@@ -1,11 +1,11 @@
 <template>
   <my-section class="benefit-section">
-      <div class="right-circle">
-          <img src="@/assets/RightBenefitCircle.png" alt="">
-      </div>
-      <div class="left-circle">
-           <img src="@/assets/LeftBenefitCircle.png" alt="">
-      </div>
+    <div class="right-circle">
+      <img src="@/assets/RightBenefitCircle.png" alt="" />
+    </div>
+    <div class="left-circle">
+      <img src="@/assets/LeftBenefitCircle.png" alt="" />
+    </div>
     <div class="benefit-title">
       <h2>Наши преимущества</h2>
     </div>
@@ -65,7 +65,7 @@ export default {
 
 <style>
 .benefit-section {
-position: relative;
+  position: relative;
   padding: 100px 0;
 }
 .benefit-title {
@@ -107,19 +107,51 @@ position: relative;
   font-weight: 300;
   color: #7c7c7c;
 }
-.right-circle{
-    position: absolute;
-    right: 80px;
-    top: 35px;
-    /* width: 200px;
-    height: auto; */
+.right-circle {
+  position: absolute;
+  right: 80px;
+  top: 35px;
 }
-/* .right-circle img{
-    max-height: 100%;
-    max-width: 100%;
-} */
-.left-circle{
-    position: absolute;
-    top: 35px;
+
+.left-circle {
+  position: absolute;
+  top: 35px;
+}
+
+@media screen and (max-width: 750px) {
+  .benefit-items {
+    flex-wrap: wrap;
+  }
+  .benefit-item:last-child {
+    flex-basis: 40%;
+    margin-top: 30px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .right-circle,
+  .left-circle {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .benefit-item {
+    flex-basis: 80%;
+    margin-bottom: 40px;
+  }
+
+  .benefit-title {
+    font-size: 14px;
+  }
+
+  .benefit-item:last-child {
+    flex-basis: 80%;
+    margin-top: 0px;
+  }
+
+  .benefit-section {
+    padding: 30px 0;
+  }
 }
 </style>

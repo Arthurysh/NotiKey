@@ -1,5 +1,8 @@
 <template>
   <my-section class="mobileApp-section">
+    <div class="circle-mobile-block">
+      <img src="@/assets/circleBgMobileSection.png" alt="">
+    </div>
     <div class="head-section">
       <h2>Наше мобильное приложение</h2>
     </div>
@@ -49,6 +52,7 @@ export default {};
 .mobileApp-section {
   background: url("../assets/mobileSectionBg.png") 76% 80% no-repeat;
   background-size: cover;
+  position: relative;
 }
 
 .mobile-image-block {
@@ -129,6 +133,18 @@ export default {};
   display: block;
 }
 
+.circle-mobile-block {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+
+}
+
+.circle-mobile-block img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
 @media screen and (max-width: 850px) {
   .mobileApp-section {
   background: url("../assets/mobileSectionBg.png") 50% 100% no-repeat;
@@ -182,6 +198,12 @@ export default {};
   }
 }
 
+@media screen and (max-width: 610px) {
+  .circle-mobile-block {
+    display: none;
+  }
+}
+
 @media screen and (max-width: 420px) {
   .mobile-info-block p {
     font-size: 14px;
@@ -206,7 +228,7 @@ export default {};
   }
 
   .head-section h2 {
-    font-size: 18px;
+    font-size: 20px;
   }
 }
 
