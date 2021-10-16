@@ -66,7 +66,7 @@ export default {
 <style>
 .benefit-section {
   position: relative;
-  padding: 100px 0;
+  padding:  0;
 }
 .benefit-title {
   text-align: center;
