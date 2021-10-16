@@ -112,7 +112,7 @@ export default {
   position: relative;
   padding-top: 255px;
   margin-bottom: 35px;
-  height: 905px;
+  height: 904px;
 }
 .services-title {
   text-align: center;
