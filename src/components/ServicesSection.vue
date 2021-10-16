@@ -184,4 +184,30 @@ export default {
     height: 664px;
   }
 }
+@media screen and (min-width: 1440px) {
+ .services-section {
+  height: 1004px;
+} 
+}
+@media screen and (min-width: 1597px) {
+ 
+ .services-section {
+  height: 1204px;
+  padding-top: 405px;
+} 
+}
+@media screen and (min-width: 1916px) {
+ 
+ .services-section {
+  height: 1404px;
+  padding-top: 505px;
+} 
+}
+@media screen and (min-width: 2215px) {
+ 
+ .services-section {
+  height: 1604px;
+  padding-top: 605px;
+} 
+}
 </style>
