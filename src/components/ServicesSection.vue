@@ -106,6 +106,9 @@ export default {
 </script>
 
 <style>
+.services-section .left-circle img{
+  width: 85px;
+}
 .services-section {
   background: url("../assets/background-services.png") no-repeat;
   background-size: cover;
