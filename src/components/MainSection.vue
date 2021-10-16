@@ -77,6 +77,44 @@ export default {
   max-height: 100%;
 }
 
+@media screen and (min-width: 1500px) {
+  .main-section {
+    height: 1100px;
+  }
+
+  .adver-mobile-image {
+    width: 600px;
+    height: 700px;
+  }
+
+  .main-information h1 {
+    font-size: 80px;
+    line-height: 80px;
+  }
+
+    .main-information p {
+      font-size: 25px;
+    }
+
+    .note-btn, .auth-btn, .reg-btn {
+      padding: 15px 40px !important;
+      font-size: 25px !important;
+    }
+
+    .nav a {
+      font-size: 20px;
+    }
+
+    .logo-image {
+      width: 95px;
+      height: 95px;
+    }
+    .logo-title {
+      font-size: 30px;
+      margin-left: 20px;
+    }
+}
+
 @media screen and (max-width: 900px) {
   .adver-mobile-image {
     display: none;

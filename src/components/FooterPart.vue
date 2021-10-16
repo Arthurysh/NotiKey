@@ -92,6 +92,16 @@ export default {};
   display: none;
 }
 
+@media screen and (min-width: 1500px) {
+  .footer-container {
+    height: 470px;
+  }
+
+  .footer-links a {
+    font-size: 25px;
+  }
+}
+
 @media screen and (max-width: 550px) {
   .link-block {
     margin-bottom: 10px;

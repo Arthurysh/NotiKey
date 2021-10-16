@@ -118,6 +118,21 @@ export default {
   top: 35px;
 }
 
+@media screen and (min-width: 1500px) {
+  .benefit-title h2{
+    font-size: 35px;
+  }
+
+  
+  .item-title {
+    font-size: 30px;
+  }
+
+  .item-description {
+    font-size: 20px;
+  }
+}
+
 @media screen and (max-width: 750px) {
   .benefit-items {
     flex-wrap: wrap;
