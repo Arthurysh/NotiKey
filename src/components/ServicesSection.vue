@@ -4,7 +4,7 @@
       <img src="@/assets/circle-background-services.png" alt="" />
     </div>
     <div class="services-title">
-      <h2>Наши преимущества</h2>
+      <h2>Наши услуги</h2>
     </div>
     <div class="services-items">
       <div
@@ -45,8 +45,6 @@
           <p class="services-item-title">{{ imageSrc.title }}</p>
         </div>
       </div>
-
-
     </div>
   </my-section>
 </template>
@@ -59,51 +57,42 @@ export default {
         {
           image: "brush.png",
           title: "Чистка двигателя",
-          
         },
         {
           image: "candle.png",
           title: "Замена свечей",
-          
         },
         {
           image: "computer.png",
           title: "Компьютерная диагностика",
-          
         },
       ],
       arrServicesImageTwoLine: [
         {
           image: "brush.png",
           title: "Чистка двигателя",
-          
         },
         {
           image: "candle.png",
           title: "Замена свечей",
-          
         },
         {
           image: "computer.png",
           title: "Компьютерная диагностика",
-          
         },
       ],
       arrServicesImageThreeLine: [
         {
           image: "brush.png",
           title: "Чистка двигателя",
-          
         },
         {
           image: "candle.png",
           title: "Замена свечей",
-          
         },
         {
           image: "computer.png",
           title: "Компьютерная диагностика",
-          
         },
       ],
     };
@@ -117,87 +106,82 @@ export default {
 </script>
 
 <style>
-.services-section{
-  background: url("../assets/background-services.png")  no-repeat;
+.services-section {
+  background: url("../assets/background-services.png") no-repeat;
   background-size: cover;
   position: relative;
   padding-top: 255px;
   margin-bottom: 35px;
-  height: 904px;
+  height: 905px;
 }
 .services-title {
   text-align: center;
   margin-bottom: 40px;
   color: #fff;
-  font-size:24px;
 }
-.services-items{
- text-align: center; 
+.services-items {
+  text-align: center;
 }
-.services-items-line-one{
-    float: left;
-    width: 33%;
-    padding: 31px;
-
+.services-items-line-one {
+  float: left;
+  width: 33%;
+  padding: 31px;
 }
-.services-items-line-two{
-    float: left;
-    width: 33%;
-    padding: 31px;
+.services-items-line-two {
+  float: left;
+  width: 33%;
+  padding: 31px;
 }
-.services-items-line-three{
-    float: left;
-    width: 33%;
-    padding: 31px;
+.services-items-line-three {
+  float: left;
+  width: 33%;
+  padding: 31px;
 }
-.services-item-title{
-    color: #fff;
-    font-size: 21px;
+.services-item-title {
+  color: #fff;
+  font-size: 22px;
 }
-.services-image-block{
-    display: flex;
-    justify-content: center;
-    margin-bottom: 7px ;  
+.services-image-block {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 7px;
 }
-.services-item-head p{
-    display: flex;
-    justify-content: center;
-    font-size:23px ;
+.services-item-head p {
+  display: flex;
+  justify-content: center;
+  font-size: 23px;
 }
-.services-image-block img{
-    width: 50px;
+.services-image-block img {
+  width: 50px;
 }
-@media screen and (max-width: 1152px){
-    .services-section{
-       padding-top: 205px; 
-    }
+@media screen and (max-width: 1152px) {
+  .services-section {
+    padding-top: 205px;
+  }
 }
-@media screen and (max-width: 524px){
-    .services-image-block img{
+@media screen and (max-width: 524px) {
+  .services-image-block img {
     width: 30px;
-}
-    .services-title {
-    font-size:20px;
-}
-    .services-item-head .services-item-title{
-    font-size: 15px ;    
-}
-    .services-section{
+  }
+  .services-item-head .services-item-title {
+    font-size: 15px;
+  }
+  .services-section {
     height: 754px;
-}   
+  }
 }
-@media screen and (max-width: 350px){
-    .services-image-block img{
+@media screen and (max-width: 350px) {
+  .services-image-block img {
     width: 22px;
-}
-    .services-title {
-    font-size:14px;
-}
-    .services-item-head .services-item-title{
-    font-size: 12px ;    
-}
-    .services-section{
+  }
+  .services-title {
+    font-size: 14px;
+  }
+  .services-item-head .services-item-title {
+    font-size: 12px;
+  }
+  .services-section {
     height: 664px;
-}   
+  }
 }
 </style>
