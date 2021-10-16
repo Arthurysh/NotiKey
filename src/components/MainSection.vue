@@ -88,8 +88,8 @@ export default {
   }
 
   .main-information h1 {
-    font-size: 80px;
-    line-height: 80px;
+    font-size: 68px;
+    line-height: 68px;
   }
 
     .main-information p {
@@ -97,12 +97,16 @@ export default {
     }
 
     .note-btn, .auth-btn, .reg-btn {
-      padding: 15px 40px !important;
-      font-size: 25px !important;
+      padding: 13px 38px !important;
+      font-size: 20px !important;
+    }
+
+    .auth-btn {
+      padding: 13px 50px !important;
     }
 
     .nav a {
-      font-size: 20px;
+      font-size: 18px;
     }
 
     .logo-image {

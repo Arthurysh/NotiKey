@@ -160,7 +160,7 @@ export default {};
   }
 
   .mobile-info-block p, .mobile-info-block ul li{
-    font-size: 30px;
+    font-size: 25px;
   }
 
   .app-benefits li {
