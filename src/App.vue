@@ -2,6 +2,7 @@
     <main-section></main-section>
     <benefit-section></benefit-section>
     <services-section></services-section>
+    <partners-section></partners-section>
     <mobile-app-section></mobile-app-section>
     <footer-part></footer-part>
 </template>
@@ -11,7 +12,8 @@ import BenefitSection from './components/BenefitSection.vue';
 import FooterPart from './components/FooterPart.vue';
 import MainSection from './components/MainSection.vue';
 import MobileAppSection from './components/MobileAppSection.vue';
-import ServicesSection from './components/ServicesSection.vue'
+import ServicesSection from './components/ServicesSection.vue';
+import PartnersSection from './components/PartnersSection.vue';
 
 export default {
   components: {
@@ -19,6 +21,7 @@ export default {
     MainSection,
     BenefitSection,
     ServicesSection,
+    PartnersSection,
     MobileAppSection,
   },
 };
