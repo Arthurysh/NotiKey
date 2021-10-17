@@ -72,7 +72,7 @@ export default {
 </script>
 <style>
 .section-partners{
-    padding-bottom: 146px ;
+    padding-bottom: 80px ;
 }
 .item-slide img{
     width: 90px;
