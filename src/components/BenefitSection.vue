@@ -66,7 +66,7 @@ export default {
 <style>
 .benefit-section {
   position: relative;
-  padding:  0;
+  padding-top: 60px;
 }
 .benefit-title {
   text-align: center;
@@ -122,7 +122,6 @@ export default {
   .benefit-title h2{
     font-size: 35px;
   }
-
   
   .item-title {
     font-size: 30px;

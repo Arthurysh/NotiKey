@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App'
 import components from './components/UI'
+import VueGoogleMaps from '@fawmi/vue-google-maps'
 
 const app = createApp(App);
 
@@ -8,4 +9,8 @@ components.forEach(component => {
     app.component(component.name, component);
 });
 
-app.mount('#app')
+app.use(VueGoogleMaps, {
+    load: {
+        key: 'AIzaSyDAMQ9lQs2wpePuFyCso5eT4SCJiveur0I',
+    },
+}).mount('#app')
