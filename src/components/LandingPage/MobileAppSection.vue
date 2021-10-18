@@ -50,7 +50,7 @@ export default {};
 
 <style>
 .mobileApp-section {
-  background: url("../assets/mobileSectionBg.png") 76% 80% no-repeat;
+  background: url("../../assets/mobileSectionBg.png") 76% 80% no-repeat;
   background-size: cover;
   position: relative;
 }
@@ -146,7 +146,7 @@ export default {};
 
 @media screen and (min-width: 1500px) {
   .mobileApp-section {
-    background: url("../assets/mobileAppBgFullHD.png") 76% 80% no-repeat;
+    background: url("../../assets/mobileAppBgFullHD.png") 76% 80% no-repeat;
     background-size: cover;
     position: relative;
   }
@@ -174,7 +174,7 @@ export default {};
 
 @media screen and (max-width: 850px) {
   .mobileApp-section {
-    background: url("../assets/mobileSectionBg.png") 50% 100% no-repeat;
+    background: url("../../assets/mobileSectionBg.png") 50% 100% no-repeat;
     background-size: cover;
   }
 

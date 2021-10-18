@@ -37,7 +37,7 @@ export default {};
 
 <style scoped>
 .footer-container {
-  background: url("../assets/footerBg.png") 50% 50% no-repeat;
+  background: url("../../assets/footerBg.png") 50% 50% no-repeat;
   background-size: cover;
   height: 360px;
   display: flex;

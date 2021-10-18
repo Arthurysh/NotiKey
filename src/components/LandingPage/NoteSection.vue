@@ -166,10 +166,8 @@
 </template>
 
 <script>
-import MySection from "./UI/MySection.vue";
 export default {
   components: {
-    MySection,
   },
   data() {
     return {

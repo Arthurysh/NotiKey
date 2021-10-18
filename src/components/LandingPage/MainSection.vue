@@ -31,7 +31,7 @@ export default {
 
 <style>
 .main-section {
-  background: url("../assets/mainSectionBg.png") 100% 100% no-repeat;
+  background: url("../../assets/mainSectionBg.png") 100% 100% no-repeat;
   background-size: cover;
   height: 820px;
   padding-top: 10px;

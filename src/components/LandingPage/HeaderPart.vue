@@ -19,8 +19,8 @@
           </ul>
         </div>
         <div class="auth-block">
-          <my-button class="auth-btn head-btn">Вход</my-button>
-          <my-button class="reg-btn head-btn">Регестрация</my-button>
+          <my-button class="auth-btn head-btn" @click="$router.push('/Authorization')">Вход</my-button>
+          <my-button class="reg-btn head-btn" @click="$router.push('/Authorization')">Регестрация</my-button>
         </div>
       </div>
       <div ref="burger" class="burger_menu">

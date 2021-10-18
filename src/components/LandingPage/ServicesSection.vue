@@ -110,7 +110,7 @@ export default {
   width: 85px;
 }
 .services-section {
-  background: url("../assets/background-services.png") no-repeat;
+  background: url("../../assets/background-services.png") no-repeat;
   background-size: cover;
   position: relative;
   padding-top: 255px;
