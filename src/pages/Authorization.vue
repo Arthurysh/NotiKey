@@ -1,13 +1,24 @@
 <template>
-  <h1>Authorization</h1>
+  <left-side></left-side>
+  <right-side></right-side>
 </template>
 
 <script>
-export default {
+import LeftSide from '@/components/Authorization/LeftSide.vue'
+import RightSide from '@/components/Authorization/RightSide.vue'
 
-}
+export default {
+  components: {
+    LeftSide,
+    RightSide,
+  },
+
+};
 </script>
 
 <style>
+
+
+
 
 </style>
