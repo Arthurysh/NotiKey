@@ -1,8 +1,14 @@
 <template>
+<div class="container-auth">
+<div class="back-to-main-page">
+          <img src="@/assets/arrow-left.svg">
+          <a href="#">На главную</a>
+      </div>
   <div class="right-side-block">
     <div class="right-side-block-items">
+     <template v-if="isElVisible">
+    <div class="registration-block">
      <h3 class="right-side-block-title">Welcome</h3>
-    <template v-if="isElVisible">
      <div class="input-registration-block">
        <my-input :placeholderValue="'Имя'" id="firstNameField"></my-input>
        <my-input :placeholderValue="'Фамилия'" id="lastNameField"></my-input>
@@ -12,29 +18,35 @@
        <my-input :placeholderValue="'Пароль'" id="passwordField"></my-input>
       </div>
       <div class="checkbox-registr">
-          <p><my-check-box></my-check-box>Я соглашаюсь с пользовательским соглашением</p>
+          <my-check-box></my-check-box><p>Я соглашаюсь с пользовательским соглашением</p>
       </div>
-      <div class="input-regustration-block-button">
+      <div class="input-registration-block-button">
         <my-button class="btn-registration-in-reg">Зарегестрироваться</my-button>
-        <my-button class="btn-log-in-reg" @click="togggleElement">Вход</my-button>
+        <my-button class="btn-log-in-reg" @click="toggleElement">Вход</my-button>
       </div>
+       </div>
     </template>
- 
+
     <template v-else>
-     <div class="input-registration-block">
+    <div class="block-log-in">
+    <h3 class="right-side-block-title">Welcome</h3>
+    <div class="input-registration-block">
        <my-input :placeholderValue="'Логин'" id="passwordField"></my-input>
        <my-input :placeholderValue="'Пароль'" id="passwordField"></my-input>
       </div>
       <div class="checkbox-registr">
-          <p><my-check-box></my-check-box>Запомнить меня</p>
+          <my-check-box></my-check-box><p>Запомнить меня</p>
       </div>
-      <div class="input-regustration-block-button">
+      <div class="input-registration-block-button">
         <my-button class="btn-log-in">Войти</my-button>
-        <my-button class="btn-registration" @click="togggleElement">Регистрация</my-button>
-      </div>
+        <my-button class="btn-registration" @click="toggleElement">Регистрация</my-button>
+    </div>
+    </div>
     </template>
+
     </div>
   </div>
+</div>
 </template>
 <script>
 import MyInput from '@/components/UI/MyInput.vue'
@@ -54,7 +66,7 @@ export default {
       }
   },
   methods: {
-      togggleElement() {
+      toggleElement() {
           this.isElVisible = !this.isElVisible
       }
   }
@@ -64,7 +76,6 @@ export default {
 
 <style>
 .right-side-block{
-    padding-top: 80px;
     width: 25vw;
     float: right;
     text-align: center;
@@ -81,7 +92,7 @@ export default {
     margin-top:20px;
     text-align: left;
 }
-.input-regustration-block-button button{
+.input-registration-block-button button{
     width: 300px;
     height: 45px;
     border-radius: 5px;
@@ -91,21 +102,103 @@ export default {
     width: 15px;
     height: 15px;
     margin-right:5px ;
+    display: inline-block;
+
 }
 .checkbox-registr{
     margin-top: 20px;
     text-align: center;
+    width: 300px;
+    margin-bottom: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 .checkbox-registr p{
-    margin-top: 20px;
+    display: inline-block;
+    width: 270px;
+    text-align: left;
+    vertical-align: top;
 }
-.input-regustration-block-button .btn-registration{
+.input-registration-block-button .btn-registration{
    background-color: #2657B1;
 }
-.input-regustration-block-button .btn-registration-in-reg{
+.input-registration-block-button .btn-registration-in-reg{
   background-color: #2657B1;  
 }
 .btn-log-in-reg {
     background-color: #4599F5;
+}
+.block-log-in{
+  position: absolute;               
+  top: 50%;                         
+  transform: translate(0, -50%)
+}
+.registration-block{
+    padding-top: 20px;
+}
+@media screen and (max-width: 1240px) {
+ .right-side-block{
+    width: 30vw;
+}
+}
+@media screen and (max-width: 1024px) {
+ .right-side-block{
+    width: 40vw;
+}
+}
+@media screen and (max-width: 770px) {
+ .right-side-block{
+    width: 50vw;
+}
+}
+@media screen and (max-width: 620px) {
+ .right-side-block{
+    width: 100vw;
+    float: none;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+.container-auth{
+  width: 100vw;
+  height: 100vh;
+  background: url("../../assets/background-regist.png") no-repeat;
+  background-size: cover;
+}
+.right-side-block-title {
+  color: white;
+}
+.checkbox-registr p {
+  color: white;
+}
+}
+@media screen and (max-width: 310px) {
+  .input-registration-block-button button{
+    width: 250px;
+}
+  .input-registration-block input{
+    width: 250px;
+}
+}
+@media screen and (max-height: 641px) {
+  .right-side-block-title{
+    font-size: 25px;
+}
+ .input-registration-block input{
+    margin-top:10px;
+}
+.input-registration-block-button button{
+    margin-top: 10px;
+}
+.checkbox-registr{
+  display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 }
 </style>
