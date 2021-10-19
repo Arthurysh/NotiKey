@@ -31,4 +31,13 @@ button:hover {
   background: #267DDD;
   color: #fff;
 }
+
+.is-not-active-btn {
+    background: #818181;
+}
+
+.is-not-active-btn:hover {
+    background: #5f5f5f;
+    color: rgb(204, 204, 204);
+}
 </style>
