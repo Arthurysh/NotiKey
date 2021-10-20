@@ -2,8 +2,10 @@
   <div class="sidebar-container">
     <div class="bread-crumbs">
       <div class="bread-crumb back-main-page">
-        <img src="@/assets/backprofileArrow.png" alt="" />
-        <a href="#">На главную</a>
+        <router-link to="/">
+        <img src="@/assets/backArrowProfile.png" alt="" />
+          <a class="on-main-link" href="#">На главную</a>
+          </router-link>
       </div>
     </div>
     <div class="user-profile-block">
@@ -15,7 +17,10 @@
         <p class="user-email">master2021@gmail.com</p>
       </div>
     </div>
-    <sidebar-menu :isAdmin="isAdminAcc" @activateItemMenu="sendActiveItemId"></sidebar-menu>
+    <sidebar-menu
+      :isAdmin="isAdminAcc"
+      @activateItemMenu="sendActiveItemId"
+    ></sidebar-menu>
   </div>
 </template>
 
@@ -27,13 +32,13 @@ export default {
     isAdminAcc: {
       type: Boolean,
       required: true,
-    }
+    },
   },
   methods: {
     sendActiveItemId(itemMenuID) {
-      this.$emit('activatedId', itemMenuID);
-    }
-  }
+      this.$emit("activatedId", itemMenuID);
+    },
+  },
 };
 </script>
 
@@ -82,14 +87,61 @@ a {
   text-decoration: underline;
 }
 
+.back-main-page {
+  align-items: center;
+  display: flex;
+}
+
 .back-main-page img {
+  width: 10px;
   margin-right: 8px;
-  transition: all 0.5s;
-  left:0px;
+  transition: all 0.5s ease;
+  left: 0px;
 }
 
 .back-main-page:hover img {
   position: relative;
-  left: -3px;
+  left: -4px;
+}
+
+@media screen and (max-width: 1120px) {
+  .user-profile-block .user-image {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .user-profile-block .user-email {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .bread-crumbs,
+  .user-profile-block {
+    padding-left: 0;
+  }
+
+  .bread-crumbs .back-main-page .on-main-link {
+    display: none;
+  }
+
+  .bread-crumbs .back-main-page img {
+    width: 16px;
+  }
+
+  .bread-crumbs .back-main-page {
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 430px) {
+  .user-profile-block .user-image {
+    width: 55px;
+    height: 55px;
+  }
+
+  .user-profile-block .user-name {
+    font-size: 14px;
+  }
 }
 </style>

@@ -1,6 +1,9 @@
 <template>
   <div class="profile-container">
-    <div class="profile-info" v-if="this.userItemID == 1 && this.isAdmin == false">
+    <div
+      class="profile-info"
+      v-if="this.userItemID == 1 && this.isAdmin == false"
+    >
       <div class="welcoming-image">
         <p class="welcoming-user-text">Hello, user</p>
       </div>
@@ -51,33 +54,51 @@
               id="passwordField"
             ></my-input>
           </div>
-          <my-button
-            type="button"
-            class="save-user-info is-not-active-btn"
+          <my-button type="button" class="save-user-info is-not-active-btn"
             >Сохранить</my-button
           >
         </div>
       </div>
     </div>
-    <div class="note-content" v-if="this.userItemID == 2 && this.isAdmin == false">
+    <div
+      class="note-content"
+      v-if="this.userItemID == 2 && this.isAdmin == false"
+    >
       <h1>Hello Note</h1>
     </div>
-    <div class="note-content" v-if="this.userItemID == 3 && this.isAdmin == false">
+    <div
+      class="car-content"
+      v-if="this.userItemID == 3 && this.isAdmin == false"
+    >
       <h1>Hello Car</h1>
     </div>
-    <div class="note-content" v-if="this.userItemID == 4 && this.isAdmin == false">
+    <div
+      class="Discount-content"
+      v-if="this.userItemID == 4 && this.isAdmin == false"
+    >
       <h1>Hello Discount</h1>
     </div>
 
-    <!-- Admin contetn -->
+    <!-- Admin content -->
 
-    <div class="note-content" v-if="this.userItemID == 1 && this.isAdmin == true">
-      <h1>Hello Table</h1>
+    <div
+      class="table-content"
+      v-if="this.userItemID == 1 && this.isAdmin == true"
+    >
+      <div class="table-head-content">
+        
+      </div>
     </div>
-    <div class="note-content" v-if="this.userItemID == 2 && this.isAdmin == true">
+    <div
+      class="document-content"
+      v-if="this.userItemID == 2 && this.isAdmin == true"
+    >
       <h1>Hello doc</h1>
     </div>
-    <div class="note-content" v-if="this.userItemID == 3 && this.isAdmin == true">
+    <div
+      class="statistic-content"
+      v-if="this.userItemID == 3 && this.isAdmin == true"
+    >
       <h1>Hello Statistics</h1>
     </div>
   </div>
@@ -94,16 +115,14 @@ export default {
       default: 1,
     },
     isAdmin: {
-        type: Boolean,
-        required: true,
-    }
+      type: Boolean,
+      required: true,
+    },
   },
   data() {
-    return {
-    };
+    return {};
   },
-  methods: {
-  },
+  methods: {},
 };
 </script>
 
@@ -155,4 +174,31 @@ export default {
 #birthdayField {
   padding-left: 54px;
 }
+
+@media screen and (max-width: 1120px) {
+  .user-info {
+    width: 100%;
+  }
+
+  .save-user-info {
+    margin: 0 auto;
+  }
+
+  .user-profile-block {
+    flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 600px) {
+    .user-info .input-user-wrap {
+      flex-basis: 100%;
+    }
+}
+
+@media screen and (max-width: 430px) {
+  .welcoming-image {
+    height: 130px;
+  }
+}
+
 </style>

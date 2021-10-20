@@ -8,21 +8,47 @@
           @click="disableItemsMenu(elem)"
           v-for="elem in arrMenuItemsUser"
           :key="elem"
-          v-bind:class="{ activeMenuItem: elem.isActive }"
         >
           <div
-            class="icon-block-menu-item"
-            :style="{ 'background-color': elem.color }"
+            class="main-menu-item"
+            v-if="elem.idItem < this.arrMenuItemsUser.length"
+            v-bind:class="{ activeMenuItem: elem.isActive }"
           >
-            <div class="menu-icon-wrap">
-              <img
-                :src="require('@/assets/profileMenuIcon/' + elem.icon)"
-                alt=""
-              />
+            <div
+              class="icon-block-menu-item"
+              :style="{ 'background-color': elem.color }"
+            >
+              <div class="menu-icon-wrap">
+                <img
+                  :src="require('@/assets/profileMenuIcon/' + elem.icon)"
+                  alt=""
+                />
+              </div>
+            </div>
+            <div class="text-block">
+              <p>{{ elem.text }}</p>
             </div>
           </div>
-          <div class="text-block">
-            <p>{{ elem.text }}</p>
+          <div
+            class="wrap-out-item"
+            @click="$router.push('/')"
+            v-if="elem.idItem == this.arrMenuItemsUser.length"
+            v-bind:class="{ activeMenuItem: elem.isActive }"
+          >
+            <div
+              class="icon-block-menu-item"
+              :style="{ 'background-color': elem.color }"
+            >
+              <div class="menu-icon-wrap">
+                <img
+                  :src="require('@/assets/profileMenuIcon/' + elem.icon)"
+                  alt=""
+                />
+              </div>
+            </div>
+            <div class="text-block">
+              <p>{{ elem.text }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -35,18 +61,45 @@
           v-bind:class="{ activeMenuItem: elem.isActive }"
         >
           <div
-            class="icon-block-menu-item"
-            :style="{ 'background-color': elem.color }"
+            class="main-menu-item"
+            v-if="elem.idItem < this.arrMenuItemsAdmin.length"
+            v-bind:class="{ activeMenuItem: elem.isActive }"
           >
-            <div class="menu-icon-wrap">
-              <img
-                :src="require('@/assets/profileMenuIcon/' + elem.icon)"
-                alt=""
-              />
+            <div
+              class="icon-block-menu-item"
+              :style="{ 'background-color': elem.color }"
+            >
+              <div class="menu-icon-wrap">
+                <img
+                  :src="require('@/assets/profileMenuIcon/' + elem.icon)"
+                  alt=""
+                />
+              </div>
+            </div>
+            <div class="text-block">
+              <p>{{ elem.text }}</p>
             </div>
           </div>
-          <div class="text-block">
-            <p>{{ elem.text }}</p>
+          <div
+            class="wrap-out-item"
+            @click="$router.push('/')"
+            v-if="elem.idItem == this.arrMenuItemsAdmin.length"
+            v-bind:class="{ activeMenuItem: elem.isActive }"
+          >
+            <div
+              class="icon-block-menu-item"
+              :style="{ 'background-color': elem.color }"
+            >
+              <div class="menu-icon-wrap">
+                <img
+                  :src="require('@/assets/profileMenuIcon/' + elem.icon)"
+                  alt=""
+                />
+              </div>
+            </div>
+            <div class="text-block">
+              <p>{{ elem.text }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -60,7 +113,7 @@ export default {
     isAdmin: {
       type: Boolean,
       required: true,
-    }
+    },
   },
   data() {
     return {
@@ -136,7 +189,7 @@ export default {
   methods: {
     disableItemsMenu(elem) {
       let itemMenuID = elem.idItem;
-      this.$emit('activateItemMenu', itemMenuID);
+      this.$emit("activateItemMenu", itemMenuID);
       if (this.isAdmin) {
         this.arrMenuItemsAdmin.forEach((element) => {
           if (element.idItem != elem.idItem) {
@@ -173,6 +226,11 @@ export default {
 }
 
 .menu-item {
+  border-radius: 8px;
+}
+
+.main-menu-item,
+.wrap-out-item {
   padding: 15px;
   color: #747474;
   display: flex;
@@ -210,5 +268,27 @@ export default {
 .activeMenuItem {
   background: #8bc2ff;
   color: #fff;
+}
+
+@media screen and (max-width: 700px) {
+  .menu-item .text-block {
+    display: none;
+  }
+
+  .icon-block-menu-item {
+    margin-right: 0;
+  }
+
+  .head-menu {
+    text-align: center;
+    padding-left: 0;
+  }
+}
+
+@media screen and (max-width: 430px) {
+  .main-menu-item,
+.wrap-out-item  {
+    padding: 10px;
+  }
 }
 </style>
