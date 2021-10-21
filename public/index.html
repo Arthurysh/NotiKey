@@ -18,12 +18,14 @@
         window.onload = function() {
             let upButton = document.getElementById("upPageBtn");
             window.onscroll = function() {
-                if (window.pageYOffset > 100) {
-                    upButton.style.zIndex = 10;
-                    upButton.style.opacity = 1;
-                } else {
-                    upButton.style.zIndex = -1;
-                    upButton.style.opacity = 0;
+                if (upButton != null) {
+                    if (window.pageYOffset > 100) {
+                        upButton.style.zIndex = 10;
+                        upButton.style.opacity = 1;
+                    } else {
+                        upButton.style.zIndex = -1;
+                        upButton.style.opacity = 0;
+                    }
                 }
             }
         }

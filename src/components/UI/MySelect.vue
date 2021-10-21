@@ -1,7 +1,7 @@
 <template>
   <select class="my-select-field">
-    <option value="{{plug}}">{{plug}}</option>
-    <option value="{{elem}}" v-for="elem in arrData" :key="elem">{{elem}}</option>
+    <option :value="this.plug">{{this.plug}}</option>
+    <option :value="elem" v-for="elem in arrData" :key="elem">{{elem}}</option>
   </select>
 </template>
 

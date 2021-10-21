@@ -21,7 +21,7 @@ export default {
   font-family: "Roboto", sans-serif;
 }
 
-@font-face {
+/* @font-face {
   font-family: "Roboto";
   src: local("Roboto"), local("Roboto"),
     url("~@/fonts/Roboto-Regular.woff2") format("woff2");
@@ -35,5 +35,5 @@ export default {
     url("~@/fonts/Roboto-Light.woff2") format("woff2");
   font-weight: 100;
   font-style: normal;
-}
+} */
 </style>
