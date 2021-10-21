@@ -1,13 +1,13 @@
 <template>
   <div class="profile">
     <sidebar-panel
-      :isAdminAcc="isAdminRole"
+      :userRole="userRole"
       @activatedId="outArr"
       class="sidebar"
     ></sidebar-panel>
     <div class="divider"></div>
     <profile-content
-      :isAdmin="isAdminRole"
+      :userRole="userRole"
       :userItemID="idCurrentItem"
       class="profile-content"
     ></profile-content>
@@ -21,7 +21,7 @@ export default {
   components: { SidebarPanel, ProfileContent },
   data() {
     return {
-      isAdminRole: true,
+      userRole: 'Admin',
       idCurrentItem: 1,
     };
   },

@@ -18,7 +18,7 @@
       </div>
     </div>
     <sidebar-menu
-      :isAdmin="isAdminAcc"
+      :userRole="userRole"
       @activateItemMenu="sendActiveItemId"
     ></sidebar-menu>
   </div>
@@ -29,8 +29,8 @@ import SidebarMenu from "@/components/ProfilePage/SidebarMenu.vue";
 export default {
   components: { SidebarMenu },
   props: {
-    isAdminAcc: {
-      type: Boolean,
+    userRole: {
+      type: String,
       required: true,
     },
   },

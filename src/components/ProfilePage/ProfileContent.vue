@@ -1,11 +1,11 @@
 <template>
   <div class="profile-container">
     <!-- Интерфейсы пользователя -->
-    <user-content :userItemID="userItemID" :isAdmin="isAdmin"></user-content>
+    <user-content :userItemID="userItemID" :userRole="userRole"></user-content>
     <!-- Интерфейсы администратора -->
-    <admin-content :userItemID="userItemID" :isAdmin="isAdmin"></admin-content>
+    <admin-content :userItemID="userItemID" :userRole="userRole"></admin-content>
     <!-- Интерфейсы менеджера -->
-    <manager-content></manager-content>
+    <manager-content :userItemID="userItemID" :userRole="userRole"></manager-content>
   </div>
 </template>
 
@@ -24,8 +24,8 @@ export default {
       type: Number,
       required: true,
     },
-    isAdmin: {
-      type: Boolean,
+    userRole: {
+      type: String,
       required: true,
     },
   },

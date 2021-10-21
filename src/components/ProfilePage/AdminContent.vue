@@ -41,7 +41,7 @@
   <!-- Таблицы -->
   <div
     class="table-content"
-    v-if="this.userItemID == 1 && this.isAdmin == true"
+    v-if="this.userItemID == 1 && this.userRole == 'Admin'"
   >
     <div class="table-head-content">
       <h2>Таблицы</h2>
@@ -92,14 +92,14 @@
   <!-- Отчеты -->
   <div
     class="document-content"
-    v-if="this.userItemID == 2 && this.isAdmin == true"
+    v-if="this.userItemID == 2 && this.userRole == 'Admin'"
   >
     <h1>Hello doc</h1>
   </div>
   <!-- Статистика -->
   <div
     class="statistic-content"
-    v-if="this.userItemID == 3 && this.isAdmin == true"
+    v-if="this.userItemID == 3 && this.userRole == 'Admin'"
   >
     <h1>Hello Statistics</h1>
   </div>
@@ -112,8 +112,8 @@ export default {
       type: Number,
       default: 1,
     },
-    isAdmin: {
-      type: Boolean,
+    userRole: {
+      type: String,
       required: true,
     },
   },
@@ -231,7 +231,7 @@ export default {
   },
   methods: {
     changeTable() {
-      if (this.isAdmin) {
+      if (this.userRole == 'Admin') {
           let table = document.getElementById("selectTableDB").value;
 
       switch (table) {

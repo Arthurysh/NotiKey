@@ -2,7 +2,7 @@
   <!-- Профиль пользователя -->
   <div
     class="profile-info"
-    v-if="this.userItemID == 1 && this.isAdmin == false"
+    v-if="this.userItemID == 1 && this.userRole == 'User'"
   >
     <div class="welcoming-image">
       <p class="welcoming-user-text">Hello, user</p>
@@ -63,18 +63,18 @@
   <!-- Записи пользователя -->
   <div
     class="note-content"
-    v-if="this.userItemID == 2 && this.isAdmin == false"
+    v-if="this.userItemID == 2 && this.userRole == 'User'"
   >
     <h1>Hello Note</h1>
   </div>
   <!-- Транспорт пользователя -->
-  <div class="car-content" v-if="this.userItemID == 3 && this.isAdmin == false">
+  <div class="car-content" v-if="this.userItemID == 3 && this.userRole == 'User'">
     <h1>Hello Car</h1>
   </div>
   <!-- Скидки пользователя -->
   <div
     class="Discount-content"
-    v-if="this.userItemID == 4 && this.isAdmin == false"
+    v-if="this.userItemID == 4 && this.userRole == 'User'"
   >
     <h1>Hello Discount</h1>
   </div>
@@ -87,8 +87,8 @@ export default {
       type: Number,
       default: 1,
     },
-    isAdmin: {
-      type: Boolean,
+    userRole: {
+      type: String,
       required: true,
     },
   },
