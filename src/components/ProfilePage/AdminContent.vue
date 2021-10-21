@@ -94,7 +94,27 @@
     class="document-content"
     v-if="this.userItemID == 2 && this.userRole == 'Admin'"
   >
-    <h1>Hello doc</h1>
+    <div class="document-head-content">
+      <h2>Отчеты</h2>
+    </div>
+    <div class="documents-content">
+      <div class="up-line">
+        <button class="doc-block earning-block">
+          <p>Зароботок</p>
+        </button>
+        <button class="doc-block new-user-block">
+          <p>Новые пользователи</p>
+        </button>
+      </div>
+      <div class="down-line">
+        <button class="doc-block new-station-block">
+          <p>Новые СТО</p>
+        </button>
+        <button class="doc-block earning-from-station">
+          <p>Зароботок с CТО</p>
+        </button>
+      </div>
+    </div>
   </div>
   <!-- Статистика -->
   <div
@@ -231,20 +251,20 @@ export default {
   },
   methods: {
     changeTable() {
-      if (this.userRole == 'Admin') {
-          let table = document.getElementById("selectTableDB").value;
+      if (this.userRole == "Admin") {
+        let table = document.getElementById("selectTableDB").value;
 
-      switch (table) {
-        case "Станции":
-          this.currentTable = this.station;
-          break;
-        case "Пользователи":
-          this.currentTable = this.users;
-          console.log(this.currentTable);
-          break;
-        default:
-          this.currentTable = this.station;
-      }
+        switch (table) {
+          case "Станции":
+            this.currentTable = this.station;
+            break;
+          case "Пользователи":
+            this.currentTable = this.users;
+            console.log(this.currentTable);
+            break;
+          default:
+            this.currentTable = this.station;
+        }
       }
     },
     activeAddModal() {
@@ -400,6 +420,58 @@ export default {
   display: none;
 }
 
+/* Отчеты контент */
+
+.document-head-content {
+  text-align: center;
+  margin-bottom: 75px;
+}
+
+.doc-block {
+  width: 40%;
+  height: 200px;
+  border-radius: 10px;
+  position: relative;
+  background: red;
+  border: none;
+  cursor: pointer;
+}
+
+.doc-block p {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  font-size: 20px;
+  color: #fff;
+}
+
+.documents-content .up-line,
+.documents-content .down-line {
+  display: flex;
+  justify-content: space-around;
+}
+
+.documents-content .up-line {
+  margin-bottom: 50px;
+}
+
+.earning-block {
+  background: #e28d8d;
+}
+
+.new-user-block {
+  background: #7ac4ee;
+}
+
+.new-station-block {
+  background: #9ad8c9;
+}
+
+.earning-from-station {
+  background: #ffcb7d;
+}
 @media screen and (max-width: 1000px) {
   /* Админ */
   /* Интерфейс таблиц */
@@ -452,6 +524,11 @@ export default {
     flex-basis: calc((100% - 30px) / 2);
     margin-right: 0;
   }
+
+  /* Интерфейс отчетов */
+  .doc-block p {
+    font-size: 16px;
+  }
 }
 
 @media screen and (max-width: 840px) {
@@ -470,6 +547,31 @@ export default {
   input {
     flex-basis: 50%;
   }
+}
+
+@media screen and (max-width: 650px) {
+  .documents-content .up-line,
+  .documents-content .down-line {
+    flex-direction: column;
+  }
+
+  .doc-block {
+    width: 100%;
+    height: 130px;
+    margin-bottom: 20px;
+  }
+
+  .documents-content .up-line {
+    margin-bottom: 0;
+  }
+
+  .document-head-content {
+    margin-bottom: 40px;
+  }
+
+    .document-head-content h2 {
+        font-size: 16px;
+    }
 }
 
 @media screen and (max-width: 480px) {
