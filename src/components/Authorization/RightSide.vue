@@ -6,28 +6,9 @@
       </div>
   <div class="right-side-block">
     <div class="right-side-block-items">
-     <template v-if="isElVisible">
-    <div class="registration-block">
-     <h3 class="right-side-block-title">Welcome</h3>
-     <div class="input-registration-block">
-       <my-input :placeholderValue="'Имя'" id="firstNameField"></my-input>
-       <my-input :placeholderValue="'Фамилия'" id="lastNameField"></my-input>
-       <my-input :placeholderValue="'Номер'" id="numberField"></my-input>
-       <my-input :placeholderValue="'Почта'" id="emailField"></my-input>
-       <my-input :placeholderValue="'Дата рождения'" id="dataField"></my-input>
-       <my-input :placeholderValue="'Пароль'" id="passwordField"></my-input>
-      </div>
-      <div class="checkbox-registr">
-          <my-check-box></my-check-box><p>Я соглашаюсь с пользовательским соглашением</p>
-      </div>
-      <div class="input-registration-block-button">
-        <my-button class="btn-registration-in-reg">Зарегестрироваться</my-button>
-        <my-button class="btn-log-in-reg" @click="toggleElement">Вход</my-button>
-      </div>
-       </div>
-    </template>
+     
 
-    <template v-else>
+    <template v-if="isElVisible">
     <div class="block-log-in">
     <h3 class="right-side-block-title">Welcome</h3>
     <div class="input-registration-block">
@@ -43,15 +24,48 @@
     </div>
     </div>
     </template>
-
+<template v-else>
+    <div class="registration-block">
+     <h3 class="right-side-block-title">Welcome</h3>
+     <div class="input-registration-block">
+       <my-input :placeholderValue="'Имя'" id="firstNameField" v-model="form.name"></my-input>
+       <span class="text-danger" v-if="errors.name">
+         {{ errors.name[0] }}
+       </span>
+       <my-input :placeholderValue="'Фамилия'" id="lastNameField"></my-input>
+       <my-input :placeholderValue="'Номер телефона'" id="numberField"></my-input>
+       <my-input :placeholderValue="'Почта'" id="emailField" v-model="form.email"></my-input>
+       <span class="text-danger" v-if="errors.email">
+         {{ errors.email[0] }}
+       </span>
+       <my-input :placeholderValue="'Пароль'" id="passwordField" v-model="form.password"></my-input>
+        <span class="text-danger" v-if="errors.password">
+         {{ errors.password[0] }}
+       </span>
+       <my-input :placeholderValue="'Повторите пароль'" id="passwordField" v-model="form.password_confirmation"></my-input>
+       <span class="text-danger" v-if="errors.password_confirmation">
+         {{ errors.password_confirmation[0] }}
+       </span>
+      </div>
+      <div class="checkbox-registr">
+          <my-check-box></my-check-box><p>Я соглашаюсь с пользовательским соглашением</p>
+      </div>
+      <div class="input-registration-block-button">
+        <my-button class="btn-registration-in-reg" @click.prevent="register">Зарегестрироваться</my-button>
+        <my-button class="btn-log-in-reg" @click="toggleElement">Вход</my-button>
+      </div>
+       </div>
+    </template>
     </div>
   </div>
 </div>
 </template>
 <script>
-import MyInput from '@/components/UI/MyInput.vue'
-import MyButton from '@/components/UI/MyButton.vue'
+import MyInput from '@/components/UI/MyInput.vue';
+import MyButton from '@/components/UI/MyButton.vue';
 import MyCheckBox from '@/components/UI/MyCheckBox.vue';
+import User from '@/apis/User';
+import Csrf from '@/apis/Csrf';
 
 
 export default {
@@ -59,18 +73,41 @@ export default {
     MyInput,
     MyButton,
     MyCheckBox,
+    User,
+    Csrf,
   },
   data: () => {
       return {
-          isElVisible: false
-      }
+          isElVisible: false,
+          form:{
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: ''
+      },
+      errors: []
+
+      };
   },
   methods: {
       toggleElement() {
           this.isElVisible = !this.isElVisible
+      },
+      register(){
+        Csrf.getCookie().then(() => {
+          
+           User.register(this.form)
+           .catch(error => {
+             if (error.response.status === 422) {
+               this.errors = error.response.data.errors;
+             }
+           })
+           
+        });
+        
       }
   }
-
+  
 };
 </script>
 
