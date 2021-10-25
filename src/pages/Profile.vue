@@ -21,7 +21,7 @@ export default {
   components: { SidebarPanel, ProfileContent },
   data() {
     return {
-      userRole: 'Admin',
+      userRole: "Admin",
       idCurrentItem: 1,
     };
   },
@@ -47,7 +47,7 @@ export default {
 }
 
 .profile-content {
-  flex-basis: 80%;
+  flex-basis: 100%;
   overflow: scroll;
 }
 
@@ -66,14 +66,14 @@ export default {
 }
 
 @media screen and (max-width: 700px) {
-.divider {
-  height: 100%;
-}
+  .divider {
+    height: 100%;
+  }
 }
 
 @media screen and (max-width: 430px) {
   .profile {
-      padding: 20px 20px 20px 10px;
+    padding: 20px 20px 20px 10px;
   }
 
   .divider {
@@ -84,8 +84,8 @@ export default {
 }
 
 @media screen and (max-width: 330px) {
-    .profile {
-      padding: 20px 10px 20px 10px;
+  .profile {
+    padding: 20px 10px 20px 10px;
   }
 
   .divider {

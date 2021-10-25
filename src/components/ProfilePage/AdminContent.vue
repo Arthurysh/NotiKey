@@ -136,14 +136,14 @@
       <div class="wrap-chart">
         <h2>Приток пользователей</h2>
         <div class="bar-chart chart-diagramm">
-          <bar-chart :dataChart="statisticData1"></bar-chart>
+          <bar-chart :dataChart="statisticData2"></bar-chart>
         </div>
       </div>
 
       <div class="wrap-chart">
-        <h2>Приток пользователей</h2>
+        <h2>Заработок компании</h2>
         <div class="line-chart chart-diagramm" style="width: 100%">
-          <line-chart :dataChart="statisticData1"></line-chart>
+          <line-chart :dataChart="statisticData3"></line-chart>
         </div>
       </div>
     </div>
@@ -170,6 +170,8 @@ export default {
   data() {
     return {
       statisticData1: [12, 19, 3, 5, 2, 3, 8],
+      statisticData2: [13, 9, 12, 20, 22, 20, 24],
+      statisticData3: [300, 215, 300, 500, 803, 580, 1004],
       tables: ["Пользователи", "Записи", "Транспорт", "Станции"],
       currentTable: [],
       isModalOpen: false,
@@ -507,7 +509,8 @@ export default {
 .chart-content {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: space-between;
+  padding: 0 30px;
 }
 .wrap-chart {
   flex-basis: 45%;
@@ -515,14 +518,14 @@ export default {
 }
 .wrap-chart:last-child {
   margin-top: 25px;
-  flex-basis: 90%;
+  flex-basis: 100%;
 }
-.wrap-chart:last-child .canv-chart{
-  height: 350px !important; 
+.wrap-chart:last-child .canv-chart {
+  height: 290px;
 }
 .wrap-chart h2 {
   font-weight: bold;
-  font-size: 20px;
+  font-size: 14px;
   line-height: 16px;
   margin-bottom: 20px;
   color: #747474;
@@ -535,6 +538,57 @@ export default {
   box-shadow: 0px 0px 25px 0px rgba(34, 60, 80, 0.2);
   border-radius: 15px;
 }
+
+.statistic-head-content {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+@media screen and (max-width: 1060px) {
+  .chart-content {
+    flex-direction: column;
+  }
+
+  .wrap-chart {
+    width: 100%;
+  }
+
+  .wrap-chart:first-child {
+    margin-bottom: 25px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .chart-content {
+    padding: 0 5px;
+  }
+  .wrap-chart div {
+    padding: 6px;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0px 0px 8px 0px rgb(34 60 80 / 20%);
+  }
+  .wrap-chart h2 {
+    font-size: 12px;
+    margin-bottom: 15px;
+  }
+
+  .wrap-chart {
+    margin-bottom: 15px !important;
+  }
+
+  .wrap-chart:last-child .canv-chart {
+    height: 240px;
+  }
+  .wrap-chart:last-child {
+    margin-top: 15px;
+  }
+
+  .statistic-head-content h2 {
+    font-size: 16px;
+  }
+}
+
 @media screen and (max-width: 1000px) {
   /* Админ */
   /* Интерфейс таблиц */
