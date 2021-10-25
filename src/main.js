@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
-import App from './App'
-import components from './components/UI'
+import App from '@/App'
+import components from '@/components/UI'
 import VueGoogleMaps from '@fawmi/vue-google-maps'
 import Router from '@/router/router'
 

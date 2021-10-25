@@ -121,12 +121,42 @@
     class="statistic-content"
     v-if="this.userItemID == 3 && this.userRole == 'Admin'"
   >
-    <h1>Hello Statistics</h1>
+    <div class="statistic-head-content">
+      <h2>Статистика</h2>
+    </div>
+
+    <div class="chart-content">
+      <div class="wrap-chart">
+        <h2>Количество новых сто</h2>
+        <div class="pie-chart chart-diagramm">
+          <pie-chart :dataChart="statisticData1"></pie-chart>
+        </div>
+      </div>
+
+      <div class="wrap-chart">
+        <h2>Приток пользователей</h2>
+        <div class="bar-chart chart-diagramm">
+          <bar-chart :dataChart="statisticData1"></bar-chart>
+        </div>
+      </div>
+
+      <div class="wrap-chart">
+        <h2>Приток пользователей</h2>
+        <div class="line-chart chart-diagramm" style="width: 100%">
+          <line-chart :dataChart="statisticData1"></line-chart>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import PieChart from "@/components/ProfilePage/AdminCharts/PieChart.vue";
+import BarChart from "@/components/ProfilePage/AdminCharts/BarChart.vue";
+import LineChart from "@/components/ProfilePage/AdminCharts/LineChart.vue";
+
 export default {
+  components: { PieChart, BarChart, LineChart },
   props: {
     userItemID: {
       type: Number,
@@ -139,6 +169,7 @@ export default {
   },
   data() {
     return {
+      statisticData1: [12, 19, 3, 5, 2, 3, 8],
       tables: ["Пользователи", "Записи", "Транспорт", "Станции"],
       currentTable: [],
       isModalOpen: false,
@@ -472,6 +503,38 @@ export default {
 .earning-from-station {
   background: #ffcb7d;
 }
+/* Статистика */
+.chart-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.wrap-chart {
+  flex-basis: 45%;
+  background: transparent;
+}
+.wrap-chart:last-child {
+  margin-top: 25px;
+  flex-basis: 90%;
+}
+.wrap-chart:last-child .canv-chart{
+  height: 350px !important; 
+}
+.wrap-chart h2 {
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 16px;
+  margin-bottom: 20px;
+  color: #747474;
+  text-align: center;
+}
+.chart-diagramm {
+  padding: 30px;
+  -webkit-box-shadow: 0px 0px 25px 0px rgba(34, 60, 80, 0.2);
+  -moz-box-shadow: 0px 0px 25px 0px rgba(34, 60, 80, 0.2);
+  box-shadow: 0px 0px 25px 0px rgba(34, 60, 80, 0.2);
+  border-radius: 15px;
+}
 @media screen and (max-width: 1000px) {
   /* Админ */
   /* Интерфейс таблиц */
@@ -569,9 +632,9 @@ export default {
     margin-bottom: 40px;
   }
 
-    .document-head-content h2 {
-        font-size: 16px;
-    }
+  .document-head-content h2 {
+    font-size: 16px;
+  }
 }
 
 @media screen and (max-width: 480px) {

@@ -15,6 +15,10 @@ const routes = [{
         path: '/Authorization',
         component: Authorization,
     },
+    {
+        path: '/Registration',
+        component: Authorization,
+    },
 ];
 
 const router = createRouter({
