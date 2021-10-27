@@ -68,7 +68,10 @@
     <h1>Hello Note</h1>
   </div>
   <!-- Транспорт пользователя -->
-  <div class="car-content" v-if="this.userItemID == 3 && this.userRole == 'User'">
+  <div
+    class="car-content"
+    v-if="this.userItemID == 3 && this.userRole == 'User'"
+  >
     <h1>Hello Car</h1>
   </div>
   <!-- Скидки пользователя -->
@@ -76,12 +79,32 @@
     class="Discount-content"
     v-if="this.userItemID == 4 && this.userRole == 'User'"
   >
-    <h1>Hello Discount</h1>
+    <div class="discount-head-content">
+      <h2>Скидки</h2>
+    </div>
+
+    <my-grid>
+      <my-grid-item class="discount-card" v-for="discount in userDiscounts" :key="discount">
+        <div class="discount-card-head">
+          <h3>Станция - {{discount.station}}</h3>
+        </div>
+        <div class="discount-content">
+          <div class="percent">
+            <p>{{discount.percent}}%</p>
+          </div>
+          <div class="date-limit">
+            <p>Действует до: {{discount.date}}</p>
+          </div>
+        </div>
+      </my-grid-item>
+    </my-grid>
   </div>
 </template>
 
 <script>
+import MyGridItem from '../UI/MyGridItem.vue';
 export default {
+  components: { MyGridItem },
   props: {
     userItemID: {
       type: Number,
@@ -91,6 +114,32 @@ export default {
       type: String,
       required: true,
     },
+  },
+  data() {
+    return {
+      userDiscounts: [
+        {
+          station: "Elcar",
+          percent: 5,
+          date: "22.10.2022",
+        },
+        {
+          station: "Towcar",
+          percent: 10,
+          date: "22.10.2022",
+        },
+                {
+          station: "Towcar",
+          percent: 10,
+          date: "22.10.2022",
+        },
+                {
+          station: "Towcar",
+          percent: 10,
+          date: "22.10.2022",
+        },
+      ],
+    };
   },
 };
 </script>
@@ -144,6 +193,44 @@ export default {
   padding-left: 54px;
 }
 
+/* Скидки пользователя */
+
+.discount-head-content {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.discount-card {
+  background: #FFD15A;
+  border: 1px solid #B0B0B0;
+  border-radius: 12px;
+  padding: 15px;
+  color: #3E3E3E;
+}
+
+.discount-card .discount-card-head {
+  margin-bottom: 44px;
+}
+
+.discount-card .discount-content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.discount-content .percent p {
+  font-size: 36px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.discount-content .date-limit {
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+    align-items: flex-end;
+    text-align: right;
+}
+
 @media screen and (max-width: 1120px) {
   .user-info {
     width: 100%;
@@ -167,11 +254,29 @@ export default {
     flex-basis: 100%;
     margin-right: 0;
   }
+
+  /* User discounts */
+
+.discount-content .percent p {
+  font-size: 25px;
+}
+
+  .discount-content .date-limit p {
+    font-size: 12px;
+}
+
+.discount-card-head h3 {
+  font-size: 15px;
+}
 }
 
 @media screen and (max-width: 430px) {
   .welcoming-image {
     height: 130px;
+  }
+
+  .discount-head-content h2 {
+    font-size: 20px;
   }
 }
 </style>

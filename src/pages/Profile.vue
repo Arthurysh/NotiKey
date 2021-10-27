@@ -21,7 +21,7 @@ export default {
   components: { SidebarPanel, ProfileContent },
   data() {
     return {
-      userRole: "Admin",
+      userRole: "User",
       idCurrentItem: 1,
     };
   },
