@@ -62,7 +62,7 @@
   </div>
   <!-- Записи пользователя -->
   <div
-    class="note-content"
+    class="note-content user-head-content"
     v-if="this.userItemID == 2 && this.userRole == 'User'"
   >
     <h1>Hello Note</h1>
@@ -72,28 +72,50 @@
     class="car-content"
     v-if="this.userItemID == 3 && this.userRole == 'User'"
   >
-    <h1>Hello Car</h1>
+    <div class="car-head-content user-head-content">
+      <h2>Транспорт</h2>
+    </div>
+
+    <my-grid>
+      <my-grid-item class="car-item" v-for="car in userCars" :key="car">
+        <div class="car-image-block">
+          <img :src="require('@/assets/' + car.image)" alt="">
+        </div>
+        <div class="car-name">
+          <p>{{car.brand + " " + car.model}}</p>
+        </div>
+      </my-grid-item>
+    <my-grid-item class="add-new-car">
+      <div class="circle-block">
+        <img src="@/assets/addIcon.png" alt="">
+      </div>
+    </my-grid-item>
+    </my-grid>
   </div>
   <!-- Скидки пользователя -->
   <div
     class="Discount-content"
     v-if="this.userItemID == 4 && this.userRole == 'User'"
   >
-    <div class="discount-head-content">
+    <div class="discount-head-content user-head-content">
       <h2>Скидки</h2>
     </div>
 
     <my-grid>
-      <my-grid-item class="discount-card" v-for="discount in userDiscounts" :key="discount">
+      <my-grid-item
+        class="discount-card"
+        v-for="discount in userDiscounts"
+        :key="discount"
+      >
         <div class="discount-card-head">
-          <h3>Станция - {{discount.station}}</h3>
+          <h3>Станция - {{ discount.station }}</h3>
         </div>
         <div class="discount-content">
           <div class="percent">
-            <p>{{discount.percent}}%</p>
+            <p>{{ discount.percent }}%</p>
           </div>
           <div class="date-limit">
-            <p>Действует до: {{discount.date}}</p>
+            <p>Действует до: {{ discount.date }}</p>
           </div>
         </div>
       </my-grid-item>
@@ -102,7 +124,7 @@
 </template>
 
 <script>
-import MyGridItem from '../UI/MyGridItem.vue';
+import MyGridItem from "../UI/MyGridItem.vue";
 export default {
   components: { MyGridItem },
   props: {
@@ -128,15 +150,37 @@ export default {
           percent: 10,
           date: "22.10.2022",
         },
-                {
+        {
           station: "Towcar",
           percent: 10,
           date: "22.10.2022",
         },
-                {
+        {
           station: "Towcar",
           percent: 10,
           date: "22.10.2022",
+        },
+      ],
+      userCars: [
+        {
+          image: "carTest1.png",
+          brand: "Tesla",
+          model: "Model S",
+          year: "2017",
+          type: "Седан",
+          power: "200лс",
+          maxSpeed: 200,
+          racingTime: 4,
+        },
+        {
+          image: "carTest2.png",
+          brand: "Tesla",
+          model: "Model X",
+          year: "2020",
+          type: "Седан",
+          power: "300лс",
+          maxSpeed: 250,
+          racingTime: 3,
         },
       ],
     };
@@ -193,23 +237,24 @@ export default {
   padding-left: 54px;
 }
 
-/* Скидки пользователя */
-
-.discount-head-content {
+.user-head-content h2 {
   text-align: center;
   margin-bottom: 24px;
 }
 
+/* Скидки пользователя */
+
 .discount-card {
-  background: #FFD15A;
-  border: 1px solid #B0B0B0;
+  background: #ffd15a;
+  border: 1px solid #b0b0b0;
   border-radius: 12px;
   padding: 15px;
-  color: #3E3E3E;
+  color: #3e3e3e;
 }
 
 .discount-card .discount-card-head {
   margin-bottom: 44px;
+  font-size: 14px;
 }
 
 .discount-card .discount-content {
@@ -227,8 +272,74 @@ export default {
   font-size: 14px;
   font-weight: bold;
   display: flex;
-    align-items: flex-end;
-    text-align: right;
+  align-items: flex-end;
+  text-align: right;
+}
+
+/* Транспорт пользователя */
+
+.car-item {
+  cursor: pointer;
+  border: 1px solid #b0b0b0;
+  border-radius: 12px;
+  padding: 15px;
+  color: #3e3e3e;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  transition: 0.3s;
+}
+
+.car-image-block {
+  width: 170px;
+  height: 100px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.car-image-block img {
+max-width: 100%;
+  max-height: 100%;
+}
+
+.car-name {
+  text-align: center;
+}
+
+.car-item:hover, .add-new-car:hover {
+  -webkit-box-shadow: 0px 0px 11px 0px rgba(34, 60, 80, 0.2);
+-moz-box-shadow: 0px 0px 11px 0px rgba(34, 60, 80, 0.2);
+box-shadow: 0px 0px 11px 0px rgba(34, 60, 80, 0.2);
+}
+
+.add-new-car {
+  position: relative;
+    cursor: pointer;
+  border: 1px solid #b0b0b0;
+  border-radius: 12px;
+  background: #EDEDED;
+  transition: 0.5s;
+  padding: 78px;
+}
+
+.circle-block {
+  position: absolute;
+  top:50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 1px solid #BFBFBF;
+  background: #fff;
+}
+
+.circle-block img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
 }
 
 @media screen and (max-width: 1120px) {
@@ -257,17 +368,17 @@ export default {
 
   /* User discounts */
 
-.discount-content .percent p {
-  font-size: 25px;
-}
+  .discount-content .percent p {
+    font-size: 25px;
+  }
 
   .discount-content .date-limit p {
     font-size: 12px;
-}
+  }
 
-.discount-card-head h3 {
-  font-size: 15px;
-}
+  .discount-card-head h3 {
+    font-size: 15px;
+  }
 }
 
 @media screen and (max-width: 430px) {
@@ -275,7 +386,7 @@ export default {
     height: 130px;
   }
 
-  .discount-head-content h2 {
+  .user-head-content h2 {
     font-size: 20px;
   }
 }
