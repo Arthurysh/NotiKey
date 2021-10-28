@@ -72,25 +72,59 @@
     class="car-content"
     v-if="this.userItemID == 3 && this.userRole == 'User'"
   >
-    <div class="car-head-content user-head-content">
-      <h2>Транспорт</h2>
+    <div class="all-user-cars" v-if="!isDetaileView">
+      <div class="car-head-content user-head-content">
+        <h2>Транспорт</h2>
+      </div>
+
+      <my-grid>
+        <my-grid-item
+          class="car-item"
+          v-for="car in userCars"
+          :key="car"
+          @click="detailedCarView(car.carID)"
+        >
+          <div class="car-image-block">
+            <img :src="require('@/assets/' + car.image)" alt="" />
+          </div>
+          <div class="car-name">
+            <p>{{ car.brand + " " + car.model }}</p>
+          </div>
+        </my-grid-item>
+        <my-grid-item class="add-new-car">
+          <div class="circle-block">
+            <img src="@/assets/addIcon.png" alt="" />
+          </div>
+        </my-grid-item>
+      </my-grid>
     </div>
 
-    <my-grid>
-      <my-grid-item class="car-item" v-for="car in userCars" :key="car">
-        <div class="car-image-block">
-          <img :src="require('@/assets/' + car.image)" alt="">
-        </div>
-        <div class="car-name">
-          <p>{{car.brand + " " + car.model}}</p>
-        </div>
-      </my-grid-item>
-    <my-grid-item class="add-new-car">
-      <div class="circle-block">
-        <img src="@/assets/addIcon.png" alt="">
+    <div class="detailed-car-info" v-if="isDetaileView">
+      <div class="close-detailed-contenet" @click="closeDetailedView()">
+        <img src="@/assets/closeCrossIcon.png" alt="" />
       </div>
-    </my-grid-item>
-    </my-grid>
+      <h3>{{ this.viewCarObj.brand + " " + this.viewCarObj.model }}</h3>
+
+      <div class="detailed-car-info-content">
+        <div class="image-car-model">
+          <img :src="require('@/assets/' + this.viewCarObj.image)" alt="" />
+        </div>
+        <div class="car-info-table">
+          <div class="car-info-line" v-for="(value, property) in viewCarObj" :key="property">
+            <div class="car-info-line-inner"
+              v-if="property != 'carID' && property != 'image'"
+            >
+              <p class="characteristic-name">{{ property }}</p>
+              <p class="characteristic-value">{{ value }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="car-control-panel">
+          <my-button class="delete-car">Удалить</my-button>
+        </div>
+      </div>
+    </div>
   </div>
   <!-- Скидки пользователя -->
   <div
@@ -126,7 +160,7 @@
 <script>
 import MyGridItem from "../UI/MyGridItem.vue";
 export default {
-  components: { MyGridItem },
+  components: { MyGridItem},
   props: {
     userItemID: {
       type: Number,
@@ -139,6 +173,8 @@ export default {
   },
   data() {
     return {
+      isDetaileView: false,
+      viewCarObj: {},
       userDiscounts: [
         {
           station: "Elcar",
@@ -163,6 +199,7 @@ export default {
       ],
       userCars: [
         {
+          carID: 12,
           image: "carTest1.png",
           brand: "Tesla",
           model: "Model S",
@@ -173,6 +210,7 @@ export default {
           racingTime: 4,
         },
         {
+          carID: 132,
           image: "carTest2.png",
           brand: "Tesla",
           model: "Model X",
@@ -184,6 +222,26 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    detailedCarView(carObjID) {
+      this.viewCarObj = this.findUserCar(carObjID);
+      this.closeDetailedView();
+    },
+
+    findUserCar(id) {
+      let userCar;
+      this.userCars.forEach((element) => {
+        if (element.carID == id) {
+          // console.log(element);
+          userCar = element;
+        }
+      });
+      return userCar;
+    },
+    closeDetailedView() {
+      this.isDetaileView = !this.isDetaileView;
+    },
   },
 };
 </script>
@@ -291,14 +349,14 @@ export default {
 }
 
 .car-image-block {
-  width: 170px;
+  width: 150px;
   height: 100px;
   margin-bottom: 10px;
   text-align: center;
 }
 
 .car-image-block img {
-max-width: 100%;
+  max-width: 100%;
   max-height: 100%;
 }
 
@@ -306,31 +364,32 @@ max-width: 100%;
   text-align: center;
 }
 
-.car-item:hover, .add-new-car:hover {
+.car-item:hover,
+.add-new-car:hover {
   -webkit-box-shadow: 0px 0px 11px 0px rgba(34, 60, 80, 0.2);
--moz-box-shadow: 0px 0px 11px 0px rgba(34, 60, 80, 0.2);
-box-shadow: 0px 0px 11px 0px rgba(34, 60, 80, 0.2);
+  -moz-box-shadow: 0px 0px 11px 0px rgba(34, 60, 80, 0.2);
+  box-shadow: 0px 0px 11px 0px rgba(34, 60, 80, 0.2);
 }
 
 .add-new-car {
   position: relative;
-    cursor: pointer;
+  cursor: pointer;
   border: 1px solid #b0b0b0;
   border-radius: 12px;
-  background: #EDEDED;
+  background: #ededed;
   transition: 0.5s;
   padding: 78px;
 }
 
 .circle-block {
   position: absolute;
-  top:50%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 70px;
   height: 70px;
   border-radius: 50%;
-  border: 1px solid #BFBFBF;
+  border: 1px solid #bfbfbf;
   background: #fff;
 }
 
@@ -339,6 +398,76 @@ box-shadow: 0px 0px 11px 0px rgba(34, 60, 80, 0.2);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+/* Транспорт пользователя детальней */
+
+.detailed-car-info-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-car-model {
+  width: 400px;
+  margin-bottom: 40px;
+}
+
+.image-car-model img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.car-info-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.car-info-table .car-info-line:nth-child(2n + 1) {
+  background: #c4c4c4;
+}
+
+.car-info-line-inner {
+  width: 100%;
+  display: flex;
+  padding: 10px 40px;
+  justify-content: space-between;
+}
+
+.car-info-table .car-info-line p {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.close-detailed-contenet {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.close-detailed-contenet img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.delete-car {
+  background: #EA7778 !important;
+  border-radius: 6px !important;
+  padding: 10px 30px !important;
+}
+
+.delete-car:hover {
+  background: #b45658 !important;
 
 }
 
@@ -378,6 +507,16 @@ box-shadow: 0px 0px 11px 0px rgba(34, 60, 80, 0.2);
 
   .discount-card-head h3 {
     font-size: 15px;
+  }
+
+  /* Транспорт пользователя детальней */
+
+  .image-car-model {
+    width: 100%;
+  }
+
+  .detailed-car-info-content {
+    margin-top: 20px;
   }
 }
 
