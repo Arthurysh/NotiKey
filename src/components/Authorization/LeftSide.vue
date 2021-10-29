@@ -2,7 +2,7 @@
     <div class="left-side-block">
       <div class="back-to-main-page">
           <img src="@/assets/arrow-left.svg">
-          <a href="#">На главную</a>
+           <router-link to="/"><a href="#">На главную</a></router-link>
       </div>
       <div class="left-side-block-items">
           <img src="@/assets/logo.png" alt="NotiKey" class="left-side-block-items-icon">
