@@ -28,21 +28,21 @@
     <div class="registration-block">
      <h3 class="right-side-block-title">Welcome</h3>
      <div class="input-registration-block">
-       <my-input :placeholderValue="'Имя'" id="firstNameField" v-model="form.name"></my-input>
+       <my-input :placeholderValue="'Имя'" id="firstNameField" @input="form.name=$event.target.value" v-bind:value="form.name"></my-input>
        <span class="text-danger" v-if="errors.name">
          {{ errors.name[0] }}
        </span>
        <my-input :placeholderValue="'Фамилия'" id="lastNameField"></my-input>
        <my-input :placeholderValue="'Номер телефона'" id="numberField"></my-input>
-       <my-input :placeholderValue="'Почта'" id="emailField" v-model="form.email"></my-input>
+       <my-input :placeholderValue="'Почта'" id="emailField" @input="form.email=$event.target.value" v-bind:value="form.email"></my-input>
        <span class="text-danger" v-if="errors.email">
          {{ errors.email[0] }}
        </span>
-       <my-input :placeholderValue="'Пароль'" id="passwordField" v-model="form.password"></my-input>
+       <my-input :placeholderValue="'Пароль'" id="passwordField" @input="form.password=$event.target.value" v-bind:value="form.password"></my-input>
         <span class="text-danger" v-if="errors.password">
          {{ errors.password[0] }}
        </span>
-       <my-input :placeholderValue="'Повторите пароль'" id="passwordField" v-model="form.password_confirmation"></my-input>
+       <my-input :placeholderValue="'Повторите пароль'" id="passwordField" @input="form.password_confirmation=$event.target.value" v-bind:value="form.password_confirmation"></my-input>
        <span class="text-danger" v-if="errors.password_confirmation">
          {{ errors.password_confirmation[0] }}
        </span>
@@ -65,7 +65,7 @@ import MyInput from '@/components/UI/MyInput.vue';
 import MyButton from '@/components/UI/MyButton.vue';
 import MyCheckBox from '@/components/UI/MyCheckBox.vue';
 import User from '@/apis/User';
-import Csrf from '@/apis/Csrf';
+
 
 
 export default {
@@ -74,39 +74,38 @@ export default {
     MyButton,
     MyCheckBox,
     User,
-    Csrf,
   },
-  data: () => {
-      return {
-          isElVisible: false,
-          form:{
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: ''
+  data() {
+    return {
+      form: {
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: ""
       },
       errors: []
-
-      };
+    };
   },
   methods: {
       toggleElement() {
           this.isElVisible = !this.isElVisible
       },
-      register(){
-        Csrf.getCookie().then(() => {
-          
-           User.register(this.form)
-           .catch(error => {
-             if (error.response.status === 422) {
-               this.errors = error.response.data.errors;
-             }
-           })
-           
+
+      register() {
+      User.register(this.form)
+        .then(() => {
+          this.$router.push({ name: "Login" });
+        })
+        .catch(error => {
+          if (error.response.status === 422) {
+            this.errors = error.response.data.errors;
+          }
         });
-        
-      }
-  }
+    },
+ 
+ 
+ }
+
   
 };
 </script>

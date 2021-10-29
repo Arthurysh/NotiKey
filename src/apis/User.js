@@ -2,9 +2,9 @@ import Api from "./Api";
 import Csrf from "./Csrf";
 
 export default {
-   register(form) {
-     Csrf.getCookie();
+  async register(form) {
+    await Csrf.getCookie();
 
-    return Api.post("/#/Authorization", form);
-  }
+    return Api.post("/Registration", form);
+  } 
 };
