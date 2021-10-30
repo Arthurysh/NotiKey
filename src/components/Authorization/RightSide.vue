@@ -5,26 +5,8 @@
           <a href="#">На главную</a>
       </div>
   <div class="right-side-block">
-    <div class="right-side-block-items">
-     
-
-    <template v-if="isElVisible">
-    <div class="block-log-in">
-    <h3 class="right-side-block-title">Welcome</h3>
-    <div class="input-registration-block">
-       <my-input :placeholderValue="'Логин'" id="passwordField"></my-input>
-       <my-input :placeholderValue="'Пароль'" id="passwordField"></my-input>
-      </div>
-      <div class="checkbox-registr">
-          <my-check-box></my-check-box><p>Запомнить меня</p>
-      </div>
-      <div class="input-registration-block-button">
-        <my-button class="btn-log-in">Войти</my-button>
-        <my-button class="btn-registration" @click="toggleElement">Регистрация</my-button>
-    </div>
-    </div>
-    </template>
-<template v-else>
+    <div class="right-side-block-items">  
+<div v-if="isElVisible">
     <div class="registration-block">
      <h3 class="right-side-block-title">Welcome</h3>
      <div class="input-registration-block">
@@ -55,7 +37,23 @@
         <my-button class="btn-log-in-reg" @click="toggleElement">Вход</my-button>
       </div>
        </div>
-    </template>
+    </div>
+    <div v-else>
+    <div class="block-log-in">
+    <h3 class="right-side-block-title">Welcome</h3>
+    <div class="input-registration-block">
+       <my-input :placeholderValue="'Логин'" id="passwordField" @input="loginform.email=$event.target.value" v-bind:value="loginform.email"></my-input>
+       <my-input :placeholderValue="'Пароль'" id="passwordField"  @input="loginform.password=$event.target.value" v-bind:value="loginform.password"></my-input>
+      </div>
+      <div class="checkbox-registr">
+          <my-check-box></my-check-box><p>Запомнить меня</p>
+      </div>
+      <div class="input-registration-block-button">
+        <my-button class="btn-log-in" @click.prevent="login">Войти</my-button>
+        <my-button class="btn-registration" @click="toggleElement">Регистрация</my-button>
+    </div>
+    </div>
+    </div>
     </div>
   </div>
 </div>
@@ -83,12 +81,19 @@ export default {
         password: "",
         password_confirmation: ""
       },
-      errors: []
+      errors: [],
+
+      loginform: {
+        email: "",
+        password: ""
+      },
     };
   },
+  
   methods: {
       toggleElement() {
-          this.isElVisible = !this.isElVisible
+          this.isElVisible = !this.isElVisible;
+          console.log(this.isElVisible);
       },
 
       register() {
@@ -102,6 +107,20 @@ export default {
           }
         });
     },
+
+    login() {
+      User.login(this.form)
+        .then(() => {
+          this.$root.$emit("login", true);
+          localStorage.setItem("auth", "true");
+          this.$router.push({ name: "Dashboard" });
+        })
+        .catch(error => {
+          if (error.response.status === 422) {
+            this.errors = error.response.data.errors;
+          }
+        });
+    }
  
  
  }

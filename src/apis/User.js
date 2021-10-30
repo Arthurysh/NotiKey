@@ -6,5 +6,11 @@ export default {
     await Csrf.getCookie();
 
     return Api.post("/Registration", form);
-  } 
+  },
+
+  async login(loginform) {
+    await Csrf.getCookie();
+
+    return Api.post("/Login", loginform)
+  }
 };
