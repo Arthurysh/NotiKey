@@ -215,7 +215,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .note-section {
   padding: 60px 0;
 }
