@@ -65,7 +65,104 @@
     class="note-content user-head-content"
     v-if="this.userItemID == 2 && this.userRole == 'User'"
   >
-    <h1>Hello Note</h1>
+    <div class="all-user-notes" v-if="!isDetaileView">
+      <div class="note-head-content">
+        <h2>Записи</h2>
+      </div>
+      <div class="filter-panel">
+        <div class="filter-search">
+          <my-select
+            :arrData="filterData"
+            :plug="'Все'"
+            id="filter-select"
+          ></my-select>
+          <my-input :placeholderValue="'Поиск'" id="nameField"></my-input>
+        </div>
+        <div class="right-sort">
+          <my-select
+            class="sort-button"
+            :arrData="filterData"
+            :plug="'По возрастанию'"
+            id="sort-select"
+          ></my-select>
+        </div>
+      </div>
+      <my-grid>
+        <my-grid-item
+          class="note-item"
+          v-for="note in userNotes"
+          :key="note"
+          @click="deteiledNoteView(note.noteId)"
+          :style="{ 'background-color': this.checkNoteStatus(note.noteId) }"
+        >
+          <div class="delete-note-button">
+            <img src="@/assets/crossIcon.png" alt="" />
+          </div>
+          <div class="note-head">
+            <h3>Запись {{ note.noteId }}</h3>
+          </div>
+          <div class="note-content-list">
+            <ul>
+              <li>Статус: {{ note.status }}</li>
+              <li>Услуга: {{ note.service }}</li>
+              <li>Машина: {{ note.car }}</li>
+              <li>Станция: {{ note.station }}</li>
+              <li>Дата: {{ note.date }}</li>
+            </ul>
+            <div class="note-time">
+              {{ note.time }}
+            </div>
+          </div>
+        </my-grid-item>
+        <my-grid-item class="add-new-car">
+          <div class="circle-block">
+            <img src="@/assets/addIcon.png" alt="" />
+          </div>
+        </my-grid-item>
+      </my-grid>
+    </div>
+
+    <div class="detailed-note-info" v-if="isDetaileView">
+      <div class="close-detailed-contenet" @click="closeDetailedView()">
+        <img src="@/assets/closeCrossIcon.png" alt="" />
+      </div>
+      <h3>{{ "Запись " + this.viewNoteObj.noteId }}</h3>
+      <div class="deteiled-note-head">
+        <h3>Информация о записи</h3>
+      </div>
+      <div class="note-info-table">
+        <div
+          class="note-info-line"
+          v-for="(value, property) in viewNoteObj"
+          :key="property"
+        >
+          <div
+            class="note-info-line-inner"
+            v-if="property != 'noteId' && property != 'status'"
+          >
+            <p class="characteristic-name">{{ property }}</p>
+            <p class="characteristic-value">{{ value }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="details">
+        <div class="deteiled-note-status">
+        <h3>Статус записи</h3>
+      </div>
+      <div class="deteiled-note-description">
+        <ul class="details-menu">
+          <li>
+            <h3 class="menu-link">Детали записи</h3>
+            <ul class="details-list">
+              <li><p class="sub-menu-link">Осмотр - 500</p></li>
+              <li><p class="sub-menu-link">Осмотр - 500</p></li>
+            </ul>
+          </li>
+        </ul>
+        <p>Рекомендованные услуги</p>
+      </div>
+      </div>
+    </div>
   </div>
   <!-- Транспорт пользователя -->
   <div
@@ -110,8 +207,13 @@
           <img :src="require('@/assets/' + this.viewCarObj.image)" alt="" />
         </div>
         <div class="car-info-table">
-          <div class="car-info-line" v-for="(value, property) in viewCarObj" :key="property">
-            <div class="car-info-line-inner"
+          <div
+            class="car-info-line"
+            v-for="(value, property) in viewCarObj"
+            :key="property"
+          >
+            <div
+              class="car-info-line-inner"
               v-if="property != 'carID' && property != 'image'"
             >
               <p class="characteristic-name">{{ property }}</p>
@@ -158,9 +260,10 @@
 </template>
 
 <script>
+import MyButton from "../UI/MyButton.vue";
 import MyGridItem from "../UI/MyGridItem.vue";
 export default {
-  components: { MyGridItem},
+  components: { MyGridItem, MyButton },
   props: {
     userItemID: {
       type: Number,
@@ -173,8 +276,53 @@ export default {
   },
   data() {
     return {
+      filterData: ["select1", "select2", "select3"],
       isDetaileView: false,
       viewCarObj: {},
+      viewNoteObj: {},
+      noteStatus: [
+        {
+          name: "В процессе",
+          color: "#84D1FC",
+        },
+        {
+          name: "Готов к оплате",
+          color: "#C8FFAE",
+        },
+        {
+          name: "Просрочено",
+          color: "#FF9999",
+        },
+      ],
+      userNotes: [
+        {
+          noteId: 1,
+          status: "В процессе",
+          service: "Починка двигателя",
+          car: "Tesla Model S",
+          station: "Elcar",
+          date: "22.10.2022",
+          time: "22:30",
+        },
+        {
+          noteId: 2,
+          status: "Готов к оплате",
+          service: "Починка двигателя",
+          car: "Tesla Model R",
+          station: "Elcar",
+          date: "22.10.2022",
+          time: "22:30",
+        },
+        {
+          noteId: 3,
+          status: "Просрочено",
+          service: "Починка двигателя",
+          car: "Tesla Model G",
+          station: "Elcar",
+          date: "22.10.2022",
+          time: "22:30",
+        },
+      ],
       userDiscounts: [
         {
           station: "Elcar",
@@ -242,6 +390,29 @@ export default {
     closeDetailedView() {
       this.isDetaileView = !this.isDetaileView;
     },
+    deteiledNoteView(noteObjID) {
+      this.viewNoteObj = this.findUserNote(noteObjID);
+      this.closeDetailedView();
+    },
+    findUserNote(id) {
+      let userNote;
+      this.userNotes.forEach((element) => {
+        if (element.noteId == id) {
+          userNote = element;
+        }
+      });
+      return userNote;
+    },
+    checkNoteStatus(id) {
+      let userNote = this.findUserNote(id);
+      let userStatusColor;
+      this.noteStatus.forEach((element) => {
+        if (element.name === userNote.status) {
+          userStatusColor = element.color;
+        }
+      });
+      return userStatusColor;
+    },
   },
 };
 </script>
@@ -300,6 +471,12 @@ export default {
   margin-bottom: 24px;
 }
 
+.input-user-wrap input,
+select {
+  width: 100%;
+  text-align: center;
+}
+
 /* Скидки пользователя */
 
 .discount-card {
@@ -332,6 +509,122 @@ export default {
   display: flex;
   align-items: flex-end;
   text-align: right;
+}
+
+/* Записи пользователя */
+.delete-note-button {
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+.delete-note-button img {
+  max-width: 100%;
+  max-height: 100%;
+}
+.note-head-content h2 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.note-content-list ul {
+  color: #625e5e;
+  list-style-type: none;
+}
+.note-item {
+  position: relative;
+  cursor: pointer;
+  border: 1px solid #b0b0b0;
+  border-radius: 12px;
+  padding: 15px;
+  color: #3e3e3e;
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s;
+}
+.note-head {
+  margin-bottom: 10px;
+}
+.note-time {
+  font-weight: bold;
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+}
+.filter-panel {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.filter-search {
+  width: 80%;
+  display: flex;
+}
+.filter-panel select {
+  flex-basis: 15%;
+  outline: none;
+  padding: 10px;
+  border-radius: 10px;
+  margin-right: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.filter-search input {
+  flex-basis: 65%;
+  height: auto;
+  text-align: left;
+  padding-left: 10px;
+  border-radius: 20px;
+}
+/* Записи пользователя детальней */
+
+.deteiled-note-head h3{
+  text-align: center;
+  margin-bottom: 24px;
+}
+.deteiled-note-head{
+  margin-bottom: 10px;
+}
+.note-info-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.note-info-table .note-info-line:nth-child(2n + 1) {
+  background: #c4c4c4;
+}
+
+.note-info-line-inner {
+  width: 100%;
+  display: flex;
+  padding: 10px 40px;
+  justify-content: space-between;
+}
+.note-info-table .note-info-line p {
+  font-size: 12px;
+  font-weight: bold;
+}
+.details {
+  display: flex;
+}
+.deteiled-note-description {
+  margin-left: 20px;
+}
+.deteiled-note-description li {
+  position: relative;
+  list-style: none;
+}
+.deteiled-note-description p{
+  font-weight: bold;
+  font-size: 15px;
+}
+.details-list {
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 /* Транспорт пользователя */
@@ -461,14 +754,13 @@ export default {
 }
 
 .delete-car {
-  background: #EA7778 !important;
+  background: #ea7778 !important;
   border-radius: 6px !important;
   padding: 10px 30px !important;
 }
 
 .delete-car:hover {
   background: #b45658 !important;
-
 }
 
 @media screen and (max-width: 1120px) {
@@ -482,6 +774,20 @@ export default {
 
   .user-profile-block {
     flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .filter-panel {
+    flex-direction: column;
+  }
+  .filter-search {
+    margin-bottom: 10px;
+    width: 100%;
+  }
+  .filter-search select,
+  input {
+    flex-basis: 50%;
   }
 }
 
@@ -519,7 +825,18 @@ export default {
     margin-top: 20px;
   }
 }
-
+@media screen and (max-width: 450px) {
+  .filter-search {
+    flex-direction: column;
+  }
+  .filter-search select {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+  .filter-search input {
+    padding: 11px 10px;
+  }
+}
 @media screen and (max-width: 430px) {
   .welcoming-image {
     height: 130px;

@@ -444,6 +444,14 @@ export default {
   margin-bottom: 10px;
 }
 
+.add-input-wrap input, select {
+  width: 100%;
+}
+.modal-head {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
 .add-edit-modal .btn-container {
   display: flex;
   justify-content: center;
