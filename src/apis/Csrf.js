@@ -6,9 +6,8 @@ export default {
     let token = Cookie.get("XSRF-TOKEN");
 
     if (token) {
-      return new Promise(resolve => {
-        resolve(token);
-      });
+      return Promise.resolve(token);
+ 
     }
 
     return Api.get("/csrf-cookie");

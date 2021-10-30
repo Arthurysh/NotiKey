@@ -11,13 +11,13 @@ export default {
   async login(loginform) {
     await Csrf.getCookie();
 
-    return Api.post("/Login", loginform)
+    return Api.post("/Login", loginform);
   },
 
   async logout() {
     await Csrf.getCookie();
 
-    return Api.post("/logout");
+    return Api.post("/Logout");
   },
 
   auth() {

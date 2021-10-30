@@ -31,7 +31,7 @@
           </div>
           <div
             class="wrap-out-item"
-            @click="logout"
+            @click.prevent="logout"
             v-if="elem.idItem == this.arrMenuItemsUser.length"
             v-bind:class="{ activeMenuItem: elem.isActive }"
           >
@@ -301,7 +301,7 @@ export default {
     },
     logout() {
       User.logout().then(() => {
-        localStorage.removeItem("auth");
+        localStorage.removeItem("auth", "true");
 
         this.$router.push('/');
       })

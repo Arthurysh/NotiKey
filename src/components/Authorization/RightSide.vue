@@ -22,11 +22,21 @@
               <my-input
                 :placeholderValue="'Фамилия'"
                 id="lastNameField"
+                @input="form.surname = $event.target.value"
+                v-bind:value="form.surname"
               ></my-input>
+              <span class="text-danger" v-if="errors.surname">
+                {{ errors.surname[0] }}
+              </span>
               <my-input
                 :placeholderValue="'Номер телефона'"
                 id="numberField"
+                @input="form.phone = $event.target.value"
+                v-bind:value="form.phone"
               ></my-input>
+              <span class="text-danger" v-if="errors.phone">
+                {{ errors.phone[0] }}
+              </span>
               <my-input
                 :placeholderValue="'Почта'"
                 id="emailField"
@@ -37,6 +47,7 @@
                 {{ errors.email[0] }}
               </span>
               <my-input
+                type="password"
                 :placeholderValue="'Пароль'"
                 id="passwordField"
                 @input="form.password = $event.target.value"
@@ -46,6 +57,7 @@
                 {{ errors.password[0] }}
               </span>
               <my-input
+                type="password"
                 :placeholderValue="'Повторите пароль'"
                 id="passwordField"
                 @input="form.password_confirmation = $event.target.value"
@@ -81,12 +93,19 @@
                 @input="loginform.email = $event.target.value"
                 v-bind:value="loginform.email"
               ></my-input>
-              <my-input
+              <span class="text-danger" v-if="errors.email">
+                {{ errors.email[0] }}
+              </span>
+              <my-input 
+                type="password"
                 :placeholderValue="'Пароль'"
                 id="passwordField"
                 @input="loginform.password = $event.target.value"
                 v-bind:value="loginform.password"
               ></my-input>
+              <span class="text-danger" v-if="errors.password">
+                {{ errors.password[0] }}
+              </span>
             </div>
             <div class="checkbox-registr">
               <my-check-box></my-check-box>
@@ -130,6 +149,8 @@ export default {
     return {
       form: {
         name: "",
+        surname: "",
+        phone: "",
         email: "",
         password: "",
         password_confirmation: "",
@@ -147,13 +168,12 @@ export default {
   methods: {
     toggleElement() {
       this.isElVisible = !this.isElVisible;
-      console.log(this.isRegistration);
     },
 
     register() {
       User.register(this.form)
         .then(() => {
-          this.$router.push({ name: "Login" });
+          this.$router.push('/Authorization');
         })
         .catch((error) => {
           if (error.response.status === 422) {
@@ -163,7 +183,7 @@ export default {
     },
 
     login() {
-      User.login(this.form)
+      User.login(this.loginform)
         .then(() => {
           this.$root.$emit("Login", true);
           localStorage.setItem("auth", "true");
@@ -240,6 +260,10 @@ export default {
 }
 .registration-block {
   padding-top: 20px;
+}
+.text-danger{
+  color: red;
+  display: block;
 }
 @media screen and (max-width: 1240px) {
   .right-side-block {
