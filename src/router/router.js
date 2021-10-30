@@ -15,12 +15,16 @@ const routes = [{
     {
         path: '/Authorization',
         component: Authorization,
-        meta: { guestOnly: true }
+        meta: { guestOnly: true },
+        props: true,
+        props: { isRegistration: false }
     },
     {
         path: '/Registration',
         component: Authorization,
-        meta: { guestOnly: true }
+        meta: { guestOnly: true },
+        props: true,
+        props: { isRegistration: true }
     },
 ];
 
@@ -31,34 +35,34 @@ const router = createRouter({
 
 function isLoggedIn() {
     return localStorage.getItem("auth");
-  }
-  
-  router.beforeEach((to, from, next) => {
+}
+
+router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.authOnly)) {
-      // this route requires auth, check if logged in
-      // if not, redirect to login page.
-      if (!isLoggedIn()) {
-        next({
-          path: "/Authorization",
-          query: { redirect: to.fullPath }
-        });
-      } else {
-        next();
-      }
+        // this route requires auth, check if logged in
+        // if not, redirect to login page.
+        if (!isLoggedIn()) {
+            next({
+                path: "/Authorization",
+                query: { redirect: to.fullPath }
+            });
+        } else {
+            next();
+        }
     } else if (to.matched.some(record => record.meta.guestOnly)) {
-      // this route requires auth, check if logged in
-      // if not, redirect to login page.
-      if (isLoggedIn()) {
-        next({
-          path: "/Profile",
-          query: { redirect: to.fullPath }
-        });
-      } else {
-        next();
-      }
+        // this route requires auth, check if logged in
+        // if not, redirect to login page.
+        if (isLoggedIn()) {
+            next({
+                path: "/Profile",
+                query: { redirect: to.fullPath }
+            });
+        } else {
+            next();
+        }
     } else {
-      next(); // make sure to always call next()!
+        next(); // make sure to always call next()!
     }
-  });
+});
 
 export default router;
