@@ -147,20 +147,67 @@
       </div>
       <div class="details">
         <div class="deteiled-note-status">
-        <h3>Статус записи</h3>
-      </div>
-      <div class="deteiled-note-description">
-        <ul class="details-menu">
-          <li>
-            <h3 class="menu-link">Детали записи</h3>
-            <ul class="details-list">
+          <h3>Статус записи</h3>
+        </div>
+        <div class="deteiled-note-description">
+          <div class="detailed-note-drop-down">
+            <div class="drop-down-head" @click="openDetailNoteList()">
+              <h3 class="menu-link">Детали записи</h3>
+              <div class="drop-down-icon-wrap">
+                <img
+                  src="@/assets/DropDownIcon.png"
+                  alt=""
+                  v-bind:class="{
+                    'drop-down-icon-active': isDetaileNoteListActive,
+                  }"
+                />
+              </div>
+            </div>
+            <ul
+              class="details-list"
+              v-bind:class="{ 'details-list-active': isDetaileNoteListActive }"
+            >
               <li><p class="sub-menu-link">Осмотр - 500</p></li>
               <li><p class="sub-menu-link">Осмотр - 500</p></li>
             </ul>
-          </li>
-        </ul>
-        <p>Рекомендованные услуги</p>
+          </div>
+          <div class="detailed-recomended-service">
+            <div class="drop-down-head" @click="openRecommendedService()">
+              <h3 class="menu-link">Рекомендованные услуги</h3>
+              <div class="drop-down-recomended-icon-wrap">
+                <img
+                  src="@/assets/DropDownIcon.png"
+                  alt=""
+                  v-bind:class="{
+                    'drop-down-recomended-icon-active':
+                      isRecommendedServiceActive,
+                  }"
+                />
+              </div>
+            </div>
+            <ul
+              class="details-list"
+              v-bind:class="{
+                'details-recomended-list-active': isRecommendedServiceActive,
+              }"
+            >
+              <li><p class="sub-menu-link">Осмотр - 500</p></li>
+              <li><p class="sub-menu-link">Осмотр - 500</p></li>
+            </ul>
+          </div>
+        </div>
       </div>
+      <div class="result-block">
+        <div class="result-price-block">
+          <h3>Общая сумма:</h3>
+          <h3 class="result-total-cost">2500</h3>
+        </div>
+        <div class="google-pay-button">
+          <my-button class="google-pay-button">
+            <img src="@/assets/google-pay.png" alt="">
+            Google Pay
+            </my-button>
+        </div>
       </div>
     </div>
   </div>
@@ -262,8 +309,9 @@
 <script>
 import MyButton from "../UI/MyButton.vue";
 import MyGridItem from "../UI/MyGridItem.vue";
+
 export default {
-  components: { MyGridItem, MyButton },
+  components: { MyGridItem, MyButton},
   props: {
     userItemID: {
       type: Number,
@@ -278,6 +326,8 @@ export default {
     return {
       filterData: ["select1", "select2", "select3"],
       isDetaileView: false,
+      isDetaileNoteListActive: true,
+      isRecommendedServiceActive: true,
       viewCarObj: {},
       viewNoteObj: {},
       noteStatus: [
@@ -412,6 +462,12 @@ export default {
         }
       });
       return userStatusColor;
+    },
+    openDetailNoteList() {
+      this.isDetaileNoteListActive = !this.isDetaileNoteListActive;
+    },
+    openRecommendedService() {
+      this.isRecommendedServiceActive = !this.isRecommendedServiceActive;
     },
   },
 };
@@ -579,11 +635,11 @@ select {
 }
 /* Записи пользователя детальней */
 
-.deteiled-note-head h3{
+.deteiled-note-head h3 {
   text-align: center;
   margin-bottom: 24px;
 }
-.deteiled-note-head{
+.deteiled-note-head {
   margin-bottom: 10px;
 }
 .note-info-table {
@@ -592,6 +648,7 @@ select {
   width: 100%;
   border-radius: 5px;
   overflow: hidden;
+  margin-bottom: 20px;
 }
 .note-info-table .note-info-line:nth-child(2n + 1) {
   background: #c4c4c4;
@@ -607,8 +664,36 @@ select {
   font-size: 12px;
   font-weight: bold;
 }
-.details {
+.drop-down-icon-wrap,
+.drop-down-recomended-icon-wrap {
+  width: 15px;
+  height: 15px;
+}
+.drop-down-icon-wrap img,
+.drop-down-recomended-icon-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  transition: transform 0.2s;
+  transform: rotate(-90deg);
+}
+.drop-down-icon-wrap .drop-down-icon-active,
+.drop-down-recomended-icon-wrap .drop-down-recomended-icon-active {
+  transition: transform 0.2s;
+  transform: rotate(-180deg);
+}
+.drop-down-head {
   display: flex;
+  align-items: center;
+}
+.drop-down-head h3 {
+  margin-right: 7px;
+}
+.details {
+  position: relative;
+  display: flex;
+  width: 55%;
+  justify-content: space-between;
+  padding: 10px 0;
 }
 .deteiled-note-description {
   margin-left: 20px;
@@ -617,16 +702,49 @@ select {
   position: relative;
   list-style: none;
 }
-.deteiled-note-description p{
+.deteiled-note-description p {
   font-weight: bold;
   font-size: 15px;
 }
 .details-list {
-  position: absolute;
-  left: 0;
-  top: 0;
+  max-height: 0;
+  padding-left: 15px;
+  overflow: hidden;
+  transition: max-height 0.2s;
 }
-
+.details-list li {
+  margin-bottom: 5px;
+  color: #5b5b5b;
+}
+.details-list-active,
+.details-recomended-list-active {
+  max-height: 200px;
+  transition: max-height 1s;
+}
+.details::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: #c4c4c4;
+  bottom: 0;
+  position: absolute;
+}
+.result-price-block {
+  display: flex;
+  padding: 15px 0;
+}
+.result-total-cost {
+  margin-left: 10px;
+  color: #5b5b5b;
+}
+.google-pay-button button{
+  background: black;
+}
+.google-pay-button img{
+  height: 20px;
+  width: 20px;
+}
 /* Транспорт пользователя */
 
 .car-item {
