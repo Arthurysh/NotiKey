@@ -1,6 +1,6 @@
 <template>
   <left-side></left-side>
-  <right-side></right-side>
+  <right-side :isRegistration="this.isRegistration"></right-side>
 </template>
 
 <script>
@@ -12,13 +12,15 @@ export default {
     LeftSide,
     RightSide,
   },
-
+  props: {
+    isRegistration: {
+      type: Boolean,
+      required: true,
+    }
+  }
 };
 </script>
 
 <style>
-
-
-
 
 </style>
