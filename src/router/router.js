@@ -14,10 +14,14 @@ const routes = [{
     {
         path: '/Authorization',
         component: Authorization,
+        props: true,
+        props: { isRegistration: false }
     },
     {
         path: '/Registration',
         component: Authorization,
+        props: true,
+        props: { isRegistration: true }
     },
 ];
 
