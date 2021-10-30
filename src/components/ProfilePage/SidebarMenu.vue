@@ -31,7 +31,7 @@
           </div>
           <div
             class="wrap-out-item"
-            @click="$router.push('/')"
+            @click="logout"
             v-if="elem.idItem == this.arrMenuItemsUser.length"
             v-bind:class="{ activeMenuItem: elem.isActive }"
           >
@@ -159,6 +159,8 @@
 </template>
 
 <script>
+import User from '@/apis/User';
+
 export default {
   props: {
     userRole: {
@@ -296,6 +298,13 @@ export default {
           }
         });
       }
+    },
+    logout() {
+      User.logout().then(() => {
+        localStorage.removeItem("auth");
+
+        this.$router.push('/');
+      })
     },
   },
 };

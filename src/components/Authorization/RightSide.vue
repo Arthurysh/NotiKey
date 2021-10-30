@@ -38,12 +38,18 @@
       </div>
        </div>
     </div>
-    <div v-else>
+    <div v-if="!isElVisible">
     <div class="block-log-in">
     <h3 class="right-side-block-title">Welcome</h3>
     <div class="input-registration-block">
        <my-input :placeholderValue="'Логин'" id="passwordField" @input="loginform.email=$event.target.value" v-bind:value="loginform.email"></my-input>
+       <span class="text-danger" v-if="errors.email">
+         {{ errors.email[0] }}
+       </span>
        <my-input :placeholderValue="'Пароль'" id="passwordField"  @input="loginform.password=$event.target.value" v-bind:value="loginform.password"></my-input>
+       <span class="text-danger" v-if="errors.password">
+         {{ errors.password[0] }}
+       </span>
       </div>
       <div class="checkbox-registr">
           <my-check-box></my-check-box><p>Запомнить меня</p>
@@ -111,9 +117,9 @@ export default {
     login() {
       User.login(this.form)
         .then(() => {
-          this.$root.$emit("login", true);
+          this.$root.$emit("Login", true);
           localStorage.setItem("auth", "true");
-          this.$router.push({ name: "Dashboard" });
+          this.$router.push('/Profile'); 
         })
         .catch(error => {
           if (error.response.status === 422) {

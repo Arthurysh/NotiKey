@@ -12,5 +12,15 @@ export default {
     await Csrf.getCookie();
 
     return Api.post("/Login", loginform)
+  },
+
+  async logout() {
+    await Csrf.getCookie();
+
+    return Api.post("/logout");
+  },
+
+  auth() {
+    return Api.get("/user");
   }
 };
