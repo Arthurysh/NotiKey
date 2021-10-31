@@ -13,6 +13,7 @@ export default {};
   flex-basis: calc((100% - 40px) / 3);
   margin-bottom: 20px;
   margin-right: 20px;
+  min-width: 0
 }
 
 .grid-item:nth-child(3n + 3) {

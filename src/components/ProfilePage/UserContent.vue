@@ -104,7 +104,7 @@
           <div class="note-content-list">
             <ul>
               <li>Статус: {{ note.status }}</li>
-              <li>Услуга: {{ note.service }}</li>
+              <li class="note-service-li">Услуга: {{ this.getNoteServicesString(note) }}</li>
               <li>Машина: {{ note.car }}</li>
               <li>Станция: {{ note.station }}</li>
               <li>Дата: {{ note.date }}</li>
@@ -122,6 +122,7 @@
       </my-grid>
     </div>
 
+    <!-- Детальные записи пользователя -->
     <div class="detailed-note-info" v-if="isDetaileView">
       <div class="close-detailed-contenet" @click="closeDetailedView()">
         <img src="@/assets/closeCrossIcon.png" alt="" />
@@ -138,16 +139,97 @@
         >
           <div
             class="note-info-line-inner"
-            v-if="property != 'noteId' && property != 'status'"
+            v-if="
+              property != 'noteId' &&
+              property != 'status' &&
+              property != 'statusHistory' &&
+              property != 'additionalServices'
+            "
           >
             <p class="characteristic-name">{{ property }}</p>
-            <p class="characteristic-value">{{ value }}</p>
+            <p class="characteristic-value" v-if="property != 'services'">{{ value }}</p>
+            <p class="characteristic-value services-characteristic-value" 
+            v-if="property == 'services'">{{ this.getNoteServicesString(this.viewNoteObj) }}</p>
           </div>
         </div>
       </div>
       <div class="details">
         <div class="deteiled-note-status">
           <h3>Статус записи</h3>
+
+          <div class="progress-note-status">
+            <div class="progress-note">
+              <div class="progress-item">
+                <div class="progress-head-name">
+                  <p>Запись</p>
+                </div>
+                <div
+                  class="progress-circle"
+                  v-bind:class="{
+                    'progress-circle-success':
+                      this.viewNoteObj.statusHistory.includes(
+                        'Успешно записан'
+                      ),
+                  }"
+                >
+                  <div class="progress-circle-img-wrap">
+                    <img src="@/assets/sucsessIcon.png" alt="" />
+                  </div>
+                </div>
+              </div>
+              <div class="progress-item">
+                <div class="progress-head-name">
+                  <p>Выполнение услуг</p>
+                </div>
+                <div
+                  class="progress-circle"
+                  v-bind:class="{
+                    'progress-circle-success':
+                      this.viewNoteObj.statusHistory.includes(
+                        'Выполнение услуг'
+                      ),
+                  }"
+                >
+                  <div class="progress-circle-img-wrap">
+                    <img src="@/assets/sucsessIcon.png" alt="" />
+                  </div>
+                </div>
+              </div>
+              <div class="progress-item">
+                <div class="progress-head-name">
+                  <p>Оплата</p>
+                </div>
+                <div
+                  class="progress-circle"
+                  v-bind:class="{
+                    'progress-circle-success':
+                      this.viewNoteObj.statusHistory.includes('Оплата'),
+                  }"
+                >
+                  <div class="progress-circle-img-wrap">
+                    <img src="@/assets/sucsessIcon.png" alt="" />
+                  </div>
+                </div>
+              </div>
+              <div class="progress-item">
+                <div class="progress-head-name">
+                  <p>Закрыта</p>
+                </div>
+                <div
+                  class="progress-circle"
+                  v-bind:class="{
+                    'progress-circle-success':
+                      this.viewNoteObj.statusHistory.includes('Закрыта'),
+                  }"
+                >
+                  <div class="progress-circle-img-wrap">
+                    <img src="@/assets/sucsessIcon.png" alt="" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="progress-service"></div>
+          </div>
         </div>
         <div class="deteiled-note-description">
           <div class="detailed-note-drop-down">
@@ -167,8 +249,7 @@
               class="details-list"
               v-bind:class="{ 'details-list-active': isDetaileNoteListActive }"
             >
-              <li><p class="sub-menu-link">Осмотр - 500</p></li>
-              <li><p class="sub-menu-link">Осмотр - 500</p></li>
+              <li v-for="service in this.viewNoteObj.services" :key="service"><p class="sub-menu-link">{{service.name + " - " + service.price + "грн"}}</p></li>
             </ul>
           </div>
           <div class="detailed-recomended-service">
@@ -191,8 +272,7 @@
                 'details-recomended-list-active': isRecommendedServiceActive,
               }"
             >
-              <li><p class="sub-menu-link">Осмотр - 500</p></li>
-              <li><p class="sub-menu-link">Осмотр - 500</p></li>
+              <li v-for="addService in this.viewNoteObj.additionalServices" :key="addService"><div class="additional-service-wrap"><p class="sub-menu-link">{{addService.name + " - " + addService.price + "грн"}}</p><input type="checkbox" @change="includeAdditionalService(addService.name)"></div></li>
             </ul>
           </div>
         </div>
@@ -200,17 +280,18 @@
       <div class="result-block">
         <div class="result-price-block">
           <h3>Общая сумма:</h3>
-          <h3 class="result-total-cost">2500</h3>
+          <h3 class="result-total-cost">{{this.getTotalNoteServicesCost() + "грн"}}</h3>
         </div>
         <div class="google-pay-button">
           <my-button class="google-pay-button">
-            <img src="@/assets/google-pay.png" alt="">
-            Google Pay
-            </my-button>
+            <img src="@/assets/google-pay.png" alt="" />
+            Оплатить с помощью google pay
+          </my-button>
         </div>
       </div>
     </div>
   </div>
+
   <!-- Транспорт пользователя -->
   <div
     class="car-content"
@@ -243,6 +324,7 @@
       </my-grid>
     </div>
 
+    <!-- Детальный просмотр транспорта -->
     <div class="detailed-car-info" v-if="isDetaileView">
       <div class="close-detailed-contenet" @click="closeDetailedView()">
         <img src="@/assets/closeCrossIcon.png" alt="" />
@@ -311,7 +393,7 @@ import MyButton from "../UI/MyButton.vue";
 import MyGridItem from "../UI/MyGridItem.vue";
 
 export default {
-  components: { MyGridItem, MyButton},
+  components: { MyGridItem, MyButton },
   props: {
     userItemID: {
       type: Number,
@@ -332,12 +414,20 @@ export default {
       viewNoteObj: {},
       noteStatus: [
         {
-          name: "В процессе",
+          name: "Успешно записан",
           color: "#84D1FC",
         },
         {
-          name: "Готов к оплате",
+          name: "Выполнение услуг",
+          color: "#FFD15A",
+        },
+        {
+          name: "Оплата",
           color: "#C8FFAE",
+        },
+        {
+          name: "Закрыта",
+          color: "#B6B6B6",
         },
         {
           name: "Просрочено",
@@ -347,8 +437,26 @@ export default {
       userNotes: [
         {
           noteId: 1,
-          status: "В процессе",
-          service: "Починка двигателя",
+          status: "Выполнение услуг",
+          statusHistory: ["Успешно записан", "Выполнение услуг"],
+          additionalServices: [
+            {
+              name: "Чистка мотора",
+              price: 400,
+              include: false,
+            },
+            {
+              name: "Замена свечей",
+              price: 200,
+                            include: false,
+            },
+          ],
+          services: [
+            {
+              name: "Починка двигателя",
+              price: 300,
+            },
+          ],
           car: "Tesla Model S",
           station: "Elcar",
           date: "22.10.2022",
@@ -356,8 +464,26 @@ export default {
         },
         {
           noteId: 2,
-          status: "Готов к оплате",
-          service: "Починка двигателя",
+          status: "Оплата",
+          statusHistory: ["Успешно записан", "Выполнение услуг", "Оплата"],
+          additionalServices: [
+            {
+              name: "Чистка Стекла",
+              price: 100,
+                            include: false,
+            },
+            {
+              name: "Замена дверей",
+              price: 2200,
+                            include: false,
+            },
+          ],
+          services: [
+            {
+              name: "Починка двигателя Про",
+              price: 500,
+            },
+          ],
           car: "Tesla Model R",
           station: "Elcar",
           date: "22.10.2022",
@@ -366,8 +492,84 @@ export default {
         {
           noteId: 3,
           status: "Просрочено",
-          service: "Починка двигателя",
+          statusHistory: [],
+          additionalServices: [
+            {
+              name: "Чистка мотора",
+              price: 400,
+                            include: false,
+            },
+          ],
+          services: [
+            {
+              name: "Починка двигателя",
+              price: 300,
+                            include: false,
+            },
+            {
+              name: "Починка бортового компьютера",
+              price: 300,
+                            include: false,
+            },
+          ],
           car: "Tesla Model G",
+          station: "Elcar",
+          date: "22.10.2022",
+          time: "22:30",
+        },
+        {
+          noteId: 4,
+          status: "Успешно записан",
+          statusHistory: ["Успешно записан"],
+          additionalServices: [
+            {
+              name: "Чистка мотора",
+              price: 400,
+                            include: false,
+            },
+          ],
+          services: [
+            {
+              name: "Починка двигателя",
+              price: 300,
+            },
+            {
+              name: "Починка бортового компьютера",
+              price: 300,
+            },
+          ],
+          car: "Tesla Model S",
+          station: "Elcar",
+          date: "22.10.2022",
+          time: "22:30",
+        },
+        {
+          noteId: 5,
+          status: "Закрыта",
+          statusHistory: [
+            "Успешно записан",
+            "Выполнение услуг",
+            "Оплата",
+            "Закрыта",
+          ],
+          additionalServices: [
+            {
+              name: "Чистка мотора",
+              price: 400,
+                            include: false,
+            },
+          ],
+          services: [
+            {
+              name: "Починка двигателя",
+              price: 300,
+            },
+            {
+              name: "Починка бортового компьютера",
+              price: 300,
+            },
+          ],
+          car: "Tesla Model S",
           station: "Elcar",
           date: "22.10.2022",
           time: "22:30",
@@ -431,7 +633,6 @@ export default {
       let userCar;
       this.userCars.forEach((element) => {
         if (element.carID == id) {
-          // console.log(element);
           userCar = element;
         }
       });
@@ -469,6 +670,40 @@ export default {
     openRecommendedService() {
       this.isRecommendedServiceActive = !this.isRecommendedServiceActive;
     },
+    getNoteServicesString(noteObj) {
+      let servicesString = "";
+
+      for (let i = 0; i < noteObj.services.length; i++) {
+        if (i < noteObj.services.length - 1) {
+          servicesString += noteObj.services[i].name + ", ";
+        } else {
+          servicesString += noteObj.services[i].name;
+        }
+      }
+      return servicesString;
+    },
+    getTotalNoteServicesCost() {
+      let sum = 0;
+
+      for (let i = 0; i < this.viewNoteObj.services.length; i++) {
+        sum += this.viewNoteObj.services[i].price;
+      }
+
+      for (let i = 0; i < this.viewNoteObj.additionalServices.length; i++) {
+        if (this.viewNoteObj.additionalServices[i].include == true) {
+          sum += this.viewNoteObj.additionalServices[i].price;
+        }
+      }
+
+      return sum;
+    },
+    includeAdditionalService(additionalServiceName) {
+      this.viewNoteObj.additionalServices.forEach(element => {
+        if(element.name == additionalServiceName) {
+          element.include = !element.include;
+        }
+      });
+    }
   },
 };
 </script>
@@ -587,6 +822,20 @@ select {
   color: #625e5e;
   list-style-type: none;
 }
+
+.services-characteristic-value {
+  max-width: 290px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ .note-service-li {
+  max-width: 75%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .note-item {
   position: relative;
   cursor: pointer;
@@ -650,7 +899,7 @@ select {
   overflow: hidden;
   margin-bottom: 20px;
 }
-.note-info-table .note-info-line:nth-child(2n + 1) {
+.note-info-line:nth-child(2n + 1) {
   background: #c4c4c4;
 }
 
@@ -691,9 +940,9 @@ select {
 .details {
   position: relative;
   display: flex;
-  width: 55%;
+  width: 75%;
   justify-content: space-between;
-  padding: 10px 0;
+  padding: 10px 0 30px 0;
 }
 .deteiled-note-description {
   margin-left: 20px;
@@ -738,12 +987,113 @@ select {
   margin-left: 10px;
   color: #5b5b5b;
 }
-.google-pay-button button{
+.google-pay-button button {
+  padding: 10px 15px;
   background: black;
+  display: flex;
+  align-items: center;
 }
-.google-pay-button img{
+.google-pay-button img {
   height: 20px;
   width: 20px;
+  margin-right: 10px;
+}
+
+.deteiled-note-status h3 {
+  margin-bottom: 15px;
+}
+
+.progress-note {
+  display: flex;
+  justify-content: space-between;
+  height: 90px;
+}
+
+.progress-note .progress-item {
+  width: 80px;
+  margin: 0 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-item .progress-head-name {
+  color: #5b5b5b;
+  font-weight: bold;
+}
+
+.progress-item .progress-circle {
+  width: 40px;
+  height: 40px;
+  background: #c4c4c4;
+  border-radius: 50%;
+  border: 4px solid #969696;
+  position: relative;
+}
+
+.progress-item .progress-circle::after {
+  content: "";
+  display: block;
+  height: 5px;
+  width: 30px;
+  border-radius: 8px;
+  position: absolute;
+  top: 50%;
+  right: -48px;
+  transform: translateY(-50%);
+  background: #c4c4c4;
+}
+
+.progress-item .progress-circle img {
+  display: none;
+}
+
+.progress-item .progress-circle-success {
+  background: #7fd970;
+  border: 4px solid #7fd970;
+}
+
+.progress-item .progress-circle-success img {
+  display: block;
+}
+
+.progress-item .progress-circle-success::after {
+  background: #7fd970;
+}
+
+.progress-item:last-child .progress-circle::after {
+  display: none;
+}
+
+.progress-circle-img-wrap {
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.progress-circle-img-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.additional-service-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 30px;
+}
+
+.additional-service-wrap p {
+    margin-right: 10px;
+}
+
+.detailed-note-drop-down {
+  margin-bottom: 10px;
 }
 /* Транспорт пользователя */
 
@@ -881,6 +1231,13 @@ select {
   background: #b45658 !important;
 }
 
+@media screen and (max-width: 1288px) {
+    /* Детальный просмотр записей */
+    .details {
+      width: 100%;
+    }
+}
+
 @media screen and (max-width: 1120px) {
   .user-info {
     width: 100%;
@@ -893,6 +1250,36 @@ select {
   .user-profile-block {
     flex-direction: column;
   }
+
+  /* Детальный просмотр записей */
+
+
+}
+
+@media screen and (max-width: 930px) {
+    /* Детальный просмотр записей */
+    .details {
+      flex-direction: column;
+    }
+
+    .progress-note-status {
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .progress-note {
+            justify-content: center;
+    }
+
+    .progress-note-status::after {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 1px;
+      background: #c4c4c4;
+      bottom: -20px;
+      position: absolute;
+    }
 }
 
 @media screen and (max-width: 850px) {
@@ -903,8 +1290,7 @@ select {
     margin-bottom: 10px;
     width: 100%;
   }
-  .filter-search select,
-  input {
+  .filter-search select, .filter-search input {
     flex-basis: 50%;
   }
 }
