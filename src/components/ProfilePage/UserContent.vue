@@ -297,7 +297,7 @@
     class="car-content"
     v-if="this.userItemID == 3 && this.userRole == 'User'"
   >
-    <div class="all-user-cars" v-if="!isDetaileView">
+    <div class="all-user-cars" v-if="!isDetaileView && !isAddActive">
       <div class="car-head-content user-head-content">
         <h2>Транспорт</h2>
       </div>
@@ -316,7 +316,7 @@
             <p>{{ car.brand + " " + car.model }}</p>
           </div>
         </my-grid-item>
-        <my-grid-item class="add-new-car">
+        <my-grid-item class="add-new-car" @click="addCarView()">
           <div class="circle-block">
             <img src="@/assets/addIcon.png" alt="" />
           </div>
@@ -353,6 +353,55 @@
 
         <div class="car-control-panel">
           <my-button class="delete-car">Удалить</my-button>
+        </div>
+      </div>
+    </div>
+
+    <div class="add-car" v-if="isAddActive">
+      <div class="close-detailed-contenet" @click="closeAddView()">
+        <img src="@/assets/closeCrossIcon.png" alt="" />
+      </div>
+      <div class="add-car-header">
+        <h2>Добавление транспорта</h2>
+      </div>
+      <div class="add-car-info">
+        <div class="add-image-car-model">
+          <img :src="require('@/assets/' + this.addCarObj.image)" alt="" />
+        </div>
+        <div class="main-add-selectors">
+          <my-select
+            class="choose-brand-button"
+            :arrData="brandData"
+            :plug="'Бренд'"
+            id="brend-select"
+            @change="getCarInfo($event, 1)"
+          ></my-select>
+          <my-select
+            class="choose-model-button"
+            :arrData="modelData"
+            :plug="'Модель'"
+            id="model-select"
+            @change="getCarInfo($event, 2)"
+          ></my-select>
+        </div>
+        <div class="car-info-table">
+          <div
+            class="car-info-line"
+            v-for="(value, property) in addCarObj"
+            :key="property"
+          >
+            <div
+              class="car-info-line-inner"
+              v-if="property != 'carID' && property != 'image'"
+            >
+              <p class="characteristic-name">{{ property }}</p>
+              <p class="characteristic-value">{{ value }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="add-car-button-block">
+          <my-button class="add-car-button">Добавить транспорт</my-button>
         </div>
       </div>
     </div>
@@ -407,11 +456,27 @@ export default {
   data() {
     return {
       filterData: ["select1", "select2", "select3"],
+      modelData: ["Model S", "Model X"],
+      brandData: ["Tesla"],
       isDetaileView: false,
       isDetaileNoteListActive: true,
       isRecommendedServiceActive: true,
+      isAddActive: false,
       viewCarObj: {},
       viewNoteObj: {},
+      addCarObj: {
+        carID: 0,
+        image: "carPrototype.png",
+        brand: "-",
+        model: "-",
+        year: "-",
+        type: "-",
+        power: "-",
+        maxSpeed: 0,
+        racingTime: 0,
+      },
+      selectBrandValue: "",
+      selectModelValue: "",
       noteStatus: [
         {
           name: "Успешно записан",
@@ -621,6 +686,30 @@ export default {
           racingTime: 3,
         },
       ],
+      allCars: [
+        {
+          carID: 12,
+          image: "carTest1.png",
+          brand: "Tesla",
+          model: "Model S",
+          year: "2017",
+          type: "Седан",
+          power: "200лс",
+          maxSpeed: 200,
+          racingTime: 4,
+        },
+        {
+          carID: 132,
+          image: "carTest2.png",
+          brand: "Tesla",
+          model: "Model X",
+          year: "2020",
+          type: "Седан",
+          power: "300лс",
+          maxSpeed: 250,
+          racingTime: 3,
+        },
+      ],
     };
   },
   methods: {
@@ -637,6 +726,13 @@ export default {
         }
       });
       return userCar;
+    },
+    addCarView() {
+      this.closeAddView();
+    },
+    closeAddView() {
+      this.isAddActive = !this.isAddActive;
+      this.clearAddCarArray();
     },
     closeDetailedView() {
       this.isDetaileView = !this.isDetaileView;
@@ -703,7 +799,63 @@ export default {
           element.include = !element.include;
         }
       });
-    }
+    },
+    getCarInfo($event, id) {
+      if (id == 1) {
+        this.selectBrandValue = $event.target.value;
+        if (this.selectBrandValue == "Бренд") {
+          this.clearAddCarArray();
+          document.getElementById("model-select").selectedIndex = 0;
+        }
+      } else {
+        this.selectModelValue = $event.target.value;
+        if (this.selectModelValue == "Модель") {
+          this.clearModelCar();
+        }
+      }
+      if (this.selectBrandValue != "" && this.selectModelValue != "") {
+        this.getCarArray();
+      }
+    },
+    getCarArray() {
+      for (let i = 0; i < this.allCars.length; i++) {
+        if (
+          this.allCars[i].brand == this.selectBrandValue &&
+          this.allCars[i].model == this.selectModelValue
+        ) {
+          this.addCarObj = this.allCars[i];
+        }
+      }
+    },
+    clearAddCarArray() {
+      this.addCarObj = {
+        carID: 0,
+        image: "carPrototype.png",
+        brand: "-",
+        model: "-",
+        year: "-",
+        type: "-",
+        power: "-",
+        maxSpeed: 0,
+        racingTime: 0,
+      };
+      this.selectBrandValue = "";
+      this.selectModelValue = "";
+    },
+    clearModelCar() {
+      this.addCarObj = {
+        carID: 0,
+        image: "carPrototype.png",
+        brand: "-",
+        model: "-",
+        year: "-",
+        type: "-",
+        power: "-",
+        maxSpeed: 0,
+        racingTime: 0,
+      };
+      this.selectModelValue = "";
+    },
   },
 };
 </script>
@@ -763,7 +915,7 @@ export default {
 }
 
 .input-user-wrap input,
-select {
+.input-user-wrap select {
   width: 100%;
   text-align: center;
 }
@@ -1231,6 +1383,47 @@ select {
   background: #b45658 !important;
 }
 
+/* Добавление транспорта */
+
+.add-car-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.add-car-info {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-image-car-model {
+  width: 400px;
+  height: 300px;
+}
+
+.add-image-car-model img {
+  max-width: 100%;
+  max-height: 100%;
+}
+.main-add-selectors {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+.main-add-selectors select {
+  border: none;
+  text-align: center;
+  width: 20%;
+  background: #c4c4c4;
+}
+.add-car-button {
+  background: #4599f5;
+  padding: 10px 100px !important;
+}
+
 @media screen and (max-width: 1288px) {
     /* Детальный просмотр записей */
     .details {
@@ -1304,7 +1497,6 @@ select {
     flex-basis: 100%;
     margin-right: 0;
   }
-
   /* User discounts */
 
   .discount-content .percent p {
