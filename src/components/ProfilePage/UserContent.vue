@@ -5,7 +5,7 @@
     v-if="this.userItemID == 1 && this.userRole == 'User'"
   >
     <div class="welcoming-image">
-      <p class="welcoming-user-text" v-if="user">Hello, {{ user.name }} </p>
+      <p class="welcoming-user-text" v-if="user">Hello, {{ user.name }}</p>
     </div>
     <div class="user-info">
       <div class="head-item">Профиль</div>
@@ -18,8 +18,8 @@
             :value="UserUpdate.name"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
-                {{ errors.name[0] }}
-              </span>
+            {{ errors.name[0] }}
+          </span>
         </div>
         <div class="input-user-wrap">
           <my-input
@@ -29,8 +29,8 @@
             :value="UserUpdate.surname"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
-                {{ errors.surname[0] }}
-              </span>
+            {{ errors.surname[0] }}
+          </span>
         </div>
         <div class="input-user-wrap">
           <my-input
@@ -40,8 +40,8 @@
             :value="UserUpdate.phone"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
-                {{ errors.phone[0] }}
-              </span>
+            {{ errors.phone[0] }}
+          </span>
         </div>
         <div class="input-user-wrap">
           <my-input
@@ -51,8 +51,8 @@
             :value="UserUpdate.email"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
-                {{ errors.email[0] }}
-              </span>
+            {{ errors.email[0] }}
+          </span>
         </div>
         <div class="input-user-wrap">
           <my-input
@@ -71,10 +71,13 @@
             :value="UserUpdate.password"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
-                {{ errors.password[0] }}
-              </span>
+            {{ errors.password[0] }}
+          </span>
         </div>
-        <my-button type="button" class="save-user-info is-not-active-btn" @click.prevent="updateUser"
+        <my-button
+          type="button"
+          class="save-user-info is-not-active-btn"
+          @click.prevent="updateUser"
           >Сохранить</my-button
         >
       </div>
@@ -404,7 +407,9 @@
         </div>
         <div class="services-control-btn-block">
           <div class="total-cost-block">
-            <h2 @click="this.getTotalServicesCost()">Общая сумма - {{ this.totalAddNoteServicesCost }}</h2>
+            <h2 @click="this.getTotalServicesCost()">
+              Общая сумма - {{ this.totalAddNoteServicesCost }}
+            </h2>
           </div>
           <div class="control-block">
             <button @click="addServiceRow()" id="addRow">
@@ -584,9 +589,9 @@ export default {
     },
   },
   mounted() {
-     User.auth().then(response => {
-       this.user = response.data;
-     });
+    User.auth().then((response) => {
+      this.user = response.data;
+    });
   },
   data() {
     return {
@@ -844,9 +849,8 @@ export default {
         email: "",
         password: "",
       },
-            errors: [],
-            user: null,
-
+      errors: [],
+      user: null,
 
       allCars: [
         {
@@ -874,23 +878,21 @@ export default {
       ],
     };
   },
- 
+
   methods: {
     
     updateUser() {
       User.updateUser(this.UserUpdate)
         .then(() => {
-          this.$router.push('/Profile');
+          this.$router.push("/Profile");
         })
         .catch((error) => {
           if (error.response.status === 422) {
             this.errors = error.response.data.errors;
           }
-          
-        })
-        
+        });
     },
-     
+
     detailedCarView(carObjID) {
       this.viewCarObj = this.findUserCar(carObjID);
       this.closeDetailedView();
@@ -1810,10 +1812,7 @@ input {
   /* Детальный просмотр записей */
   .details {
     flex-direction: column;
-<<<<<<< HEAD
     padding: 10px 0 12px 0;
-=======
->>>>>>> 5439a85194b60b3f9fc2e505a0eae905668bd585
   }
 
   .progress-note-status {
@@ -1834,15 +1833,12 @@ input {
     bottom: -20px;
     position: absolute;
   }
-<<<<<<< HEAD
 
   .deteiled-note-description {
     display: flex;
     justify-content: space-between;
     margin-left: 0;
   }
-=======
->>>>>>> 5439a85194b60b3f9fc2e505a0eae905668bd585
 }
 
 @media screen and (max-width: 850px) {
