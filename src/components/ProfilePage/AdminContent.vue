@@ -668,8 +668,7 @@ export default {
     width: 100%;
   }
 
-  .control-left-panel select,
-  input {
+  .control-left-panel select, .control-left-panel input {
     flex-basis: 50%;
   }
 }

@@ -104,7 +104,9 @@
           <div class="note-content-list">
             <ul>
               <li>Статус: {{ note.status }}</li>
-              <li class="note-service-li">Услуга: {{ this.getNoteServicesString(note) }}</li>
+              <li class="note-service-li">
+                Услуга: {{ this.getNoteServicesString(note) }}
+              </li>
               <li>Машина: {{ note.car }}</li>
               <li>Станция: {{ note.station }}</li>
               <li>Дата: {{ note.date }}</li>
@@ -147,9 +149,15 @@
             "
           >
             <p class="characteristic-name">{{ property }}</p>
-            <p class="characteristic-value" v-if="property != 'services'">{{ value }}</p>
-            <p class="characteristic-value services-characteristic-value" 
-            v-if="property == 'services'">{{ this.getNoteServicesString(this.viewNoteObj) }}</p>
+            <p class="characteristic-value" v-if="property != 'services'">
+              {{ value }}
+            </p>
+            <p
+              class="characteristic-value services-characteristic-value"
+              v-if="property == 'services'"
+            >
+              {{ this.getNoteServicesString(this.viewNoteObj) }}
+            </p>
           </div>
         </div>
       </div>
@@ -249,7 +257,11 @@
               class="details-list"
               v-bind:class="{ 'details-list-active': isDetaileNoteListActive }"
             >
-              <li v-for="service in this.viewNoteObj.services" :key="service"><p class="sub-menu-link">{{service.name + " - " + service.price + "грн"}}</p></li>
+              <li v-for="service in this.viewNoteObj.services" :key="service">
+                <p class="sub-menu-link">
+                  {{ service.name + " - " + service.price + "грн" }}
+                </p>
+              </li>
             </ul>
           </div>
           <div class="detailed-recomended-service">
@@ -272,7 +284,20 @@
                 'details-recomended-list-active': isRecommendedServiceActive,
               }"
             >
-              <li v-for="addService in this.viewNoteObj.additionalServices" :key="addService"><div class="additional-service-wrap"><p class="sub-menu-link">{{addService.name + " - " + addService.price + "грн"}}</p><input type="checkbox" @change="includeAdditionalService(addService.name)"></div></li>
+              <li
+                v-for="addService in this.viewNoteObj.additionalServices"
+                :key="addService"
+              >
+                <div class="additional-service-wrap">
+                  <p class="sub-menu-link">
+                    {{ addService.name + " - " + addService.price + "грн" }}
+                  </p>
+                  <input
+                    type="checkbox"
+                    @change="includeAdditionalService(addService.name)"
+                  />
+                </div>
+              </li>
             </ul>
           </div>
         </div>
@@ -280,7 +305,9 @@
       <div class="result-block">
         <div class="result-price-block">
           <h3>Общая сумма:</h3>
-          <h3 class="result-total-cost">{{this.getTotalNoteServicesCost() + "грн"}}</h3>
+          <h3 class="result-total-cost">
+            {{ this.getTotalNoteServicesCost() + "грн" }}
+          </h3>
         </div>
         <div class="google-pay-button">
           <my-button class="google-pay-button">
@@ -513,7 +540,7 @@ export default {
             {
               name: "Замена свечей",
               price: 200,
-                            include: false,
+              include: false,
             },
           ],
           services: [
@@ -535,12 +562,12 @@ export default {
             {
               name: "Чистка Стекла",
               price: 100,
-                            include: false,
+              include: false,
             },
             {
               name: "Замена дверей",
               price: 2200,
-                            include: false,
+              include: false,
             },
           ],
           services: [
@@ -562,19 +589,19 @@ export default {
             {
               name: "Чистка мотора",
               price: 400,
-                            include: false,
+              include: false,
             },
           ],
           services: [
             {
               name: "Починка двигателя",
               price: 300,
-                            include: false,
+              include: false,
             },
             {
               name: "Починка бортового компьютера",
               price: 300,
-                            include: false,
+              include: false,
             },
           ],
           car: "Tesla Model G",
@@ -590,7 +617,7 @@ export default {
             {
               name: "Чистка мотора",
               price: 400,
-                            include: false,
+              include: false,
             },
           ],
           services: [
@@ -621,7 +648,7 @@ export default {
             {
               name: "Чистка мотора",
               price: 400,
-                            include: false,
+              include: false,
             },
           ],
           services: [
@@ -794,8 +821,8 @@ export default {
       return sum;
     },
     includeAdditionalService(additionalServiceName) {
-      this.viewNoteObj.additionalServices.forEach(element => {
-        if(element.name == additionalServiceName) {
+      this.viewNoteObj.additionalServices.forEach((element) => {
+        if (element.name == additionalServiceName) {
           element.include = !element.include;
         }
       });
@@ -981,7 +1008,7 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
 }
- .note-service-li {
+.note-service-li {
   max-width: 75%;
   white-space: nowrap;
   overflow: hidden;
@@ -1088,6 +1115,7 @@ export default {
 }
 .drop-down-head h3 {
   margin-right: 7px;
+  margin-bottom: 8px;
 }
 .details {
   position: relative;
@@ -1241,7 +1269,7 @@ export default {
 }
 
 .additional-service-wrap p {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .detailed-note-drop-down {
@@ -1425,10 +1453,10 @@ export default {
 }
 
 @media screen and (max-width: 1288px) {
-    /* Детальный просмотр записей */
-    .details {
-      width: 100%;
-    }
+  /* Детальный просмотр записей */
+  .details {
+    width: 100%;
+  }
 }
 
 @media screen and (max-width: 1120px) {
@@ -1445,34 +1473,39 @@ export default {
   }
 
   /* Детальный просмотр записей */
-
-
 }
 
 @media screen and (max-width: 930px) {
-    /* Детальный просмотр записей */
-    .details {
-      flex-direction: column;
-    }
+  /* Детальный просмотр записей */
+  .details {
+    flex-direction: column;
+    padding: 10px 0 12px 0;
+  }
 
-    .progress-note-status {
-      margin-bottom: 30px;
-      position: relative;
-    }
+  .progress-note-status {
+    margin-bottom: 30px;
+    position: relative;
+  }
 
-    .progress-note {
-            justify-content: center;
-    }
+  .progress-note {
+    justify-content: center;
+  }
 
-    .progress-note-status::after {
-      content: "";
-      display: block;
-      width: 100%;
-      height: 1px;
-      background: #c4c4c4;
-      bottom: -20px;
-      position: absolute;
-    }
+  .progress-note-status::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: #c4c4c4;
+    bottom: -20px;
+    position: absolute;
+  }
+
+  .deteiled-note-description {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 0;
+  }
 }
 
 @media screen and (max-width: 850px) {
@@ -1483,9 +1516,12 @@ export default {
     margin-bottom: 10px;
     width: 100%;
   }
-  .filter-search select, .filter-search input {
+  .filter-search select,
+  .filter-search input {
     flex-basis: 50%;
   }
+
+  /* Детальный просмотр записей */
 }
 
 @media screen and (max-width: 600px) {
