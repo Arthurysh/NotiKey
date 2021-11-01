@@ -5,38 +5,54 @@
     v-if="this.userItemID == 1 && this.userRole == 'User'"
   >
     <div class="welcoming-image">
-      <p class="welcoming-user-text">Hello, user</p>
+      <p class="welcoming-user-text" v-if="user">Hello, {{ user.name }} </p>
     </div>
     <div class="user-info">
       <div class="head-item">Профиль</div>
       <div class="user-fields">
         <div class="input-user-wrap">
           <my-input
-            value="Алексей"
-            :placeholderValue="'Имя'"
+            :placeholderValue="Name"
             id="nameField"
+            @input="UserUpdate.name = $event.target.value"
+            :value="UserUpdate.name"
           ></my-input>
+          <span class="text-danger" v-if="errors.surname">
+                {{ errors.name[0] }}
+              </span>
         </div>
         <div class="input-user-wrap">
           <my-input
-            value="Трофименко"
             :placeholderValue="'Фамилия'"
             id="surnameField"
+            @input="UserUpdate.surname = $event.target.value"
+            :value="UserUpdate.surname"
           ></my-input>
+          <span class="text-danger" v-if="errors.surname">
+                {{ errors.surname[0] }}
+              </span>
         </div>
         <div class="input-user-wrap">
           <my-input
-            value="+380972362662"
             :placeholderValue="'Телефон'"
             id="phoneField"
+            @input="UserUpdate.phone = $event.target.value"
+            :value="UserUpdate.phone"
           ></my-input>
+          <span class="text-danger" v-if="errors.surname">
+                {{ errors.phone[0] }}
+              </span>
         </div>
         <div class="input-user-wrap">
           <my-input
-            value="master2021@gmail.com"
             :placeholderValue="'Почта'"
             id="emailField"
+            @input="UserUpdate.email = $event.target.value"
+            :value="UserUpdate.email"
           ></my-input>
+          <span class="text-danger" v-if="errors.surname">
+                {{ errors.email[0] }}
+              </span>
         </div>
         <div class="input-user-wrap">
           <my-input
@@ -48,13 +64,17 @@
         </div>
         <div class="input-user-wrap">
           <my-input
-            value="master"
             type="password"
             :placeholderValue="'Пароль'"
             id="passwordField"
+            @input="UserUpdate.password = $event.target.value"
+            :value="UserUpdate.password"
           ></my-input>
+          <span class="text-danger" v-if="errors.surname">
+                {{ errors.password[0] }}
+              </span>
         </div>
-        <my-button type="button" class="save-user-info is-not-active-btn"
+        <my-button type="button" class="save-user-info is-not-active-btn" @click.prevent="updateUser"
           >Сохранить</my-button
         >
       </div>
@@ -260,6 +280,7 @@
 </template>
 
 <script>
+import User from "@/apis/User";
 import MyButton from "../UI/MyButton.vue";
 import MyGridItem from "../UI/MyGridItem.vue";
 export default {
@@ -273,6 +294,11 @@ export default {
       type: String,
       required: true,
     },
+  },
+  mounted() {
+     User.auth().then(response => {
+       this.user = response.data;
+     });
   },
   data() {
     return {
@@ -369,9 +395,36 @@ export default {
           racingTime: 3,
         },
       ],
+      UserUpdate: {
+        name: "",
+        surname: "",
+        phone: "",
+        email: "",
+        password: "",
+      },
+            errors: [],
+            user: null,
+
+
     };
   },
+ 
   methods: {
+    
+    updateUser() {
+      User.updateUser(this.UserUpdate)
+        .then(() => {
+          this.$router.push('/Profile');
+        })
+        .catch((error) => {
+          if (error.response.status === 422) {
+            this.errors = error.response.data.errors;
+          }
+          
+        })
+        
+    },
+     
     detailedCarView(carObjID) {
       this.viewCarObj = this.findUserCar(carObjID);
       this.closeDetailedView();
