@@ -444,7 +444,7 @@ export default {
   margin-bottom: 10px;
 }
 
-.add-input-wrap input, select {
+.add-input-wrap input, .add-input-wrap select {
   width: 100%;
 }
 .modal-head {
