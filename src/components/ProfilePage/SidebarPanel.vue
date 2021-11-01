@@ -13,7 +13,7 @@
         <img src="@/assets/testUserPhoto.png" alt="" />
       </div>
       <div class="user-info-block" v-if="user">
-        <p class="user-name">{{ user.name }}</p>
+        <p class="user-name">{{ user.name }} {{ user.surname }}</p>
         <p class="user-email">{{ user.email }}</p>
       </div>
     </div>
