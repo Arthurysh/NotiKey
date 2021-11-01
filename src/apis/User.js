@@ -22,5 +22,11 @@ export default {
 
   auth() {
     return Api.get("/user");
-  }
+  },
+  
+  async updateUser(UserUpdate) {
+    await Csrf.getCookie();
+
+    return Api.post("/UpdateUser", UserUpdate);
+  },
 };

@@ -5,38 +5,54 @@
     v-if="this.userItemID == 1 && this.userRole == 'User'"
   >
     <div class="welcoming-image">
-      <p class="welcoming-user-text">Hello, user</p>
+      <p class="welcoming-user-text" v-if="user">Hello, {{ user.name }} </p>
     </div>
     <div class="user-info">
       <div class="head-item">Профиль</div>
       <div class="user-fields">
         <div class="input-user-wrap">
           <my-input
-            value="Алексей"
-            :placeholderValue="'Имя'"
+            :placeholderValue="Name"
             id="nameField"
+            @input="UserUpdate.name = $event.target.value"
+            :value="UserUpdate.name"
           ></my-input>
+          <span class="text-danger" v-if="errors.surname">
+                {{ errors.name[0] }}
+              </span>
         </div>
         <div class="input-user-wrap">
           <my-input
-            value="Трофименко"
             :placeholderValue="'Фамилия'"
             id="surnameField"
+            @input="UserUpdate.surname = $event.target.value"
+            :value="UserUpdate.surname"
           ></my-input>
+          <span class="text-danger" v-if="errors.surname">
+                {{ errors.surname[0] }}
+              </span>
         </div>
         <div class="input-user-wrap">
           <my-input
-            value="+380972362662"
             :placeholderValue="'Телефон'"
             id="phoneField"
+            @input="UserUpdate.phone = $event.target.value"
+            :value="UserUpdate.phone"
           ></my-input>
+          <span class="text-danger" v-if="errors.surname">
+                {{ errors.phone[0] }}
+              </span>
         </div>
         <div class="input-user-wrap">
           <my-input
-            value="master2021@gmail.com"
             :placeholderValue="'Почта'"
             id="emailField"
+            @input="UserUpdate.email = $event.target.value"
+            :value="UserUpdate.email"
           ></my-input>
+          <span class="text-danger" v-if="errors.surname">
+                {{ errors.email[0] }}
+              </span>
         </div>
         <div class="input-user-wrap">
           <my-input
@@ -48,13 +64,17 @@
         </div>
         <div class="input-user-wrap">
           <my-input
-            value="master"
             type="password"
             :placeholderValue="'Пароль'"
             id="passwordField"
+            @input="UserUpdate.password = $event.target.value"
+            :value="UserUpdate.password"
           ></my-input>
+          <span class="text-danger" v-if="errors.surname">
+                {{ errors.password[0] }}
+              </span>
         </div>
-        <my-button type="button" class="save-user-info is-not-active-btn"
+        <my-button type="button" class="save-user-info is-not-active-btn" @click.prevent="updateUser"
           >Сохранить</my-button
         >
       </div>
@@ -65,14 +85,14 @@
     class="note-content user-head-content"
     v-if="this.userItemID == 2 && this.userRole == 'User'"
   >
-    <div class="all-user-notes" v-if="!isDetaileView">
+    <div class="all-user-notes" v-if="!isDetaileView && !isAddActive">
       <div class="note-head-content">
         <h2>Записи</h2>
       </div>
       <div class="filter-panel">
         <div class="filter-search">
           <my-select
-            :arrData="filterData"
+            :arrData="this.getStatusFilter()"
             :plug="'Все'"
             id="filter-select"
           ></my-select>
@@ -116,7 +136,7 @@
             </div>
           </div>
         </my-grid-item>
-        <my-grid-item class="add-new-car">
+        <my-grid-item class="add-new-car" @click="addNoteView()">
           <div class="circle-block">
             <img src="@/assets/addIcon.png" alt="" />
           </div>
@@ -317,6 +337,87 @@
         </div>
       </div>
     </div>
+
+    <!-- Добавление записи -->
+    <div class="add-note" v-if="isAddActive">
+      <div class="close-detailed-contenet" @click="closeAddNote()">
+        <img src="@/assets/closeCrossIcon.png" alt="" />
+      </div>
+      <h2>Добавление записи</h2>
+      <div class="add-head-select-block">
+        <h2>Информация о записи</h2>
+        <div class="add-select-block">
+          <my-select
+            class="add-choose-sto"
+            :arrData="brandData"
+            :plug="'Станция СТО'"
+            id="add-sto-select"
+          ></my-select>
+          <my-select
+            class="add-choose-date"
+            :arrData="brandData"
+            :plug="'Дата'"
+            id="add-date-select"
+          ></my-select>
+          <my-select
+            class="add-choose-car"
+            :arrData="brandData"
+            :plug="'Машина'"
+            id="add-car-select"
+          ></my-select>
+          <my-select
+            class="add-choose-time"
+            :arrData="brandData"
+            :plug="'Время'"
+            id="add-time-select"
+          ></my-select>
+        </div>
+      </div>
+      <div class="modal-services">
+        <div class="modal-head">
+          <h3>Выберите услуги</h3>
+        </div>
+        <div class="table-block" id="service-table">
+          <div class="row row-head">
+            <div class="service-field">
+              <p>Услуга</p>
+            </div>
+            <div class="service-cost">
+              <p>Стоимость</p>
+            </div>
+          </div>
+          <div class="table-body">
+            <div class="row" v-for="elem in userServices" :key="elem">
+              <div class="service-field">
+                <my-select
+                  :arrData="getServiceArrat()"
+                  :plug="'Выбрать услугу'"
+                  id="selectDateField"
+                  @change="getServiceCost($event, elem)"
+                ></my-select>
+              </div>
+              <div class="service-cost">
+                <input type="text" :id="'service-cost-input' + elem" readonly />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="services-control-btn-block">
+          <div class="total-cost-block">
+            <h2 @click="this.getTotalServicesCost()">Общая сумма - {{ this.totalAddNoteServicesCost }}</h2>
+          </div>
+          <div class="control-block">
+            <button @click="addServiceRow()" id="addRow">
+              <img src="@/assets/plusIcon.png" alt="plus" />
+            </button>
+            <button id="deletRow" @click="deleteServiceRow()">
+              <img src="@/assets/crossIcon.png" alt="cross" />
+            </button>
+          </div>
+        </div>
+        <my-button>Записаться</my-button>
+      </div>
+    </div>
   </div>
 
   <!-- Транспорт пользователя -->
@@ -384,6 +485,7 @@
       </div>
     </div>
 
+    <!-- Добавление транспорта пользователя -->
     <div class="add-car" v-if="isAddActive">
       <div class="close-detailed-contenet" @click="closeAddView()">
         <img src="@/assets/closeCrossIcon.png" alt="" />
@@ -465,6 +567,7 @@
 </template>
 
 <script>
+import User from "@/apis/User";
 import MyButton from "../UI/MyButton.vue";
 import MyGridItem from "../UI/MyGridItem.vue";
 
@@ -480,11 +583,18 @@ export default {
       required: true,
     },
   },
+  mounted() {
+     User.auth().then(response => {
+       this.user = response.data;
+     });
+  },
   data() {
     return {
       filterData: ["select1", "select2", "select3"],
       modelData: ["Model S", "Model X"],
       brandData: ["Tesla"],
+      userServices: 0,
+      totalAddNoteServicesCost: 0,
       isDetaileView: false,
       isDetaileNoteListActive: true,
       isRecommendedServiceActive: true,
@@ -667,6 +777,20 @@ export default {
           time: "22:30",
         },
       ],
+      services: [
+        {
+          name: "Ушатать дверь",
+          cost: 200,
+        },
+        {
+          name: "Поставить дверь",
+          cost: 300,
+        },
+        {
+          name: "Запилить дверь",
+          cost: 400,
+        },
+      ],
       userDiscounts: [
         {
           station: "Elcar",
@@ -713,6 +837,17 @@ export default {
           racingTime: 3,
         },
       ],
+      UserUpdate: {
+        name: "",
+        surname: "",
+        phone: "",
+        email: "",
+        password: "",
+      },
+            errors: [],
+            user: null,
+
+
       allCars: [
         {
           carID: 12,
@@ -739,7 +874,23 @@ export default {
       ],
     };
   },
+ 
   methods: {
+    
+    updateUser() {
+      User.updateUser(this.UserUpdate)
+        .then(() => {
+          this.$router.push('/Profile');
+        })
+        .catch((error) => {
+          if (error.response.status === 422) {
+            this.errors = error.response.data.errors;
+          }
+          
+        })
+        
+    },
+     
     detailedCarView(carObjID) {
       this.viewCarObj = this.findUserCar(carObjID);
       this.closeDetailedView();
@@ -760,6 +911,12 @@ export default {
     closeAddView() {
       this.isAddActive = !this.isAddActive;
       this.clearAddCarArray();
+    },
+    addNoteView() {
+      this.closeAddNote();
+    },
+    closeAddNote() {
+      this.isAddActive = !this.isAddActive;
     },
     closeDetailedView() {
       this.isDetaileView = !this.isDetaileView;
@@ -882,6 +1039,57 @@ export default {
         racingTime: 0,
       };
       this.selectModelValue = "";
+    },
+    addServiceRow() {
+      this.userServices++;
+    },
+    deleteServiceRow() {
+      this.userServices--;
+      this.getTotalServicesCost();
+    },
+    getServiceCost($event, elem) {
+      let inputId = "service-cost-input" + elem;
+      let inputValue = $event.target.value.split("-");
+      //console.log(inputValue);
+      if (inputValue[0] == "Выбрать услугу") {
+        document.getElementById(inputId).value = 0;
+      }
+      for (let i = 0; i < this.services.length; i++) {
+        if (this.services[i].name == inputValue[0]) {
+          document.getElementById(inputId).value = this.services[i].cost;
+        }
+      }
+      this.getTotalServicesCost();
+    },
+    getServiceArrat() {
+      let resArr = [];
+      for (let i = 0; i < this.services.length; i++) {
+        resArr[i] = this.services[i].name;
+      }
+      return resArr;
+    },
+    getStatusFilter() {
+      let resArr = [];
+      for (let i = 0; i < this.userNotes.length; i++) {
+        resArr[i] = this.userNotes[i].status;
+      }
+      return resArr;
+    },
+
+    getTotalServicesCost() {
+      let noteListUserServices =
+        document.getElementsByClassName("service-cost");
+      let myArray = Array.from(noteListUserServices);
+      let result = 0;
+      console.log(noteListUserServices);
+      if (this.userServices > 0) {
+        for (let i = 1; i < myArray.length; i++) {
+          //console.log(myArray[i].childNodes[0]);
+          result += Number(myArray[i].childNodes[0].value);
+        }
+      }
+      console.log(result);
+      this.totalAddNoteServicesCost = result;
     },
   },
 };
@@ -1275,6 +1483,129 @@ export default {
 .detailed-note-drop-down {
   margin-bottom: 10px;
 }
+
+/* Добавление записи пользователя */
+
+.add-select-block {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+.add-select-block select {
+  flex-basis: 34%;
+  margin-bottom: 20px;
+  text-align: center;
+  background: #c4c4c4;
+}
+.add-select-block::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: #c4c4c4;
+  bottom: 0;
+}
+.add-note-services-header {
+  margin: 20px 0;
+}
+
+.modal-services {
+  justify-content: center;
+  width: 50%;
+  height: 350px;
+}
+.modal-head {
+  margin-bottom: 20px;
+}
+.table-block {
+  border: 1px solid gray;
+  height: 200px;
+  background: rgb(189, 189, 189);
+  margin-bottom: 10px;
+  overflow: scroll;
+}
+
+.table-block .row {
+  border-bottom: 1px solid gray;
+  display: flex;
+}
+
+.table-block .row select,
+input {
+  border: none;
+  border-radius: 0;
+  height: 100%;
+  outline: none;
+  width: 100%;
+  text-align: center;
+}
+.row-head {
+  background: #fff;
+}
+.service-cost,
+.service-field {
+  flex-basis: 50%;
+}
+.service-cost input {
+  border-left: 1px solid gray;
+}
+.row-head .service-cost,
+.row-head .service-field {
+  padding: 4px;
+  text-align: center;
+}
+
+.row-head .service-cost {
+  border-left: 1px solid gray;
+}
+.services-control-btn-block {
+  display: flex;
+  justify-content: space-between;
+}
+
+.services-control-btn-block button {
+  height: 40px;
+  width: 40px;
+  border: none;
+  border-radius: 5px;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.5s;
+}
+.control-block button:first-child:hover {
+  background: #006be0;
+}
+
+.control-block button:last-child:hover {
+  background: #bd3232;
+}
+
+.control-block button img {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.control-block button:last-child img {
+  width: 15px;
+  height: 15px;
+}
+
+.control-block button:first-child {
+  background: #4599f5;
+  color: #fff;
+  margin-right: 10px;
+}
+
+.control-block button:last-child {
+  background: #da5252;
+  color: #fff;
+}
+
 /* Транспорт пользователя */
 
 .car-item {
@@ -1479,7 +1810,10 @@ export default {
   /* Детальный просмотр записей */
   .details {
     flex-direction: column;
+<<<<<<< HEAD
     padding: 10px 0 12px 0;
+=======
+>>>>>>> 5439a85194b60b3f9fc2e505a0eae905668bd585
   }
 
   .progress-note-status {
@@ -1500,12 +1834,15 @@ export default {
     bottom: -20px;
     position: absolute;
   }
+<<<<<<< HEAD
 
   .deteiled-note-description {
     display: flex;
     justify-content: space-between;
     margin-left: 0;
   }
+=======
+>>>>>>> 5439a85194b60b3f9fc2e505a0eae905668bd585
 }
 
 @media screen and (max-width: 850px) {
