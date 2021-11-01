@@ -1851,7 +1851,13 @@ export default {
     flex-direction: column;
   }
 
-  /* Детальный просмотр записей */
+  /* Детальный просмотр записей */  
+}
+
+@media screen and (max-width: 1120px) {
+  .note-item .note-content-list li {
+    font-size: 16px;
+  }
 }
 
 @media screen and (max-width: 930px) {
@@ -1947,6 +1953,12 @@ export default {
     margin-top: 20px;
   }
 
+  /* Просмотр записей */
+
+  .filter-panel .right-sort select {
+    width: 100%;
+  }
+
   /* Детальный просмотр записей */
 
   .deteiled-note-head h3 {
@@ -2013,6 +2025,19 @@ export default {
   }
   .filter-search input {
     padding: 11px 10px;
+  }
+
+  .note-item .note-head {
+    font-size: 14px;
+  }
+
+  .note-item .delete-note-button {
+    width: 20px;
+    height: 20px;
+  }
+
+  .note-item .note-content-list li{
+    font-size: 14px;
   }
 }
 @media screen and (max-width: 430px) {
