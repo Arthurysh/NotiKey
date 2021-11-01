@@ -1795,6 +1795,7 @@ export default {
 .add-car-header {
   text-align: center;
   margin-bottom: 20px;
+  font-size: 16px;
 }
 
 .add-car-info {
@@ -1807,7 +1808,6 @@ export default {
 
 .add-image-car-model {
   width: 400px;
-  height: 300px;
 }
 
 .add-image-car-model img {
@@ -1828,7 +1828,7 @@ export default {
 }
 .add-car-button {
   background: #4599f5;
-  padding: 10px 100px !important;
+  padding: 10px 60px !important;
 }
 
 @media screen and (max-width: 1288px) {
@@ -1906,7 +1906,14 @@ export default {
     flex-basis: 50%;
   }
 
-  /* Детальный просмотр записей */
+  /* Добаление транспорта пользователя */
+  .main-add-selectors select {
+    flex-basis: 40%;
+  }
+
+  .add-car-header {
+    font-size: 12px;
+  }
 }
 
 @media screen and (max-width: 770px) {
@@ -1941,6 +1948,11 @@ export default {
 
   .discount-card-head h3 {
     font-size: 15px;
+  }
+
+  /* Добавление транспорта пользователя */
+  .add-image-car-model {
+    width: 100%;
   }
 
   /* Транспорт пользователя детальней */
@@ -2065,6 +2077,36 @@ export default {
 
   .note-info-table .note-info-line p {
     font-size: 10px
+  }
+
+  /* Добавление транспорта пользователя */
+  .car-info-line .car-info-line-inner {
+    padding: 10px 20px;
+  }
+  .add-car-header {
+    font-size: 10px;
+    text-align: left;
+  }
+  .main-add-selectors {
+    flex-direction: column;
+  }
+  .main-add-selectors select {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .add-car-button-block {
+    width: 100%;
+  }
+  .add-car-button-block button {
+    padding: 15px 20px !important;
+    width: 100% !important;
+    font-size: 12px !important;
+  }
+  .add-car .close-detailed-contenet {
+    width: 25px;
+    height: 25px;
+    top: 16px;
+    right: 12px;
   }
 }
 </style>
