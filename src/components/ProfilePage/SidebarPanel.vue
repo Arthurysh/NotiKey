@@ -77,7 +77,7 @@ a {
 }
 
 .user-profile-block .user-name {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   margin-bottom: 3px;
 }
@@ -123,6 +123,11 @@ a {
     margin-right: 0;
     margin-bottom: 10px;
   }
+  
+  .user-profile-block .user-name {
+      text-align: center;
+      font-size: 12px;
+  }
 
   .user-profile-block .user-email {
     display: none;
@@ -155,7 +160,7 @@ a {
   }
 
   .user-profile-block .user-name {
-    font-size: 14px;
+    font-size: 10px;
   }
 }
 </style>

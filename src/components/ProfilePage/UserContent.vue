@@ -12,10 +12,11 @@
       <div class="user-fields">
         <div class="input-user-wrap">
           <my-input
+            v-if="user"
             :placeholderValue="Name"
             id="nameField"
             @input="UserUpdate.name = $event.target.value"
-            :value="UserUpdate.name"
+            :value="user.name"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
             {{ errors.name[0] }}
@@ -23,10 +24,11 @@
         </div>
         <div class="input-user-wrap">
           <my-input
+            v-if="user"
             :placeholderValue="'Фамилия'"
             id="surnameField"
             @input="UserUpdate.surname = $event.target.value"
-            :value="UserUpdate.surname"
+            :value="user.surname"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
             {{ errors.surname[0] }}
@@ -34,10 +36,11 @@
         </div>
         <div class="input-user-wrap">
           <my-input
+            v-if="user"
             :placeholderValue="'Телефон'"
             id="phoneField"
             @input="UserUpdate.phone = $event.target.value"
-            :value="UserUpdate.phone"
+            :value="user.phone"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
             {{ errors.phone[0] }}
@@ -45,10 +48,11 @@
         </div>
         <div class="input-user-wrap">
           <my-input
+            v-if="user"
             :placeholderValue="'Почта'"
             id="emailField"
             @input="UserUpdate.email = $event.target.value"
-            :value="UserUpdate.email"
+            :value="user.email"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
             {{ errors.email[0] }}
@@ -64,11 +68,12 @@
         </div>
         <div class="input-user-wrap">
           <my-input
+            v-if="user"
             type="password"
             :placeholderValue="'Пароль'"
             id="passwordField"
             @input="UserUpdate.password = $event.target.value"
-            :value="UserUpdate.password"
+            :value="user.password"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
             {{ errors.password[0] }}
@@ -152,7 +157,7 @@
       <div class="close-detailed-contenet" @click="closeDetailedView()">
         <img src="@/assets/closeCrossIcon.png" alt="" />
       </div>
-      <h3>{{ "Запись " + this.viewNoteObj.noteId }}</h3>
+      <h3 class="opened-note-name">{{ "Запись " + this.viewNoteObj.noteId }}</h3>
       <div class="deteiled-note-head">
         <h3>Информация о записи</h3>
       </div>
@@ -190,7 +195,10 @@
 
           <div class="progress-note-status">
             <div class="progress-note">
-              <div class="progress-item">
+              <div class="progress-item" v-bind:class="{
+                    'success-status-item':
+                      this.viewNoteObj.statusHistory.includes('Успешно записан'),
+                  }">
                 <div class="progress-head-name">
                   <p>Запись</p>
                 </div>
@@ -208,7 +216,11 @@
                   </div>
                 </div>
               </div>
-              <div class="progress-item">
+              <div class="progress-circle-divider"></div>
+              <div class="progress-item" v-bind:class="{
+                    'success-status-item':
+                      this.viewNoteObj.statusHistory.includes('Выполнение услуг'),
+                  }">
                 <div class="progress-head-name">
                   <p>Выполнение услуг</p>
                 </div>
@@ -226,7 +238,11 @@
                   </div>
                 </div>
               </div>
-              <div class="progress-item">
+               <div class="progress-circle-divider"></div>
+              <div class="progress-item" v-bind:class="{
+                    'success-status-item':
+                      this.viewNoteObj.statusHistory.includes('Оплата'),
+                  }">
                 <div class="progress-head-name">
                   <p>Оплата</p>
                 </div>
@@ -242,7 +258,11 @@
                   </div>
                 </div>
               </div>
-              <div class="progress-item">
+              <div class="progress-circle-divider"></div>
+              <div class="progress-item" v-bind:class="{
+                    'success-status-item':
+                      this.viewNoteObj.statusHistory.includes('Закрыта'),
+                  }">
                 <div class="progress-head-name">
                   <p>Закрыта</p>
                 </div>
@@ -393,7 +413,7 @@
             <div class="row" v-for="elem in userServices" :key="elem">
               <div class="service-field">
                 <my-select
-                  :arrData="getServiceArrat()"
+                  :arrData="getServiceArray()"
                   :plug="'Выбрать услугу'"
                   id="selectDateField"
                   @change="getServiceCost($event, elem)"
@@ -424,7 +444,6 @@
       </div>
     </div>
   </div>
-
   <!-- Транспорт пользователя -->
   <div
     class="car-content"
@@ -595,30 +614,18 @@ export default {
   },
   data() {
     return {
-      filterData: ["select1", "select2", "select3"],
-      modelData: ["Model S", "Model X"],
-      brandData: ["Tesla"],
-      userServices: 0,
-      totalAddNoteServicesCost: 0,
-      isDetaileView: false,
-      isDetaileNoteListActive: true,
-      isRecommendedServiceActive: true,
-      isAddActive: false,
-      viewCarObj: {},
-      viewNoteObj: {},
-      addCarObj: {
-        carID: 0,
-        image: "carPrototype.png",
-        brand: "-",
-        model: "-",
-        year: "-",
-        type: "-",
-        power: "-",
-        maxSpeed: 0,
-        racingTime: 0,
+      /* ========= Профиль пользователя ========= */
+      UserUpdate: {
+        name: "",
+        surname: "",
+        phone: "",
+        email: "",
+        password: "",
       },
-      selectBrandValue: "",
-      selectModelValue: "",
+      errors: [],
+      user: null,
+
+      /* ========= Записи пользователя ========= */
       noteStatus: [
         {
           name: "Успешно записан",
@@ -796,28 +803,16 @@ export default {
           cost: 400,
         },
       ],
-      userDiscounts: [
-        {
-          station: "Elcar",
-          percent: 5,
-          date: "22.10.2022",
-        },
-        {
-          station: "Towcar",
-          percent: 10,
-          date: "22.10.2022",
-        },
-        {
-          station: "Towcar",
-          percent: 10,
-          date: "22.10.2022",
-        },
-        {
-          station: "Towcar",
-          percent: 10,
-          date: "22.10.2022",
-        },
-      ],
+      /* Записи пользователя детальный просмотр */
+      viewNoteObj: {},
+      isDetaileNoteListActive: true,
+      isRecommendedServiceActive: true,
+
+      /* Добавление записи пользователя */
+      userServices: 0,
+      totalAddNoteServicesCost: 0,
+
+      /* ========= Транспорт пользователя ========= */
       userCars: [
         {
           carID: 12,
@@ -842,16 +837,6 @@ export default {
           racingTime: 3,
         },
       ],
-      UserUpdate: {
-        name: "",
-        surname: "",
-        phone: "",
-        email: "",
-        password: "",
-      },
-      errors: [],
-      user: null,
-
       allCars: [
         {
           carID: 12,
@@ -876,11 +861,59 @@ export default {
           racingTime: 3,
         },
       ],
+      /* Транспорт пользователя детальный просмотр */
+      viewCarObj: {},
+
+      /* Добавление транспорта пользователя */
+      addCarObj: {
+        carID: 0,
+        image: "carPrototype.png",
+        brand: "-",
+        model: "-",
+        year: "-",
+        type: "-",
+        power: "-",
+        maxSpeed: 0,
+        racingTime: 0,
+      },
+      selectBrandValue: "",
+      selectModelValue: "",
+      modelData: ["Model S", "Model X"],
+      brandData: ["Tesla"],
+
+      /* ========= Скижки пользователя ========= */
+      userDiscounts: [
+        {
+          station: "Elcar",
+          percent: 5,
+          date: "22.10.2022",
+        },
+        {
+          station: "Towcar",
+          percent: 10,
+          date: "22.10.2022",
+        },
+        {
+          station: "Towcar",
+          percent: 10,
+          date: "22.10.2022",
+        },
+        {
+          station: "Towcar",
+          percent: 10,
+          date: "22.10.2022",
+        },
+      ],
+
+      /* ========= Общее ========= */
+      filterData: ["select1", "select2", "select3"],
+      isDetaileView: false,
+      isAddActive: false,
     };
   },
 
   methods: {
-    
+    /* ========= Профиль пользователя ========= */
     updateUser() {
       User.updateUser(this.UserUpdate)
         .then(() => {
@@ -893,40 +926,16 @@ export default {
         });
     },
 
-    detailedCarView(carObjID) {
-      this.viewCarObj = this.findUserCar(carObjID);
-      this.closeDetailedView();
-    },
-
-    findUserCar(id) {
-      let userCar;
-      this.userCars.forEach((element) => {
-        if (element.carID == id) {
-          userCar = element;
-        }
-      });
-      return userCar;
-    },
-    addCarView() {
-      this.closeAddView();
-    },
-    closeAddView() {
-      this.isAddActive = !this.isAddActive;
-      this.clearAddCarArray();
-    },
+    /* ========= Записи пользователя ========= */
     addNoteView() {
       this.closeAddNote();
     },
-    closeAddNote() {
-      this.isAddActive = !this.isAddActive;
-    },
-    closeDetailedView() {
-      this.isDetaileView = !this.isDetaileView;
-    },
+
     deteiledNoteView(noteObjID) {
       this.viewNoteObj = this.findUserNote(noteObjID);
       this.closeDetailedView();
     },
+
     findUserNote(id) {
       let userNote;
       this.userNotes.forEach((element) => {
@@ -936,6 +945,7 @@ export default {
       });
       return userNote;
     },
+
     checkNoteStatus(id) {
       let userNote = this.findUserNote(id);
       let userStatusColor;
@@ -946,12 +956,15 @@ export default {
       });
       return userStatusColor;
     },
+
     openDetailNoteList() {
       this.isDetaileNoteListActive = !this.isDetaileNoteListActive;
     },
+
     openRecommendedService() {
       this.isRecommendedServiceActive = !this.isRecommendedServiceActive;
     },
+
     getNoteServicesString(noteObj) {
       let servicesString = "";
 
@@ -986,69 +999,16 @@ export default {
         }
       });
     },
-    getCarInfo($event, id) {
-      if (id == 1) {
-        this.selectBrandValue = $event.target.value;
-        if (this.selectBrandValue == "Бренд") {
-          this.clearAddCarArray();
-          document.getElementById("model-select").selectedIndex = 0;
-        }
-      } else {
-        this.selectModelValue = $event.target.value;
-        if (this.selectModelValue == "Модель") {
-          this.clearModelCar();
-        }
-      }
-      if (this.selectBrandValue != "" && this.selectModelValue != "") {
-        this.getCarArray();
-      }
-    },
-    getCarArray() {
-      for (let i = 0; i < this.allCars.length; i++) {
-        if (
-          this.allCars[i].brand == this.selectBrandValue &&
-          this.allCars[i].model == this.selectModelValue
-        ) {
-          this.addCarObj = this.allCars[i];
-        }
-      }
-    },
-    clearAddCarArray() {
-      this.addCarObj = {
-        carID: 0,
-        image: "carPrototype.png",
-        brand: "-",
-        model: "-",
-        year: "-",
-        type: "-",
-        power: "-",
-        maxSpeed: 0,
-        racingTime: 0,
-      };
-      this.selectBrandValue = "";
-      this.selectModelValue = "";
-    },
-    clearModelCar() {
-      this.addCarObj = {
-        carID: 0,
-        image: "carPrototype.png",
-        brand: "-",
-        model: "-",
-        year: "-",
-        type: "-",
-        power: "-",
-        maxSpeed: 0,
-        racingTime: 0,
-      };
-      this.selectModelValue = "";
-    },
+
     addServiceRow() {
       this.userServices++;
     },
+
     deleteServiceRow() {
       this.userServices--;
       this.getTotalServicesCost();
     },
+
     getServiceCost($event, elem) {
       let inputId = "service-cost-input" + elem;
       let inputValue = $event.target.value.split("-");
@@ -1063,13 +1023,15 @@ export default {
       }
       this.getTotalServicesCost();
     },
-    getServiceArrat() {
+
+    getServiceArray() {
       let resArr = [];
       for (let i = 0; i < this.services.length; i++) {
         resArr[i] = this.services[i].name;
       }
       return resArr;
     },
+
     getStatusFilter() {
       let resArr = [];
       for (let i = 0; i < this.userNotes.length; i++) {
@@ -1092,6 +1054,100 @@ export default {
       }
       console.log(result);
       this.totalAddNoteServicesCost = result;
+    },
+
+    closeAddNote() {
+      this.isAddActive = !this.isAddActive;
+    },
+
+    /* ========= Транспорт пользователя ========= */
+    detailedCarView(carObjID) {
+      this.viewCarObj = this.findUserCar(carObjID);
+      this.closeDetailedView();
+    },
+
+    findUserCar(id) {
+      let userCar;
+      this.userCars.forEach((element) => {
+        if (element.carID == id) {
+          userCar = element;
+        }
+      });
+      return userCar;
+    },
+
+    addCarView() {
+      this.closeAddView();
+    },
+
+    getCarInfo($event, id) {
+      if (id == 1) {
+        this.selectBrandValue = $event.target.value;
+        if (this.selectBrandValue == "Бренд") {
+          this.clearAddCarArray();
+          document.getElementById("model-select").selectedIndex = 0;
+        }
+      } else {
+        this.selectModelValue = $event.target.value;
+        if (this.selectModelValue == "Модель") {
+          this.clearModelCar();
+        }
+      }
+      if (this.selectBrandValue != "" && this.selectModelValue != "") {
+        this.getCarArray();
+      }
+    },
+
+    getCarArray() {
+      for (let i = 0; i < this.allCars.length; i++) {
+        if (
+          this.allCars[i].brand == this.selectBrandValue &&
+          this.allCars[i].model == this.selectModelValue
+        ) {
+          this.addCarObj = this.allCars[i];
+        }
+      }
+    },
+
+    clearAddCarArray() {
+      this.addCarObj = {
+        carID: 0,
+        image: "carPrototype.png",
+        brand: "-",
+        model: "-",
+        year: "-",
+        type: "-",
+        power: "-",
+        maxSpeed: 0,
+        racingTime: 0,
+      };
+      this.selectBrandValue = "";
+      this.selectModelValue = "";
+    },
+
+    clearModelCar() {
+      this.addCarObj = {
+        carID: 0,
+        image: "carPrototype.png",
+        brand: "-",
+        model: "-",
+        year: "-",
+        type: "-",
+        power: "-",
+        maxSpeed: 0,
+        racingTime: 0,
+      };
+      this.selectModelValue = "";
+    },
+
+    /* ========= Скижки пользователя ========= */
+
+    closeAddView() {
+      this.isAddActive = !this.isAddActive;
+      this.clearAddCarArray();
+    },
+    closeDetailedView() {
+      this.isDetaileView = !this.isDetaileView;
     },
   },
 };
@@ -1325,7 +1381,6 @@ export default {
 }
 .drop-down-head h3 {
   margin-right: 7px;
-  margin-bottom: 8px;
 }
 .details {
   position: relative;
@@ -1423,16 +1478,11 @@ export default {
   position: relative;
 }
 
-.progress-item .progress-circle::after {
-  content: "";
-  display: block;
+.progress-circle-divider {
+  margin-top: 66px;
   height: 5px;
   width: 30px;
   border-radius: 8px;
-  position: absolute;
-  top: 50%;
-  right: -48px;
-  transform: translateY(-50%);
   background: #c4c4c4;
 }
 
@@ -1449,12 +1499,8 @@ export default {
   display: block;
 }
 
-.progress-item .progress-circle-success::after {
+.success-status-item + .progress-circle-divider {
   background: #7fd970;
-}
-
-.progress-item:last-child .progress-circle::after {
-  display: none;
 }
 
 .progress-circle-img-wrap {
@@ -1533,7 +1579,7 @@ export default {
 }
 
 .table-block .row select,
-input {
+.table-block .row input {
   border: none;
   border-radius: 0;
   height: 100%;
@@ -1857,6 +1903,17 @@ input {
   /* Детальный просмотр записей */
 }
 
+@media screen and (max-width: 770px) {
+  .deteiled-note-description {
+    flex-direction: column;
+  }
+
+  .additional-service-wrap input {
+    width: 18px;
+    height: 18px;
+  }
+}
+
 @media screen and (max-width: 600px) {
   .user-info .input-user-wrap {
     flex-basis: 100%;
@@ -1889,6 +1946,62 @@ input {
   .detailed-car-info-content {
     margin-top: 20px;
   }
+
+  /* Детальный просмотр записей */
+
+  .deteiled-note-head h3 {
+    font-size: 16px;
+  }
+
+  .progress-note {
+    height: 75px;
+    justify-content: space-around;
+  }
+  .progress-note .progress-item {
+    width: 12%;
+  }
+
+  .progress-item .progress-circle {
+    width: 30px;
+    height: 30px;
+    border: 2px solid #969696;
+  }
+  .progress-item .progress-circle-success {
+    border: 2px solid #7fd970;
+  }
+  .progress-item .progress-head-name {
+    font-size: 12px;
+  }
+  .progress-circle-img-wrap {
+    width: 18px;
+    height: 18px;
+  }
+  .progress-circle-divider {
+    margin-top: 57px;
+  }
+  .deteiled-note-status h3, .drop-down-head h3, .result-price-block h3 {
+    font-size: 15px;
+  }
+
+  .deteiled-note-description p {
+    font-size: 12px;
+  }
+
+  .google-pay-button button{
+    width: 100%;
+    justify-content: center;
+    padding: 12px 0;
+    font-size: 10px;
+  }
+
+  .opened-note-name {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .services-characteristic-value {
+    max-width: 127px;
+  }
 }
 @media screen and (max-width: 450px) {
   .filter-search {
@@ -1909,6 +2022,24 @@ input {
 
   .user-head-content h2 {
     font-size: 20px;
+  }
+
+  /* Детальный просмотр записей */
+  .note-info-line .note-info-line-inner {
+    padding: 10px 20px;
+  }
+
+  .progress-item .progress-head-name {
+    font-size: 10px;
+  }
+
+  .additional-service-wrap input {
+    width: 14px;
+    height: 14px;
+  }
+
+  .note-info-table .note-info-line p {
+    font-size: 10px
   }
 }
 </style>
