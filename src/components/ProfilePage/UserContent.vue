@@ -1810,10 +1810,7 @@ input {
   /* Детальный просмотр записей */
   .details {
     flex-direction: column;
-<<<<<<< HEAD
     padding: 10px 0 12px 0;
-=======
->>>>>>> 5439a85194b60b3f9fc2e505a0eae905668bd585
   }
 
   .progress-note-status {
@@ -1834,15 +1831,12 @@ input {
     bottom: -20px;
     position: absolute;
   }
-<<<<<<< HEAD
 
   .deteiled-note-description {
     display: flex;
     justify-content: space-between;
     margin-left: 0;
   }
-=======
->>>>>>> 5439a85194b60b3f9fc2e505a0eae905668bd585
 }
 
 @media screen and (max-width: 850px) {
