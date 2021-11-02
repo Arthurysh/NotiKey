@@ -12,8 +12,7 @@
       <div class="user-fields">
         <div class="input-user-wrap">
           <my-input
-            v-if="user"
-            :placeholderValue="Name"
+            :placeholderValue="'Имя'"
             id="nameField"
             @input="UserUpdate.name = $event.target.value"
             :value="UserUpdate.name"
@@ -24,7 +23,6 @@
         </div>
         <div class="input-user-wrap">
           <my-input
-            v-if="user"
             :placeholderValue="'Фамилия'"
             id="surnameField"
             @input="UserUpdate.surname = $event.target.value"
@@ -36,7 +34,6 @@
         </div>
         <div class="input-user-wrap">
           <my-input
-            v-if="user"
             :placeholderValue="'Телефон'"
             id="phoneField"
             @input="UserUpdate.phone = $event.target.value"
@@ -48,7 +45,6 @@
         </div>
         <div class="input-user-wrap">
           <my-input
-            v-if="user"
             :placeholderValue="'Почта'"
             id="emailField"
             @input="UserUpdate.email = $event.target.value"
@@ -68,7 +64,6 @@
         </div>
         <div class="input-user-wrap">
           <my-input
-            v-if="user"
             type="password"
             :placeholderValue="'Пароль'"
             id="passwordField"
@@ -400,7 +395,7 @@
         <div class="modal-head">
           <h3>Выберите услуги</h3>
         </div>
-        <div class="table-block" id="service-table">
+        <div class="table-block add-note-services-table" id="service-table">
           <div class="row row-head">
             <div class="service-field">
               <p>Услуга</p>
@@ -428,14 +423,14 @@
         <div class="services-control-btn-block">
           <div class="total-cost-block">
             <h2 @click="this.getTotalServicesCost()">
-              Общая сумма - {{ this.totalAddNoteServicesCost }}
+              Общая сумма - {{ this.totalAddNoteServicesCost + "грн"}} 
             </h2>
           </div>
           <div class="control-block">
             <button @click="addServiceRow()" id="addRow">
               <img src="@/assets/plusIcon.png" alt="plus" />
             </button>
-            <button id="deletRow" @click="deleteServiceRow()">
+            <button id="deletRow" @click="deleteService()">
               <img src="@/assets/crossIcon.png" alt="cross" />
             </button>
           </div>
@@ -606,24 +601,24 @@ export default {
       type: String,
       required: true,
     },
+    user: {
+      type: Object,
+      required: true,
+    }
   },
   mounted() {
-    User.auth().then((response) => {
-      this.user = response.data;
-    });
   },
   data() {
     return {
       /* ========= Профиль пользователя ========= */
       UserUpdate: {
-        name: "",
-        surname: "",
-        phone: "",
-        email: "",
-        password: "",
+        name: this.user.name,
+        surname: this.user.surname,
+        phone: this.user.phone,
+        email: this.user.email,
+        password: this.user.password,
       },
       errors: [],
-      user: null,
 
       /* ========= Записи пользователя ========= */
       noteStatus: [
@@ -924,6 +919,7 @@ export default {
             this.errors = error.response.data.errors;
           }
         });
+        this.$emit("updateUserData");
     },
 
     /* ========= Записи пользователя ========= */
@@ -1006,6 +1002,10 @@ export default {
 
     deleteServiceRow() {
       this.userServices--;
+    },
+
+    async deleteService() {
+      await this.deleteServiceRow();
       this.getTotalServicesCost();
     },
 
@@ -1044,8 +1044,8 @@ export default {
       let noteListUserServices =
         document.getElementsByClassName("service-cost");
       let myArray = Array.from(noteListUserServices);
+      console.log(myArray);
       let result = 0;
-      console.log(noteListUserServices);
       if (this.userServices > 0) {
         for (let i = 1; i < myArray.length; i++) {
           //console.log(myArray[i].childNodes[0]);
@@ -1538,6 +1538,11 @@ export default {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.add-head-select-block h2 {
+  font-size: 18px;
 }
 .add-select-block select {
   flex-basis: 34%;
@@ -1557,18 +1562,29 @@ export default {
   margin: 20px 0;
 }
 
+.add-note-services-table .table-body .row:nth-child(2n + 1) .service-field select,
+.add-note-services-table .table-body .row:nth-child(2n + 1) .service-cost input {
+  background: #c4c4c4;
+}
+
+.total-cost-block {
+  font-size: 14px;
+}
+
 .modal-services {
   justify-content: center;
   width: 50%;
   height: 350px;
+  margin: 0 auto;
 }
 .modal-head {
   margin-bottom: 20px;
 }
 .table-block {
   border: 1px solid gray;
+    border-radius: 5px;
   height: 200px;
-  background: rgb(189, 189, 189);
+  background: #fff;
   margin-bottom: 10px;
   overflow: scroll;
 }
@@ -1590,6 +1606,10 @@ export default {
 .row-head {
   background: #fff;
 }
+.service-cost {
+  border-left: 1px solid gray;
+}
+
 .service-cost,
 .service-field {
   flex-basis: 50%;
@@ -1599,7 +1619,7 @@ export default {
 }
 .row-head .service-cost,
 .row-head .service-field {
-  padding: 4px;
+  padding: 6px;
   text-align: center;
 }
 

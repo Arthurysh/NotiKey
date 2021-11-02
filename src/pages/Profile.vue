@@ -9,6 +9,8 @@
     <profile-content
       :userRole="userRole"
       :userItemID="idCurrentItem"
+      :user="user"
+      @updateUserData="getUserData()"
       class="profile-content"
     ></profile-content>
   </div>
@@ -17,19 +19,36 @@
 <script>
 import SidebarPanel from "@/components/ProfilePage/SidebarPanel.vue";
 import ProfileContent from "@/components/ProfilePage/ProfileContent.vue";
+import User from "@/apis/User";
+
 export default {
   components: { SidebarPanel, ProfileContent },
   data() {
     return {
-      userRole: "User",
+      userRole: null,
       idCurrentItem: 1,
+      user: this.getUserData(),
     };
   },
   methods: {
     outArr(itemMenuID) {
       this.idCurrentItem = itemMenuID;
     },
+    getUserRole(role) {
+      this.userRole = role;
+    },
+
+    async getUserData() {
+      await User.auth().then(response => {
+      this.getUserRole(response.data.user_role);
+      this.user = response.data;
+     });
+    }
   },
+  // mounted: async function () {
+  //     await this.getUserData()
+  //    this.getUserRole()
+  // },
 };
 </script>
 

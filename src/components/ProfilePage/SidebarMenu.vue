@@ -82,7 +82,7 @@
           </div>
           <div
             class="wrap-out-item"
-            @click="$router.push('/')"
+            @click.prevent="logout"
             v-if="elem.idItem == this.arrMenuItemsAdmin.length"
             v-bind:class="{ activeMenuItem: elem.isActive }"
           >
@@ -133,7 +133,7 @@
           </div>
           <div
             class="wrap-out-item"
-            @click="$router.push('/')"
+            @click.prevent="logout"
             v-if="elem.idItem == this.arrMenuItemsManager.length"
             v-bind:class="{ activeMenuItem: elem.isActive }"
           >

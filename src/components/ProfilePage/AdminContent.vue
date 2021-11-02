@@ -30,7 +30,7 @@
         ></my-input>
       </div>
       <div class="btn-container" v-show="!modalEdit">
-        <my-button class="add-table-note-btn">Добавить</my-button>
+        <my-button class="add-table-note-btn" @click.prevent="getAddModelInput()">Добавить</my-button>
       </div>
       <div class="btn-container" v-show="modalEdit">
         <my-button class="add-table-note-btn">Сохранить</my-button>
@@ -154,6 +154,7 @@
 import PieChart from "@/components/ProfilePage/AdminCharts/PieChart.vue";
 import BarChart from "@/components/ProfilePage/AdminCharts/BarChart.vue";
 import LineChart from "@/components/ProfilePage/AdminCharts/LineChart.vue";
+import Station from "@/apis/Station"
 
 export default {
   components: { PieChart, BarChart, LineChart },
@@ -184,105 +185,28 @@ export default {
           adress: "Kharkiv 22 A",
           description: "Best Station in Kharkiv",
         },
-        {
-          stationID: 2,
-          name: "Elcar",
-          adress: "Kharkiv 22 A",
-          description: "Best Station in Kharkiv",
-        },
-        {
-          stationID: 3,
-          name: "Elcar",
-          adress: "Kharkiv 22 A",
-          description: "Best Station in Kharkiv",
-        },
-        {
-          stationID: 4,
-          name: "Elcar",
-          adress: "Kharkiv 22 A",
-          description: "Best Station in Kharkiv",
-        },
-        {
-          stationID: 5,
-          name: "Elcar",
-          adress: "Kharkiv 22 A",
-          description: "Best Station in Kharkiv",
-        },
-        {
-          stationID: 6,
-          name: "Elcar",
-          adress: "Kharkiv 22 A",
-          description: "Best Station in Kharkiv",
-        },
-        {
-          stationID: 7,
-          name: "Elcar",
-          adress: "Kharkiv 22 A",
-          description: "Best Station in Kharkiv",
-        },
-        {
-          stationID: 8,
-          name: "Elcar",
-          adress: "Kharkiv 22 A",
-          description: "Best Station in Kharkiv",
-        },
-        {
-          stationID: 9,
-          name: "Elcar",
-          adress: "Kharkiv 22 A",
-          description: "Best Station in Kharkiv",
-        },
-        {
-          stationID: 10,
-          name: "Elcar",
-          adress: "Kharkiv 22 A",
-          description: "Best Station in Kharkiv",
-        },
-        {
-          stationID: 11,
-          name: "Elcar",
-          adress: "Kharkiv 22 A",
-          description: "Best Station in Kharkiv",
-        },
-        {
-          stationID: 12,
-          name: "Elcar",
-          adress: "Kharkiv 22 A",
-          description: "Best Station in Kharkiv",
-        },
-      ],
-      users: [
-        {
-          userID: 1,
-          name: "Alexey",
-          surname: "Trofimneko",
-          number: "+38092342342",
-          email: "master222@gmail.com",
-          birthday: "18.10.2001",
-          isActive: "Active",
-        },
-        {
-          userID: 2,
-          name: "Alexey",
-          surname: "Trofimneko",
-          number: "+38092342342",
-          email: "master222@gmail.com",
-          birthday: "18.10.2001",
-          isActive: "Active",
-        },
-        {
-          userID: 3,
-          name: "Alexey",
-          surname: "Trofimneko",
-          number: "+38092342342",
-          email: "master222@gmail.com",
-          birthday: "18.10.2001",
-          isActive: "Active",
-        },
+        
       ],
     };
   },
   methods: {
+    createStation() {
+      Sation.createStation(this.formStation)
+        .then(() => {
+          this.$router.push('/Profile');
+        })
+        
+    },
+    getAddModelInput() {
+      let addObject = {}
+       for (const key in this.currentTable[0]) {
+         let inputId = key + "Input";
+         addObject[key] = document.getElementById(inputId).value;
+       }
+       Station.createStation(addObject)
+       console.log(addObject)
+    },
+
     changeTable() {
       if (this.userRole == "Admin") {
         let table = document.getElementById("selectTableDB").value;
