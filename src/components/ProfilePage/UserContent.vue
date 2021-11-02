@@ -4,6 +4,9 @@
     class="profile-info"
     v-if="this.userItemID == 1 && this.userRole == 'User'"
   >
+    <div class="success-update-data-modal" id="successDataUpdateModal">
+      <p>Данные успешно обновлены</p>
+    </div>
     <div class="welcoming-image">
       <p class="welcoming-user-text" v-if="user">Hello, {{ user.name }}</p>
     </div>
@@ -76,8 +79,10 @@
         </div>
         <my-button
           type="button"
-          class="save-user-info is-not-active-btn"
+          class="save-user-info"
+          :class="{ 'is-not-active-btn': !this.isActiveSaveBtn }"
           @click.prevent="updateUser"
+          id="saveUserDataChanges"
           >Сохранить</my-button
         >
       </div>
@@ -152,7 +157,9 @@
       <div class="close-detailed-contenet" @click="closeDetailedView()">
         <img src="@/assets/closeCrossIcon.png" alt="" />
       </div>
-      <h3 class="opened-note-name">{{ "Запись " + this.viewNoteObj.noteId }}</h3>
+      <h3 class="opened-note-name">
+        {{ "Запись " + this.viewNoteObj.noteId }}
+      </h3>
       <div class="deteiled-note-head">
         <h3>Информация о записи</h3>
       </div>
@@ -190,10 +197,13 @@
 
           <div class="progress-note-status">
             <div class="progress-note">
-              <div class="progress-item" v-bind:class="{
-                    'success-status-item':
-                      this.viewNoteObj.statusHistory.includes('Успешно записан'),
-                  }">
+              <div
+                class="progress-item"
+                v-bind:class="{
+                  'success-status-item':
+                    this.viewNoteObj.statusHistory.includes('Успешно записан'),
+                }"
+              >
                 <div class="progress-head-name">
                   <p>Запись</p>
                 </div>
@@ -212,10 +222,13 @@
                 </div>
               </div>
               <div class="progress-circle-divider"></div>
-              <div class="progress-item" v-bind:class="{
-                    'success-status-item':
-                      this.viewNoteObj.statusHistory.includes('Выполнение услуг'),
-                  }">
+              <div
+                class="progress-item"
+                v-bind:class="{
+                  'success-status-item':
+                    this.viewNoteObj.statusHistory.includes('Выполнение услуг'),
+                }"
+              >
                 <div class="progress-head-name">
                   <p>Выполнение услуг</p>
                 </div>
@@ -233,11 +246,14 @@
                   </div>
                 </div>
               </div>
-               <div class="progress-circle-divider"></div>
-              <div class="progress-item" v-bind:class="{
-                    'success-status-item':
-                      this.viewNoteObj.statusHistory.includes('Оплата'),
-                  }">
+              <div class="progress-circle-divider"></div>
+              <div
+                class="progress-item"
+                v-bind:class="{
+                  'success-status-item':
+                    this.viewNoteObj.statusHistory.includes('Оплата'),
+                }"
+              >
                 <div class="progress-head-name">
                   <p>Оплата</p>
                 </div>
@@ -254,10 +270,13 @@
                 </div>
               </div>
               <div class="progress-circle-divider"></div>
-              <div class="progress-item" v-bind:class="{
-                    'success-status-item':
-                      this.viewNoteObj.statusHistory.includes('Закрыта'),
-                  }">
+              <div
+                class="progress-item"
+                v-bind:class="{
+                  'success-status-item':
+                    this.viewNoteObj.statusHistory.includes('Закрыта'),
+                }"
+              >
                 <div class="progress-head-name">
                   <p>Закрыта</p>
                 </div>
@@ -423,7 +442,7 @@
         <div class="services-control-btn-block">
           <div class="total-cost-block">
             <h2 @click="this.getTotalServicesCost()">
-              Общая сумма - {{ this.totalAddNoteServicesCost + "грн"}} 
+              Общая сумма - {{ this.totalAddNoteServicesCost + "грн" }}
             </h2>
           </div>
           <div class="control-block">
@@ -589,6 +608,7 @@
 import User from "@/apis/User";
 import MyButton from "../UI/MyButton.vue";
 import MyGridItem from "../UI/MyGridItem.vue";
+import { defaults } from "chart.js";
 
 export default {
   components: { MyGridItem, MyButton },
@@ -604,10 +624,9 @@ export default {
     user: {
       type: Object,
       required: true,
-    }
+    },
   },
-  mounted() {
-  },
+  mounted() {},
   data() {
     return {
       /* ========= Профиль пользователя ========= */
@@ -616,9 +635,10 @@ export default {
         surname: this.user.surname,
         phone: this.user.phone,
         email: this.user.email,
-        password: this.user.password,
+        password: "",
       },
       errors: [],
+      isActiveSaveBtn: false,
 
       /* ========= Записи пользователя ========= */
       noteStatus: [
@@ -911,6 +931,19 @@ export default {
     /* ========= Профиль пользователя ========= */
     updateUser() {
       User.updateUser(this.UserUpdate)
+        .then((response) => {
+          if (response.status == 200) {
+            document
+              .getElementById("successDataUpdateModal")
+              .classList.add("success-update-data-modal-active");
+
+            setTimeout(() => {
+              document
+                .getElementById("successDataUpdateModal")
+                .classList.remove("success-update-data-modal-active");
+            }, 3000);
+          }
+        })
         .then(() => {
           this.$router.push("/Profile");
         })
@@ -918,8 +951,9 @@ export default {
           if (error.response.status === 422) {
             this.errors = error.response.data.errors;
           }
+          console.log(error);
         });
-        this.$emit("updateUserData");
+      this.$emit("updateUserData");
     },
 
     /* ========= Записи пользователя ========= */
@@ -1154,6 +1188,29 @@ export default {
 </script>
 
 <style>
+.success-update-data-modal {
+  padding: 20px 30px;
+  position: absolute;
+  top: 30px;
+  text-align: center;
+  border: 2px solid #6fa86e;
+  background: #c0f1bf;
+  color: #6fa86e;
+  border-radius: 8px;
+  z-index: 4;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.success-update-data-modal-active {
+  display: block;
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+
 .welcoming-image {
   height: 175px;
   position: relative;
@@ -1562,8 +1619,16 @@ export default {
   margin: 20px 0;
 }
 
-.add-note-services-table .table-body .row:nth-child(2n + 1) .service-field select,
-.add-note-services-table .table-body .row:nth-child(2n + 1) .service-cost input {
+.add-note-services-table
+  .table-body
+  .row:nth-child(2n + 1)
+  .service-field
+  select,
+.add-note-services-table
+  .table-body
+  .row:nth-child(2n + 1)
+  .service-cost
+  input {
   background: #c4c4c4;
 }
 
@@ -1582,7 +1647,7 @@ export default {
 }
 .table-block {
   border: 1px solid gray;
-    border-radius: 5px;
+  border-radius: 5px;
   height: 200px;
   background: #fff;
   margin-bottom: 10px;
@@ -1871,7 +1936,7 @@ export default {
     flex-direction: column;
   }
 
-  /* Детальный просмотр записей */  
+  /* Детальный просмотр записей */
 }
 
 @media screen and (max-width: 1120px) {
@@ -2023,7 +2088,9 @@ export default {
   .progress-circle-divider {
     margin-top: 57px;
   }
-  .deteiled-note-status h3, .drop-down-head h3, .result-price-block h3 {
+  .deteiled-note-status h3,
+  .drop-down-head h3,
+  .result-price-block h3 {
     font-size: 15px;
   }
 
@@ -2031,7 +2098,7 @@ export default {
     font-size: 12px;
   }
 
-  .google-pay-button button{
+  .google-pay-button button {
     width: 100%;
     justify-content: center;
     padding: 12px 0;
@@ -2068,7 +2135,7 @@ export default {
     height: 20px;
   }
 
-  .note-item .note-content-list li{
+  .note-item .note-content-list li {
     font-size: 14px;
   }
 }
@@ -2096,7 +2163,7 @@ export default {
   }
 
   .note-info-table .note-info-line p {
-    font-size: 10px
+    font-size: 10px;
   }
 
   /* Добавление транспорта пользователя */
