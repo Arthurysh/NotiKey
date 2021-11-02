@@ -12,9 +12,9 @@
       <div class="user-image">
         <img src="@/assets/testUserPhoto.png" alt="" />
       </div>
-      <div class="user-info-block" v-if="user">
-        <p class="user-name">{{ user.name }} {{ user.surname }}</p>
-        <p class="user-email">{{ user.email }}</p>
+      <div class="user-info-block">
+        <p class="user-name">{{ this.user.name }} {{ this.user.surname }}</p>
+        <p class="user-email">{{ this.user.email }}</p>
       </div>
     </div>
     <sidebar-menu
@@ -32,13 +32,9 @@ import SidebarMenu from "@/components/ProfilePage/SidebarMenu.vue";
 export default {
   data() {
     return {
-      user: null
     }
   },
   mounted() {
-     User.auth().then(response => {
-       this.user = response.data;
-     });
   },
   components: { SidebarMenu },
   props: {
@@ -46,6 +42,10 @@ export default {
       type: String,
       required: true,
     },
+    user: {
+      type: Object,
+      required: true,
+    }
   },
   methods: {
     sendActiveItemId(itemMenuID) {

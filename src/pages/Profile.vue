@@ -2,6 +2,7 @@
   <div class="profile">
     <sidebar-panel
       :userRole="userRole"
+      :user="user"
       @activatedId="outArr"
       class="sidebar"
     ></sidebar-panel>
@@ -10,7 +11,7 @@
       :userRole="userRole"
       :userItemID="idCurrentItem"
       :user="user"
-      @updateUserData="getUserData()"
+      @updateUserData="updateUserData()"
       class="profile-content"
     ></profile-content>
   </div>
@@ -27,28 +28,25 @@ export default {
     return {
       userRole: null,
       idCurrentItem: 1,
-      user: this.getUserData(),
+      user: this.updateUserData(),
     };
   },
   methods: {
     outArr(itemMenuID) {
       this.idCurrentItem = itemMenuID;
     },
-    getUserRole(role) {
-      this.userRole = role;
-    },
 
     async getUserData() {
       await User.auth().then(response => {
-      this.getUserRole(response.data.user_role);
+      this.userRole = response.data.user_role;
       this.user = response.data;
      });
+    },
+
+    updateUserData() {
+      this.getUserData()
     }
   },
-  // mounted: async function () {
-  //     await this.getUserData()
-  //    this.getUserRole()
-  // },
 };
 </script>
 
