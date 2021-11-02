@@ -81,7 +81,7 @@
             <td class="row-panel">
               <div class="row-control">
                 <div class="edit-icon" @click="activeEditModal(elem)"></div>
-                <div class="delete-icon"></div>
+                <div class="delete-icon" @click.prevent="deleteStation()"></div>
               </div>
             </td>
           </tr>
@@ -178,20 +178,27 @@ export default {
       isModalOpen: false,
       modalEdit: false,
       editObj: {},
-      station: [
-        {
-          stationID: 1,
-          name: "Elcar",
-          adress: "Kharkiv 22 A",
-          description: "Best Station in Kharkiv",
-        },
-        
-      ],
+      station: this.getStation(),
+      deleteItem: {
+        stationID: 6,
+      },
     };
   },
   methods: {
+    deleteStation() {
+         Station.delete(deleteItem);
+    },
+    async getStation() {
+      await Station.viewList().then(response => {
+      this.station = response.data;
+     });
+    },
+    updateStationData() {
+      this.getStation()
+    },
+  
     createStation() {
-      Sation.createStation(this.formStation)
+      Station.createStation(this.formStation)
         .then(() => {
           this.$router.push('/Profile');
         })
@@ -203,8 +210,7 @@ export default {
          let inputId = key + "Input";
          addObject[key] = document.getElementById(inputId).value;
        }
-       Station.createStation(addObject)
-       console.log(addObject)
+       Station.createStation(addObject);
     },
 
     changeTable() {
