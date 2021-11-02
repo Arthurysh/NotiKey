@@ -1,7 +1,7 @@
 <template>
   <div class="profile-container">
     <!-- Интерфейсы пользователя -->
-    <user-content :userItemID="userItemID" :userRole="userRole"></user-content>
+    <user-content @updateUserData="sendEventUserDataUpdate()" :userItemID="userItemID" :userRole="userRole" :user="user"></user-content>
     <!-- Интерфейсы администратора -->
     <admin-content
       :userItemID="userItemID"
@@ -34,11 +34,19 @@ export default {
       type: String,
       required: true,
     },
+    user: {
+      type: Object,
+      required: true,
+    }
   },
   data() {
     return {};
   },
-  methods: {},
+  methods: {
+    sendEventUserDataUpdate() {
+      this.$emit("updateUserData");
+    }
+  },
 };
 </script>
 

@@ -154,6 +154,7 @@ export default {
         email: "",
         password: "",
         password_confirmation: "",
+        user_role: "User",
       },
       errors: [],
 
