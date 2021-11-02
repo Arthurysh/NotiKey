@@ -16,7 +16,7 @@
             :placeholderValue="Name"
             id="nameField"
             @input="UserUpdate.name = $event.target.value"
-            :value="user.name"
+            :value="UserUpdate.name"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
             {{ errors.name[0] }}
@@ -28,7 +28,7 @@
             :placeholderValue="'Фамилия'"
             id="surnameField"
             @input="UserUpdate.surname = $event.target.value"
-            :value="user.surname"
+            :value="UserUpdate.surname"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
             {{ errors.surname[0] }}
@@ -40,7 +40,7 @@
             :placeholderValue="'Телефон'"
             id="phoneField"
             @input="UserUpdate.phone = $event.target.value"
-            :value="user.phone"
+            :value="UserUpdate.phone"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
             {{ errors.phone[0] }}
@@ -52,7 +52,7 @@
             :placeholderValue="'Почта'"
             id="emailField"
             @input="UserUpdate.email = $event.target.value"
-            :value="user.email"
+            :value="UserUpdate.email"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
             {{ errors.email[0] }}
@@ -73,7 +73,7 @@
             :placeholderValue="'Пароль'"
             id="passwordField"
             @input="UserUpdate.password = $event.target.value"
-            :value="user.password"
+            :value="UserUpdate.password"
           ></my-input>
           <span class="text-danger" v-if="errors.surname">
             {{ errors.password[0] }}
