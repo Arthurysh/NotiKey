@@ -2,8 +2,10 @@
   <div class="sidebar-container">
     <div class="bread-crumbs">
       <div class="bread-crumb back-main-page">
-        <router-link to="/">
-        <img src="@/assets/backArrowProfile.png" alt="" />
+        <router-link class="back-link-profile" to="/">
+          <div class="back-wrap-arrow">
+            <img src="@/assets/backArrowProfile.png" alt="" />
+          </div>
           <a class="on-main-link" href="#">На главную</a>
           </router-link>
       </div>
@@ -61,6 +63,16 @@ a {
   color: #000;
 }
 
+.back-link-profile {
+  display: flex; 
+  align-items: center;
+}
+
+
+.back-wrap-arrow img {
+  margin-top: 3px;
+}
+
 .bread-crumbs {
   margin-bottom: 36px;
 }
@@ -109,7 +121,7 @@ a {
 .back-main-page img {
   width: 10px;
   margin-right: 8px;
-  transition: all 0.5s ease;
+  transition: left 0.5s ease;
   left: 0px;
 }
 
@@ -131,6 +143,10 @@ a {
 
   .user-profile-block .user-email {
     display: none;
+  }
+
+  .user-profile-block {
+    flex-direction: column;
   }
 }
 

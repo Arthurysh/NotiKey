@@ -251,17 +251,17 @@
                 class="progress-item"
                 v-bind:class="{
                   'success-status-item':
-                    this.viewNoteObj.statusHistory.includes('Оплата'),
+                    this.viewNoteObj.statusHistory.includes('Готово к оплате'),
                 }"
               >
                 <div class="progress-head-name">
-                  <p>Оплата</p>
+                  <p>Готово к<br> оплате</p>
                 </div>
                 <div
                   class="progress-circle"
                   v-bind:class="{
                     'progress-circle-success':
-                      this.viewNoteObj.statusHistory.includes('Оплата'),
+                      this.viewNoteObj.statusHistory.includes('Готово к оплате'),
                   }"
                 >
                   <div class="progress-circle-img-wrap">
@@ -352,6 +352,7 @@
                   <input
                     type="checkbox"
                     @change="includeAdditionalService(addService.name)"
+                    :checked="addService.include ? true : false"
                   />
                 </div>
               </li>
@@ -366,11 +367,19 @@
             {{ this.getTotalNoteServicesCost() + "грн" }}
           </h3>
         </div>
-        <div class="google-pay-button">
+        <div class="pay-note-block"  v-if="this.viewNoteObj.status == 'Готово к оплате'">
+          <my-select
+                class="pay-user-station-discount"
+                :arrData="brandData"
+                :plug="'Доступные скидки'"
+                id="add-car-select"
+              ></my-select>
+              <div class="google-pay-button">
           <my-button class="google-pay-button">
             <img src="@/assets/google-pay.png" alt="" />
             Оплатить с помощью google pay
           </my-button>
+        </div>
         </div>
       </div>
     </div>
@@ -380,80 +389,136 @@
       <div class="close-detailed-contenet" @click="closeAddNote()">
         <img src="@/assets/closeCrossIcon.png" alt="" />
       </div>
-      <h2>Добавление записи</h2>
+      <h2 class="add-note-head">Добавление записи</h2>
       <div class="add-head-select-block">
         <h2>Информация о записи</h2>
-        <div class="add-select-block">
-          <my-select
-            class="add-choose-sto"
-            :arrData="brandData"
-            :plug="'Станция СТО'"
-            id="add-sto-select"
-          ></my-select>
-          <my-select
-            class="add-choose-date"
-            :arrData="brandData"
-            :plug="'Дата'"
-            id="add-date-select"
-          ></my-select>
-          <my-select
-            class="add-choose-car"
-            :arrData="brandData"
-            :plug="'Машина'"
-            id="add-car-select"
-          ></my-select>
-          <my-select
-            class="add-choose-time"
-            :arrData="brandData"
-            :plug="'Время'"
-            id="add-time-select"
-          ></my-select>
+        <div class="note-info-table note-add-info-table">
+          <div class="note-info-line">
+            <div class="note-info-line-inner">
+              <p class="characteristic-name">Номер</p>
+              <p style="padding-right: 35px;">Запись {{this.userNotes.length + 1}}</p>
+            </div>
+          </div>
+          <div class="note-info-line">
+            <div class="note-info-line-inner">
+              <p class="characteristic-name">Станция</p>
+              <my-select
+                class="add-choose-sto"
+                :arrData="brandData"
+                :plug="'Станция СТО'"
+                id="add-sto-select"
+              ></my-select>
+            </div>
+          </div>
+          <div class="note-info-line">
+            <div class="note-info-line-inner">
+              <p class="characteristic-name">Машина</p>
+              <my-select
+                class="add-choose-car"
+                :arrData="brandData"
+                :plug="'Машина'"
+                id="add-car-select"
+              ></my-select>
+            </div>
+          </div>
+          <div class="note-info-line">
+            <div class="note-info-line-inner">
+              <p class="characteristic-name">Дата</p>
+              <my-select
+                class="add-choose-date"
+                :arrData="brandData"
+                :plug="'Дата'"
+                id="add-date-select"
+              ></my-select>
+            </div>
+          </div>
+          <div class="note-info-line">
+            <div class="note-info-line-inner">
+              <p class="characteristic-name">Время</p>
+              <my-select
+                class="add-choose-time"
+                :arrData="brandData"
+                :plug="'Время'"
+                id="add-time-select"
+              ></my-select>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="modal-services">
-        <div class="modal-head">
-          <h3>Выберите услуги</h3>
-        </div>
-        <div class="table-block add-note-services-table" id="service-table">
-          <div class="row row-head">
-            <div class="service-field">
-              <p>Услуга</p>
-            </div>
-            <div class="service-cost">
-              <p>Стоимость</p>
-            </div>
+      <div class="note-add-station-settings">
+        <div class="station-location-map">
+          <div class="map-station-head">
+            <h3>Адресс</h3>
           </div>
-          <div class="table-body">
-            <div class="row" v-for="elem in userServices" :key="elem">
+          <GMapMap
+            :center="center"
+            :zoom="7"
+            map-type-id="terrain"
+            style="width: 100%; height: 20rem"
+          >
+            <GMapCluster >
+              <GMapMarker
+                :key="index"
+                v-for="(m, index) in markers"
+                :position="m.position"
+                :clickable="true"
+                :draggable="true"
+                @click="center = m.position"
+              />
+            </GMapCluster>
+          </GMapMap>
+        </div>
+        <div class="modal-services">
+          <div class="modal-head">
+            <h3>Выберите услуги</h3>
+          </div>
+          <div class="table-block add-note-services-table" id="service-table">
+            <div class="row row-head">
               <div class="service-field">
-                <my-select
-                  :arrData="getServiceArray()"
-                  :plug="'Выбрать услугу'"
-                  id="selectDateField"
-                  @change="getServiceCost($event, elem)"
-                ></my-select>
+                <p>Услуга</p>
               </div>
               <div class="service-cost">
-                <input type="text" :id="'service-cost-input' + elem" readonly />
+                <p>Стоимость</p>
+              </div>
+            </div>
+            <div class="table-body">
+              <div class="row" v-for="elem in userServices" :key="elem">
+                <div class="service-field">
+                  <my-select
+                    :arrData="getServiceArray()"
+                    :plug="'Выбрать услугу'"
+                    id="selectDateField"
+                    @change="getServiceCost($event, elem)"
+                  ></my-select>
+                </div>
+                <div class="service-cost">
+                  <input
+                    type="text"
+                    :id="'service-cost-input' + elem"
+                    readonly
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="services-control-btn-block">
-          <div class="total-cost-block">
-            <h2 @click="this.getTotalServicesCost()">
-              Общая сумма - {{ this.totalAddNoteServicesCost + "грн" }}
-            </h2>
+          <div class="services-control-btn-block">
+            <div class="total-cost-block">
+              <h2 @click="this.getTotalServicesCost()">
+                Общая сумма - {{ this.totalAddNoteServicesCost + "грн" }}
+              </h2>
+            </div>
+            <div class="control-block add-service-into-note-control">
+              <button @click="addServiceRow()" id="addRow">
+                <img src="@/assets/plusIcon.png" alt="plus" />
+              </button>
+              <button id="deletRow" @click="deleteService()">
+                <img src="@/assets/crossIcon.png" alt="cross" />
+              </button>
+            </div>
           </div>
-          <div class="control-block">
-            <button @click="addServiceRow()" id="addRow">
-              <img src="@/assets/plusIcon.png" alt="plus" />
-            </button>
-            <button id="deletRow" @click="deleteService()">
-              <img src="@/assets/crossIcon.png" alt="cross" />
-            </button>
-          </div>
         </div>
+      </div>
+      <div class="add-note-btn-block">
         <my-button>Записаться</my-button>
       </div>
     </div>
@@ -651,7 +716,7 @@ export default {
           color: "#FFD15A",
         },
         {
-          name: "Оплата",
+          name: "Готово к оплате",
           color: "#C8FFAE",
         },
         {
@@ -693,8 +758,8 @@ export default {
         },
         {
           noteId: 2,
-          status: "Оплата",
-          statusHistory: ["Успешно записан", "Выполнение услуг", "Оплата"],
+          status: "Готово к оплате",
+          statusHistory: ["Успешно записан", "Выполнение услуг", "Готово к оплате"],
           additionalServices: [
             {
               name: "Чистка Стекла",
@@ -778,7 +843,7 @@ export default {
           statusHistory: [
             "Успешно записан",
             "Выполнение услуг",
-            "Оплата",
+            "Готово к оплате",
             "Закрыта",
           ],
           additionalServices: [
@@ -822,6 +887,7 @@ export default {
       viewNoteObj: {},
       isDetaileNoteListActive: true,
       isRecommendedServiceActive: true,
+      totalServiceNoteCost: 0,
 
       /* Добавление записи пользователя */
       userServices: 0,
@@ -1020,7 +1086,8 @@ export default {
         }
       }
 
-      return sum;
+      this.totalServiceNoteCost = sum;
+      return this.totalServiceNoteCost;
     },
     includeAdditionalService(additionalServiceName) {
       this.viewNoteObj.additionalServices.forEach((element) => {
@@ -1187,7 +1254,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .success-update-data-modal {
   padding: 20px 30px;
   position: absolute;
@@ -1385,6 +1452,9 @@ export default {
   border-radius: 20px;
 }
 /* Записи пользователя детальней */
+.detailed-note-info {
+  position: relative;
+}
 
 .deteiled-note-head h3 {
   text-align: center;
@@ -1512,7 +1582,7 @@ export default {
 }
 
 .progress-note .progress-item {
-  width: 80px;
+  width: 64px;
   margin: 0 10px;
   text-align: center;
   display: flex;
@@ -1524,6 +1594,7 @@ export default {
 .progress-item .progress-head-name {
   color: #5b5b5b;
   font-weight: bold;
+  font-size: 14px;
 }
 
 .progress-item .progress-circle {
@@ -1590,6 +1661,9 @@ export default {
 }
 
 /* Добавление записи пользователя */
+.add-note {
+  position: relative;
+}
 
 .add-select-block {
   display: flex;
@@ -1632,17 +1706,33 @@ export default {
   background: #c4c4c4;
 }
 
+.table-block.add-note-services-table {
+  overflow: normal;
+}
+
+.table-block.add-note-services-table .table-body {
+  height: 178px;
+  overflow-y: scroll;
+}
+
+.table-block.add-note-services-table {
+  height: 212px;
+}
+
 .total-cost-block {
   font-size: 14px;
 }
 
 .modal-services {
-  justify-content: center;
-  width: 50%;
   height: 350px;
-  margin: 0 auto;
 }
-.modal-head {
+
+.station-location-map,
+.modal-services {
+  width: 48%;
+}
+.modal-head,
+.map-station-head {
   margin-bottom: 20px;
 }
 .table-block {
@@ -1694,6 +1784,7 @@ export default {
 .services-control-btn-block {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .services-control-btn-block button {
@@ -1739,6 +1830,40 @@ export default {
   color: #fff;
 }
 
+.note-add-info-table .note-info-line:nth-child(2n + 1) select {
+  background: #c4c4c4;
+}
+
+.note-add-info-table .note-info-line select {
+  border: none;
+  outline: none;
+  padding: 0 5px 0 0;
+  width: 90px;
+}
+
+.vue-map {
+  min-height: 17rem;
+  border: 3px solid #000;
+  border-radius: 5px;
+}
+
+.vue-map-container {
+  min-height: 16rem !important;
+}
+
+.note-add-station-settings {
+  display: flex;
+  justify-content: space-between;
+}
+
+.add-note-btn-block {
+  display: flex;
+  justify-content: center;
+}
+
+.pay-note-block select {
+  margin-bottom: 10px;
+}
 /* Транспорт пользователя */
 
 .car-item {
@@ -1807,6 +1932,10 @@ export default {
 
 /* Транспорт пользователя детальней */
 
+.detailed-car-info {
+  position: relative;
+}
+
 .detailed-car-info-content {
   position: relative;
   display: flex;
@@ -1852,8 +1981,8 @@ export default {
 
 .close-detailed-contenet {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: -4px;
+  right: 0px;
   width: 30px;
   height: 30px;
   cursor: pointer;
@@ -1876,6 +2005,9 @@ export default {
 }
 
 /* Добавление транспорта */
+.add-car {
+  position: relative;
+}
 
 .add-car-header {
   text-align: center;
@@ -1932,16 +2064,19 @@ export default {
     margin: 0 auto;
   }
 
-  .user-profile-block {
-    flex-direction: column;
-  }
-
   /* Детальный просмотр записей */
 }
 
 @media screen and (max-width: 1120px) {
   .note-item .note-content-list li {
     font-size: 16px;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+    /* Добаление записи пользователя */
+  .table-block.add-note-services-table .table-body {
+    display: block;
   }
 }
 
@@ -1976,6 +2111,17 @@ export default {
     justify-content: space-between;
     margin-left: 0;
   }
+      /* Добаление записи пользователя */
+  .note-add-station-settings {
+    flex-direction: column;
+  }
+  .station-location-map,
+.modal-services {
+  width: 100%;
+}
+  .station-location-map {
+    margin-bottom: 20px;
+  }
 }
 
 @media screen and (max-width: 850px) {
@@ -1985,10 +2131,16 @@ export default {
   .filter-search {
     margin-bottom: 10px;
     width: 100%;
+    justify-content: space-between;
   }
   .filter-search select,
   .filter-search input {
-    flex-basis: 50%;
+    flex-basis: 48%;
+    margin-right: 0;
+
+  }
+  .right-sort select {
+    margin-right: 0;
   }
 
   /* Добаление транспорта пользователя */
@@ -2113,6 +2265,19 @@ export default {
   .services-characteristic-value {
     max-width: 127px;
   }
+  /* Добаление записи пользователя */
+  .note-add-station-settings .map-station-head,
+  .note-add-station-settings .modal-head {
+        font-size: 14px;
+  }
+
+  .note-add-station-settings .modal-services .total-cost-block h2{
+    font-size: 18px;
+  }
+
+  .add-note h2 {
+    font-size: 21px;
+  }
 }
 @media screen and (max-width: 450px) {
   .filter-search {
@@ -2167,6 +2332,9 @@ export default {
   }
 
   /* Добавление транспорта пользователя */
+  .add-car {
+    position: relative;
+  }
   .car-info-line .car-info-line-inner {
     padding: 10px 20px;
   }
@@ -2192,8 +2360,31 @@ export default {
   .add-car .close-detailed-contenet {
     width: 25px;
     height: 25px;
-    top: 16px;
-    right: 12px;
+    top: -4px;
+    right: 0;
+  }
+  /* Добаление записи пользователя */
+  .note-add-station-settings .modal-services .services-control-btn-block {
+    flex-direction: column-reverse;
+  }
+  .add-service-into-note-control {
+    display: flex;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .add-service-into-note-control button{
+    flex-basis: 50%;
+  } 
+  .add-note-btn-block button{
+    width: 100%;
+  }
+  .add-note .add-note-head {
+    text-align: left;
+    font-size: 16px;
+  }
+  .add-head-select-block h2{
+    font-size: 14px;
   }
 }
 </style>

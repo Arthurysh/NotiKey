@@ -20,6 +20,10 @@ export default {};
   margin-right: 0;
 }
 
+.grid-item:hover {
+  box-shadow: 0px 0px 11px 0px rgb(34 60 80 / 20%);
+}
+
 @media screen and (max-width: 872px) {
   .grid-item {
     flex-basis: calc((100% - 30px) / 2);

@@ -65,9 +65,10 @@
           :center="center"
           :zoom="7"
           map-type-id="terrain"
-          style="width: 100%; height: 20rem"
+          style="width: 100%; height: 20rem;"
+          :options="options"
         >
-          <GMapCluster>
+          <GMapCluster >
             <GMapMarker
               :key="index"
               v-for="(m, index) in markers"
@@ -251,9 +252,13 @@ export default {
 }
 
 .input-wrap input,
-select {
+.input-wrap select {
   width: 100%;
+  border-radius: 5px;
+  border: solid 1px#484848;
 }
+
+
 
 .form-btn-block {
   text-align: center;
@@ -314,6 +319,10 @@ select {
   background: rgb(189, 189, 189);
   margin-bottom: 10px;
   overflow: scroll;
+}
+
+.table-block .table-body {
+  display: block;
 }
 
 .table-block .row {
@@ -411,12 +420,6 @@ input {
 
 .saveUserServices:hover {
   background: #006be0;
-}
-
-.vue-map {
-  min-height: 22rem !important;
-  border: 3px solid #000;
-  border-radius: 5px;
 }
 
 .circle-right-note,

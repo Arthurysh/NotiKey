@@ -647,8 +647,9 @@ export default {
     flex-direction: column;
   }
 
-  .control-left-panel select {
+  .tables-content .control-left-panel select {
     margin-bottom: 10px;
+    margin-right: 0;
   }
 
   .add-edit-modal {
