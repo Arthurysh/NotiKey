@@ -27,13 +27,14 @@
           :placeholderValue="property"
           :id="property + 'Input'"
           :value="this.editObj[property]"
+          @change="this.editObj[property] = $event.target.value"
         ></my-input>
       </div>
       <div class="btn-container" v-show="!modalEdit">
         <my-button class="add-table-note-btn" @click.prevent="getAddModelInput()">Добавить</my-button>
       </div>
       <div class="btn-container" v-show="modalEdit">
-        <my-button class="add-table-note-btn">Сохранить</my-button>
+        <my-button class="add-table-note-btn" @click.prevent="updateIdStation(editObj)">Сохранить</my-button>
       </div>
     </div>
   </my-modal>
@@ -81,7 +82,7 @@
             <td class="row-panel">
               <div class="row-control">
                 <div class="edit-icon" @click="activeEditModal(elem)"></div>
-                <div class="delete-icon" @click.prevent="deleteStation()"></div>
+                <div class="delete-icon" @click.prevent="deleteIdStation(elem)" ></div>
               </div>
             </td>
           </tr>
@@ -179,15 +180,36 @@ export default {
       modalEdit: false,
       editObj: {},
       station: this.getStation(),
-      deleteItem: {
-        stationID: 6,
-      },
     };
   },
   methods: {
-    deleteStation() {
-         Station.delete(deleteItem);
+     deleteIdStation(elem) {
+      let elemId;
+
+      switch (document.getElementById("selectTableDB").value) {
+        case "Пользователи": 
+        this.elemId = elem.id; 
+        break;
+        case "Станции": 
+        this.elemId = elem.stationID; 
+        break;
+        case "Записи": 
+        this.elemId = elem.notesID; 
+        break;
+        case "Транспорт": 
+        this.elemId = elem.carsID; 
+        break;
+      }  
+      let idElementSection = {
+         Id: this.elemId,
+       };
+       Station.delete(idElementSection);
     },
+
+     updateIdStation(editObj) {
+     Station.editStation(editObj);    
+      },
+
     async getStation() {
       await Station.viewList().then(response => {
       this.station = response.data;
@@ -196,20 +218,13 @@ export default {
     updateStationData() {
       this.getStation()
     },
-  
-    createStation() {
-      Station.createStation(this.formStation)
-        .then(() => {
-          this.$router.push('/Profile');
-        })
-        
-    },
     getAddModelInput() {
       let addObject = {}
        for (const key in this.currentTable[0]) {
          let inputId = key + "Input";
          addObject[key] = document.getElementById(inputId).value;
        }
+       this.closeModal();
        Station.createStation(addObject);
     },
 

@@ -8,8 +8,13 @@ export default {
   viewList() {
     return Api.get("/stationInfo");
   },
-  delete(deleteItem) {
-    return Api.post("/deleteStation", deleteItem);
+  delete(deleteIdStation) {
+    return Api.post("/deleteStation", deleteIdStation);
+
   },
+  editStation(updateInfoStation) {
+    return Api.post("/editStation", updateInfoStation);
+
+  }
 
 };
