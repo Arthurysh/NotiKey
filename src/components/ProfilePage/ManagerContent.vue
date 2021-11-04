@@ -67,9 +67,10 @@
         >
           <div class="user-info-line-inner">
             <p class="characteristic-name">{{ property }}</p>
-            <p class="characteristic-value" v-if="property != 'services'">
+            <!-- <p class="characteristic-value" v-if="property != 'services'">
               {{ value }}
-            </p>
+            </p> -->
+            <input class="user-characteristic-input" :type=" property != 'birthDate' ? 'text' : 'date'" :value="value" />
           </div>
         </div>
       </div>
@@ -383,13 +384,15 @@ export default {
   outline: none;
   padding: 10px;
   border-radius: 10px;
-  margin-right: 20px;
   padding-left: 10px;
   padding-right: 10px;
 }
 .filter-search {
   width: 80%;
   display: flex;
+}
+.filter-search select {
+  margin-right: 20px;
 }
 .filter-search input {
   flex-basis: 65%;
@@ -409,9 +412,10 @@ export default {
   flex-direction: column;
   transition: 0.3s;
   background: #ffd15a;
+    min-height: 158px;
 }
 .user-head {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 .user-content-list ul {
   color: #625e5e;
@@ -471,6 +475,7 @@ export default {
 .head-user-detailed-info {
   padding: 15px 0;
   text-align: center;
+  font-size: 14px;
 }
 .user-info-table {
   display: flex;
@@ -484,7 +489,11 @@ export default {
   font-size: 12px;
   font-weight: bold;
 }
-.user-info-line:nth-child(2n + 1) {
+.user-info-table .user-info-line input {
+  font-size: 12px;
+}
+
+.user-info-line:nth-child(2n + 1), .user-info-line:nth-child(2n + 1) input {
   background: #c4c4c4;
 }
 .user-info-line-inner {
@@ -492,6 +501,12 @@ export default {
   display: flex;
   padding: 10px 40px;
   justify-content: space-between;
+}
+.user-characteristic-input {
+  background: #fff;
+  border: none;
+  text-align: right;
+  outline: none;
 }
 .manager-user-car-list {
   padding: 20px;
@@ -620,7 +635,51 @@ export default {
   font-size: 12px;
   font-weight: bold;
 }
+
+@media screen and (max-width: 1000px) {
+  .car-item, .detailed-add-new-car {
+  flex-basis: calc((100% - 40px) / 3);
+  background: #fff;
+}
+.car-item:nth-child(3n + 3) {
+  margin-right: 0;
+}
+.car-item:nth-child(4n + 4) {
+  margin-right: 20px;
+}
+}
+
 @media screen and (max-width: 850px) {
+  .filter-panel {
+    flex-direction: column;
+  }
+  .filter-search {
+    margin-bottom: 10px;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .filter-search select,
+  .filter-search input {
+    flex-basis: 48%;
+    margin-right: 0;
+
+  }
+  .right-sort select {
+    margin-right: 0;
+  }
+
+  .car-item, .detailed-add-new-car {
+  flex-basis: calc((100% - 20px) / 2);
+  background: #fff;
+  }
+  .car-item:nth-child(3n + 3) {
+    margin-right: 20px;
+  }
+  .car-item:nth-child(4n + 4) {
+    margin-right: 0;
+  }
+
+
   .add-car-header {
     font-size: 12px;
   }
@@ -641,6 +700,59 @@ export default {
     width: 100%;
   }
 }
+
+@media screen and (max-width: 540px) {
+  .detailed-user-content h2 {
+    font-size: 16px;
+  }
+  .head-user-detailed-info h2{
+    font-size: 14px;
+  }
+  .car-item, .detailed-add-new-car {
+  flex-basis: 100%;
+  }
+  .car-item {
+    margin-right: 0px;
+  }
+  .car-item:nth-child(3n + 3) {
+    margin-right: 0;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  /* Просмотр клиентов */
+  .filter-search {
+    flex-direction: column;
+  }
+  .filter-search select {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+  .filter-panel select  {
+    width: 100%;
+  }
+  .filter-search input {
+    padding: 11px 10px;
+  }
+
+  .users-item .user-head {
+    font-size: 14px;
+  }
+
+  .users-item .user-content-list li {
+    font-size: 14px;
+  }
+
+  .users-head-content h2 {
+    font-size: 20px;
+  }
+
+  /* Детальный просмотр клиента */
+  .user-info-table .user-info-line input {
+    width: 80px;
+  }
+}
+
 @media screen and (max-width: 430px) {
   .add-car-header {
     font-size: 10px;
@@ -663,6 +775,10 @@ export default {
     padding: 15px 20px !important;
     width: 100% !important;
     font-size: 12px !important;
+  }
+    /* Детальный просмотр клиента */
+      .user-info-line .user-info-line-inner {
+    padding: 10px 20px;
   }
 }
 </style>
