@@ -241,7 +241,7 @@ export default {
         {
           idItem: 1,
           icon: "userIcon.png",
-          text: "Пользователи",
+          text: "Клиенты",
           color: "#6A69E0",
           isActive: true,
         },

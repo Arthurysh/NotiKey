@@ -2025,6 +2025,7 @@ export default {
 
 .add-image-car-model {
   width: 400px;
+  height: 250px;
 }
 
 .add-image-car-model img {
@@ -2190,6 +2191,7 @@ export default {
   /* Добавление транспорта пользователя */
   .add-image-car-model {
     width: 100%;
+    height: auto;
   }
 
   /* Транспорт пользователя детальней */
