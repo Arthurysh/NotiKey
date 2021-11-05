@@ -46,6 +46,16 @@
 .back-to-main-page a{
     padding-left: 5px;
 }
+@media screen and (min-width: 2720px) {
+  .left-side-block{
+    width: 80vw;
+}
+}
+@media screen and (min-width: 2390px) {
+  .left-side-block{
+    width: 78vw;
+}
+}
 @media screen and (max-width: 1240px) {
  .left-side-block{
     width: 70vw;

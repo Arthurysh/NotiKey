@@ -59,10 +59,11 @@
         </div>
         <div class="input-user-wrap">
           <my-input
-            value="2001.12.12"
             type="date"
             :placeholderValue="'Дата рождения'"
             id="birthdayField"
+            @input="UserUpdate.birthday = $event.target.value"
+            :value="UserUpdate.birthday"
           ></my-input>
         </div>
         <div class="input-user-wrap">
@@ -701,6 +702,7 @@ export default {
         phone: this.user.phone,
         email: this.user.email,
         password: "",
+        birthday: this.user.birthday,
       },
       errors: [],
       isActiveSaveBtn: false,
@@ -1241,7 +1243,7 @@ export default {
       this.selectModelValue = "";
     },
 
-    /* ========= Скижки пользователя ========= */
+    /* ========= Скидки пользователя ========= */
 
     closeAddView() {
       this.isAddActive = !this.isAddActive;

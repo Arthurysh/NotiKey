@@ -5,6 +5,9 @@
       <a href="#">На главную</a>
     </div>
     <div class="right-side-block">
+      <div class="success-update-data-modal" id="successDataUpdateModal">
+             <p>Вы успешно зарегистрировались</p>
+             </div>
       <div class="right-side-block-items">
         <div v-if="this.isElVisible">
           <div class="registration-block">
@@ -173,14 +176,25 @@ export default {
 
     register() {
       User.register(this.form)
-        .then(() => {
-          this.$router.push('/Authorization');
+        .then((response) => {
+          if (response.status == 200) {
+            document
+              .getElementById("successDataUpdateModal")
+              .classList.add("success-update-data-modal-active");
+
+            setTimeout(() => {
+              document
+                .getElementById("successDataUpdateModal")
+                .classList.remove("success-update-data-modal-active");
+            }, 3000);
+          }
         })
         .catch((error) => {
           if (error.response.status === 422) {
             this.errors = error.response.data.errors;
           }
         });
+        this.toggleElement()
     },
 
     login() {
@@ -201,6 +215,28 @@ export default {
 </script>
 
 <style>
+.success-update-data-modal {
+  padding: 20px 30px;
+  position: absolute;
+  top: 30px;
+  text-align: center;
+  border: 2px solid #6fa86e;
+  background: #c0f1bf;
+  color: #6fa86e;
+  border-radius: 8px;
+  z-index: 4;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.success-update-data-modal-active {
+  display: block;
+  opacity: 1;
+  transition: opacity 0.5s;
+}
 .right-side-block {
   width: 25vw;
   float: right;
@@ -265,6 +301,38 @@ export default {
 .text-danger{
   color: red;
   display: block;
+}
+@media screen and (min-width: 3000px) {
+  .input-registration-block input {
+  width: 400px;
+  height: 55px;
+  
+}
+.input-registration-block-button button {
+  width: 400px;
+  height: 55px;
+}
+.checkbox-registr input {
+  width: 20px;
+  height: 20px;
+  margin-left: -100px;
+
+}
+}
+@media screen and (min-width: 2720px) {
+  .right-side-block{
+    width: 20vw;
+}
+}
+@media screen and (max-width: 2720px) {
+  .right-side-block{
+    width: 20vw;
+}
+}
+@media screen and (max-width: 2390px) {
+  .right-side-block  {
+    width: 22vw;
+  }
 }
 @media screen and (max-width: 1240px) {
   .right-side-block {
