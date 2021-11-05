@@ -675,6 +675,7 @@ import User from "@/apis/User";
 import MyButton from "../UI/MyButton.vue";
 import MyGridItem from "../UI/MyGridItem.vue";
 import { defaults } from "chart.js";
+import Records from "@/apis/Records";
 
 export default {
   components: { MyGridItem, MyButton },
@@ -730,147 +731,7 @@ export default {
           color: "#FF9999",
         },
       ],
-      userNotes: [
-        {
-          noteId: 1,
-          status: "Выполнение услуг",
-          statusHistory: ["Успешно записан", "Выполнение услуг"],
-          additionalServices: [
-            {
-              name: "Чистка мотора",
-              price: 400,
-              include: false,
-            },
-            {
-              name: "Замена свечей",
-              price: 200,
-              include: false,
-            },
-          ],
-          services: [
-            {
-              name: "Починка двигателя",
-              price: 300,
-            },
-          ],
-          car: "Tesla Model S",
-          station: "Elcar",
-          date: "22.10.2022",
-          time: "22:30",
-        },
-        {
-          noteId: 2,
-          status: "Готово к оплате",
-          statusHistory: ["Успешно записан", "Выполнение услуг", "Готово к оплате"],
-          additionalServices: [
-            {
-              name: "Чистка Стекла",
-              price: 100,
-              include: false,
-            },
-            {
-              name: "Замена дверей",
-              price: 2200,
-              include: false,
-            },
-          ],
-          services: [
-            {
-              name: "Починка двигателя Про",
-              price: 500,
-            },
-          ],
-          car: "Tesla Model R",
-          station: "Elcar",
-          date: "22.10.2022",
-          time: "22:30",
-        },
-        {
-          noteId: 3,
-          status: "Просрочено",
-          statusHistory: [],
-          additionalServices: [
-            {
-              name: "Чистка мотора",
-              price: 400,
-              include: false,
-            },
-          ],
-          services: [
-            {
-              name: "Починка двигателя",
-              price: 300,
-              include: false,
-            },
-            {
-              name: "Починка бортового компьютера",
-              price: 300,
-              include: false,
-            },
-          ],
-          car: "Tesla Model G",
-          station: "Elcar",
-          date: "22.10.2022",
-          time: "22:30",
-        },
-        {
-          noteId: 4,
-          status: "Успешно записан",
-          statusHistory: ["Успешно записан"],
-          additionalServices: [
-            {
-              name: "Чистка мотора",
-              price: 400,
-              include: false,
-            },
-          ],
-          services: [
-            {
-              name: "Починка двигателя",
-              price: 300,
-            },
-            {
-              name: "Починка бортового компьютера",
-              price: 300,
-            },
-          ],
-          car: "Tesla Model S",
-          station: "Elcar",
-          date: "22.10.2022",
-          time: "22:30",
-        },
-        {
-          noteId: 5,
-          status: "Закрыта",
-          statusHistory: [
-            "Успешно записан",
-            "Выполнение услуг",
-            "Готово к оплате",
-            "Закрыта",
-          ],
-          additionalServices: [
-            {
-              name: "Чистка мотора",
-              price: 400,
-              include: false,
-            },
-          ],
-          services: [
-            {
-              name: "Починка двигателя",
-              price: 300,
-            },
-            {
-              name: "Починка бортового компьютера",
-              price: 300,
-            },
-          ],
-          car: "Tesla Model S",
-          station: "Elcar",
-          date: "22.10.2022",
-          time: "22:30",
-        },
-      ],
+      userNotes: this.updateNotes(),
       services: [
         {
           name: "Ушатать дверь",
@@ -996,6 +857,16 @@ export default {
   },
 
   methods: {
+    /* ========= Запииси ========= */
+  updateNotes() {
+    this.getRecords() 
+  },
+
+    async getRecords() {
+      await Records.viewList().then(response => {
+      this.userNotes = response.data;
+     });
+    },
     /* ========= Профиль пользователя ========= */
     updateUser() {
       User.updateUser(this.UserUpdate)

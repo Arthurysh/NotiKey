@@ -155,7 +155,8 @@
 import PieChart from "@/components/ProfilePage/AdminCharts/PieChart.vue";
 import BarChart from "@/components/ProfilePage/AdminCharts/BarChart.vue";
 import LineChart from "@/components/ProfilePage/AdminCharts/LineChart.vue";
-import Station from "@/apis/Station"
+import Station from "@/apis/Station";
+
 
 export default {
   components: { PieChart, BarChart, LineChart },
@@ -183,6 +184,7 @@ export default {
     };
   },
   methods: {
+    // ---- Station 
      deleteIdStation(elem) {
       let elemId;
 
@@ -204,10 +206,14 @@ export default {
          Id: this.elemId,
        };
        Station.delete(idElementSection);
+       setTimeout(function(){
+       window.location.reload();
+       }, 5);
     },
 
      updateIdStation(editObj) {
-     Station.editStation(editObj);    
+     Station.editStation(editObj); 
+     this.closeModal(); 
       },
 
     async getStation() {
@@ -218,6 +224,7 @@ export default {
     updateStationData() {
       this.getStation()
     },
+    // ----
     getAddModelInput() {
       let addObject = {}
        for (const key in this.currentTable[0]) {
@@ -226,6 +233,9 @@ export default {
        }
        this.closeModal();
        Station.createStation(addObject);
+       setTimeout(function(){
+       window.location.reload();
+       }, 5);
     },
 
     changeTable() {
@@ -267,7 +277,8 @@ export default {
     },
   },
   mounted: function () {
-    this.changeTable();
+       this.changeTable();
+       
   },
 };
 </script>
