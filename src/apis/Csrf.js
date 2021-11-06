@@ -2,14 +2,14 @@ import Api from "./Api";
 import Cookie from "js-cookie";
 
 export default {
-  getCookie() {
-    let token = Cookie.get("XSRF-TOKEN");
+    getCookie() {
+        let token = Cookie.get("XSRF-TOKEN");
 
-    if (token) {
-      return Promise.resolve(token);
- 
+        if (token) {
+            return Promise.resolve(token);
+
+        }
+
+        return Api.get("/csrf-cookie");
     }
-
-    return Api.get("/csrf-cookie");
-  }
 };

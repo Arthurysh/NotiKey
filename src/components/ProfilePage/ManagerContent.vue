@@ -726,9 +726,10 @@ export default {
   padding: 15px;
   color: #3e3e3e;
   position: relative;
+  min-height: 158px;
 }
 .manager-discount-card .manager-discount-card-head {
-  margin-bottom: 44px;
+  margin-bottom: 68px;
   font-size: 14px;
 }
 .manager-discount-card .discount-content {
