@@ -33,7 +33,7 @@
           @click="this.deteiledManagerUsersView(user.email)"
         >
           <div class="user-head">
-            <h3>{{ user.userName + " "+ user.userSurname }}</h3>
+            <h3>{{ user.userName + " " + user.userSurname }}</h3>
           </div>
           <div class="user-content-list">
             <ul>
@@ -55,7 +55,7 @@
       <div class="close-detailed-contenet" @click="closeDetailedView()">
         <img src="@/assets/closeCrossIcon.png" alt="" />
       </div>
-      <h2>{{findUserName(this.userId)}}</h2>
+      <h2>{{ findUserName(this.userId) }}</h2>
       <div class="head-user-detailed-info">
         <h2>Информация о пользователе</h2>
       </div>
@@ -70,33 +70,40 @@
             <!-- <p class="characteristic-value" v-if="property != 'services'">
               {{ value }}
             </p> -->
-            <input class="user-characteristic-input" :type=" property != 'birthDate' ? 'text' : 'date'" :value="value" />
+            <input
+              class="user-characteristic-input"
+              :type="property != 'birthDate' ? 'text' : 'date'"
+              :value="value"
+            />
           </div>
         </div>
       </div>
       <div class="manager-user-car-list">
-          <my-grid>
-            <my-grid-item
-              class="grid-item car-item"
-              v-for="car in userCars"
-              :key="car"
-            >
+        <my-grid>
+          <my-grid-item
+            class="grid-item car-item"
+            v-for="car in userCars"
+            :key="car"
+          >
             <div class="delete-car-button">
-              <img src="@/assets/closeCrossIcon.png" alt="">
+              <img src="@/assets/closeCrossIcon.png" alt="" />
             </div>
-              <div class="car-image-block">
-                <img :src="require('@/assets/' + car.image)" alt="" />
-              </div>
-              <div class="car-name">
-                <p>{{ car.brand + " " + car.model }}</p>
-              </div>
-            </my-grid-item>
-            <my-grid-item class="grid-item detailed-add-new-car" @click="addCarView()">
-              <div class="circle-block">
-                <img src="@/assets/addIcon.png" alt="" />
-              </div>
-            </my-grid-item>
-          </my-grid>
+            <div class="car-image-block">
+              <img :src="require('@/assets/' + car.image)" alt="" />
+            </div>
+            <div class="car-name">
+              <p>{{ car.brand + " " + car.model }}</p>
+            </div>
+          </my-grid-item>
+          <my-grid-item
+            class="grid-item detailed-add-new-car"
+            @click="addCarView()"
+          >
+            <div class="circle-block">
+              <img src="@/assets/addIcon.png" alt="" />
+            </div>
+          </my-grid-item>
+        </my-grid>
       </div>
     </div>
 
@@ -162,7 +169,38 @@
     class="manager-discount-content"
     v-if="this.userItemID == 3 && this.userRole == 'Manager'"
   >
-    <h1>Manager Hello discount</h1>
+    <div class="manager-discount-head-content">
+      <h2>Скидки</h2>
+    </div>
+
+    <my-grid>
+      <my-grid-item
+        class="grid-item manager-discount-card"
+        v-for="discount in managerDiscounts"
+        :key="discount"
+      >
+        <div class="delete-manager-discount-button">
+          <img src="@/assets/crossIcon.png" alt="" />
+        </div>
+        <div class="manager-discount-card-head">
+          <h3>Станция - {{ discount.station }}</h3>
+        </div>
+        <div class="discount-content">
+          <div class="percent">
+            <p>{{ discount.percent }}%</p>
+          </div>
+          <div class="date-limit">
+            <p>Действует от: {{ discount.activeCount }} покупок</p>
+            <p>Действует до: {{ discount.date }}</p>
+          </div>
+        </div>
+      </my-grid-item>
+      <my-grid-item class="grid-item add-new-car">
+          <div class="circle-block">
+            <img src="@/assets/addIcon.png" alt="" />
+          </div>
+        </my-grid-item>
+    </my-grid>
   </div>
 </template>
 
@@ -271,6 +309,32 @@ export default {
           phoneNumber: "+38093453453",
           email: "alex222@gmail.com",
           birthDate: "19.07.2001 ",
+        },
+      ],
+      managerDiscounts: [
+        {
+          station: "Elcar",
+          percent: 5,
+          activeCount: 5,
+          date: "22.10.2022",
+        },
+        {
+          station: "Towcar",
+          percent: 10,
+          activeCount: 5,
+          date: "22.10.2022",
+        },
+        {
+          station: "Towcar",
+          percent: 10,
+          activeCount: 5,
+          date: "22.10.2022",
+        },
+        {
+          station: "Towcar",
+          percent: 10,
+          activeCount: 5,
+          date: "22.10.2022",
         },
       ],
     };
@@ -412,7 +476,7 @@ export default {
   flex-direction: column;
   transition: 0.3s;
   background: #ffd15a;
-    min-height: 158px;
+  min-height: 158px;
 }
 .user-head {
   margin-bottom: 20px;
@@ -421,7 +485,8 @@ export default {
   color: #625e5e;
   list-style-type: none;
 }
-.add-new-car, .detailed-add-new-car {
+.add-new-car,
+.detailed-add-new-car {
   position: relative;
   cursor: pointer;
   border: 1px solid #b0b0b0;
@@ -493,7 +558,8 @@ export default {
   font-size: 12px;
 }
 
-.user-info-line:nth-child(2n + 1), .user-info-line:nth-child(2n + 1) input {
+.user-info-line:nth-child(2n + 1),
+.user-info-line:nth-child(2n + 1) input {
   background: #c4c4c4;
 }
 .user-info-line-inner {
@@ -540,7 +606,7 @@ export default {
   opacity: 0;
   transition: opacity 0.3s;
 }
-.delete-car-button  img{
+.delete-car-button img {
   max-width: 100%;
   max-height: 100%;
 }
@@ -562,7 +628,8 @@ export default {
 .car-name {
   text-align: center;
 }
-.car-item, .detailed-add-new-car {
+.car-item,
+.detailed-add-new-car {
   flex-basis: calc((100% - 60px) / 4);
   background: #fff;
 }
@@ -636,17 +703,73 @@ export default {
   font-weight: bold;
 }
 
+/* Скидки менеджера */
+.delete-manager-discount-button {
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+.delete-manager-discount-button img {
+  max-width: 100%;
+  max-height: 100%;
+}
+.manager-discount-head-content {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.manager-discount-card {
+  background: #ffd15a;
+  border: 1px solid #b0b0b0;
+  border-radius: 12px;
+  padding: 15px;
+  color: #3e3e3e;
+  position: relative;
+}
+.manager-discount-card .manager-discount-card-head {
+  margin-bottom: 44px;
+  font-size: 14px;
+}
+.manager-discount-card .discount-content {
+  display: flex;
+  justify-content: space-between;
+}
+.discount-content .percent p {
+  font-size: 36px;
+  color: #fff;
+  font-weight: bold;
+}
+.percent {
+  width: 80px;
+}
+.date-limit {
+  flex-direction: column;
+}
+.date-limit p {
+  margin-bottom: 5px;
+}
+
+.discount-content .date-limit {
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: flex-end;
+  text-align: right;
+}
+
 @media screen and (max-width: 1000px) {
-  .car-item, .detailed-add-new-car {
-  flex-basis: calc((100% - 40px) / 3);
-  background: #fff;
-}
-.car-item:nth-child(3n + 3) {
-  margin-right: 0;
-}
-.car-item:nth-child(4n + 4) {
-  margin-right: 20px;
-}
+  .car-item,
+  .detailed-add-new-car {
+    flex-basis: calc((100% - 40px) / 3);
+    background: #fff;
+  }
+  .car-item:nth-child(3n + 3) {
+    margin-right: 0;
+  }
+  .car-item:nth-child(4n + 4) {
+    margin-right: 20px;
+  }
 }
 
 @media screen and (max-width: 850px) {
@@ -662,15 +785,15 @@ export default {
   .filter-search input {
     flex-basis: 48%;
     margin-right: 0;
-
   }
   .right-sort select {
     margin-right: 0;
   }
 
-  .car-item, .detailed-add-new-car {
-  flex-basis: calc((100% - 20px) / 2);
-  background: #fff;
+  .car-item,
+  .detailed-add-new-car {
+    flex-basis: calc((100% - 20px) / 2);
+    background: #fff;
   }
   .car-item:nth-child(3n + 3) {
     margin-right: 20px;
@@ -678,7 +801,6 @@ export default {
   .car-item:nth-child(4n + 4) {
     margin-right: 0;
   }
-
 
   .add-car-header {
     font-size: 12px;
@@ -694,22 +816,40 @@ export default {
     width: 100%;
     height: auto;
   }
+  /* Скидки менеджера */
+  .discount-content .percent p {
+    font-size: 32px;
+  }
+
+  .discount-content .date-limit p {
+    font-size: 12px;
+  }
+
+  .manager-discount-card-head h3 {
+    font-size: 15px;
+  }
   /* Транспорт пользователя детальней */
 
   .image-car-model {
     width: 100%;
   }
 }
-
+@media screen and (max-width: 565px) {
+  .delete-manager-discount-button {
+    width: 20px;
+    height: 20px;
+  }
+}
 @media screen and (max-width: 540px) {
   .detailed-user-content h2 {
     font-size: 16px;
   }
-  .head-user-detailed-info h2{
+  .head-user-detailed-info h2 {
     font-size: 14px;
   }
-  .car-item, .detailed-add-new-car {
-  flex-basis: 100%;
+  .car-item,
+  .detailed-add-new-car {
+    flex-basis: 100%;
   }
   .car-item {
     margin-right: 0px;
@@ -728,7 +868,7 @@ export default {
     margin-right: 0;
     margin-bottom: 10px;
   }
-  .filter-panel select  {
+  .filter-panel select {
     width: 100%;
   }
   .filter-search input {
@@ -776,8 +916,8 @@ export default {
     width: 100% !important;
     font-size: 12px !important;
   }
-    /* Детальный просмотр клиента */
-      .user-info-line .user-info-line-inner {
+  /* Детальный просмотр клиента */
+  .user-info-line .user-info-line-inner {
     padding: 10px 20px;
   }
 }
