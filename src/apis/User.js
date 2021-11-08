@@ -29,4 +29,7 @@ export default {
 
     return Api.post("/UpdateUser", UserUpdate);
   },
+  getUserList() {
+  return Api.get("/getUserList");
+  },
 };

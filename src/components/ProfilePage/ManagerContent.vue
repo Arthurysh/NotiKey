@@ -33,13 +33,13 @@
           @click="this.deteiledManagerUsersView(user.email)"
         >
           <div class="user-head">
-            <h3>{{ user.userName + " " + user.userSurname }}</h3>
+            <h3>{{ user.name + " " + user.surname}}</h3>
           </div>
           <div class="user-content-list">
             <ul>
               <li>Email: {{ user.email }}</li>
-              <li>Номер телефона: {{ user.phoneNumber }}</li>
-              <li>Дата рождения: {{ user.birthDate }}</li>
+              <li>Номер телефона: {{ user.phone }}</li>
+              <li>Дата рождения: {{ user.birthday }}</li>
             </ul>
           </div>
         </my-grid-item>
@@ -205,6 +205,8 @@
 </template>
 
 <script>
+import User from '@/apis/User';
+
 export default {
   props: {
     userItemID: {
@@ -295,22 +297,7 @@ export default {
           racingTime: 3,
         },
       ],
-      usersArray: [
-        {
-          userName: "Алексей",
-          userSurname: "Трофименко",
-          phoneNumber: "+38093453453",
-          email: "alex222@gmail.com",
-          birthDate: "19.07.2001 ",
-        },
-        {
-          userName: "Алексей",
-          userSurname: "Трофименко",
-          phoneNumber: "+38093453453",
-          email: "alex222@gmail.com",
-          birthDate: "19.07.2001 ",
-        },
-      ],
+      usersArray: this.getUser(),
       managerDiscounts: [
         {
           station: "Elcar",
@@ -340,6 +327,11 @@ export default {
     };
   },
   methods: {
+     async getUser() {
+      await User.getUserList().then(response => {
+      this.usersArray = response.data;
+     });
+    },
     deteiledManagerUsersView(userObjID) {
       this.viewDetailedUserObj = this.findUserObj(userObjID);
       this.userId = userObjID;
