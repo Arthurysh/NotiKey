@@ -4,7 +4,7 @@ import Api from "./Api";
 export default {
     
   viewList() {
-    return Api.get("/recordsInfo");
+    return Api.get("/notesInfo");
   },
   
 

@@ -55,7 +55,7 @@
       <div class="close-detailed-contenet" @click="closeDetailedView()">
         <img src="@/assets/closeCrossIcon.png" alt="" />
       </div>
-      <h2>{{ findUserName(this.userId) }}</h2>
+      <h2>{{ viewDetailedUserObj.name + " " + viewDetailedUserObj.surname}}</h2>
       <div class="head-user-detailed-info">
         <h2>Информация о пользователе</h2>
       </div>
@@ -73,7 +73,8 @@
             <input
               class="user-characteristic-input"
               :type="property != 'birthDate' ? 'text' : 'date'"
-              :value="value"
+              :value="this.editObj[property]"
+              @change="this.editObj[property] = $event.target.value"
             />
           </div>
         </div>
@@ -104,6 +105,9 @@
             </div>
           </my-grid-item>
         </my-grid>
+      </div>
+      <div class="block-save-btn">
+        <my-button class="save-detail-user-data-btn" @click.prevent="updateUserItem()">Сохранить</my-button>
       </div>
     </div>
 
@@ -206,10 +210,12 @@
 
 <script>
 import User from '@/apis/User';
+import MyButton from '../UI/MyButton.vue';
 
 export default {
   props: {
-    userItemID: {
+  
+userItemID: {
       type: Number,
       default: 1,
     },
@@ -227,6 +233,7 @@ export default {
       brandData: ["Tesla"],
       isDetaileView: false,
       isAddActive: false,
+      editObj: {},
       addCarObj: {
         carID: 0,
         image: "carPrototype.png",
@@ -327,6 +334,11 @@ export default {
     };
   },
   methods: {
+
+   async updateUserItem(){
+      await User.updateUserListItem(this.editObj);
+      window.location.reload();
+   },
      async getUser() {
       await User.getUserList().then(response => {
       this.usersArray = response.data;
@@ -426,6 +438,11 @@ export default {
 </script>
 
 <style scoped>
+.block-save-btn{
+  margin-top:20px;
+  display: flex;
+  justify-content: center;
+}
 .users-head-content h2 {
   text-align: center;
   margin-bottom: 24px;

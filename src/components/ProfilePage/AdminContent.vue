@@ -10,10 +10,13 @@
         :key="value"
         v-show="!modalEdit"
       >
-        <label :for="property + 'Input'">{{ property }}</label>
+        <label :for="property + 'Input'" v-if="!property.includes('Id')"
+>{{ property }}</label>
         <my-input
           :placeholderValue="property"
           :id="property + 'Input'"
+          v-if="!property.includes('Id')"
+
         ></my-input>
       </div>
       <div
@@ -185,30 +188,30 @@ export default {
   },
   methods: {
     // ---- Station 
-     deleteIdStation(elem) {
+     async deleteIdStation(elem) {
       let elemId;
 
       switch (document.getElementById("selectTableDB").value) {
         case "Пользователи": 
-        this.elemId = elem.id; 
+        this.elemId = elem.userId; 
         break;
         case "Станции": 
-        this.elemId = elem.stationID; 
+        this.elemId = elem.stationId; 
         break;
         case "Записи": 
-        this.elemId = elem.notesID; 
+        this.elemId = elem.notesId; 
         break;
         case "Транспорт": 
-        this.elemId = elem.carsID; 
+        this.elemId = elem.carsId; 
         break;
       }  
       let idElementSection = {
-         Id: this.elemId,
+         stationId: this.elemId,
        };
-       Station.delete(idElementSection);
-       setTimeout(function(){
+       await Station.delete(idElementSection);
+       
        window.location.reload();
-       }, 5);
+       
     },
 
      updateIdStation(editObj) {
@@ -225,17 +228,16 @@ export default {
       this.getStation()
     },
     // ----
-    getAddModelInput() {
+    async getAddModelInput() {
       let addObject = {}
        for (const key in this.currentTable[0]) {
          let inputId = key + "Input";
          addObject[key] = document.getElementById(inputId).value;
        }
        this.closeModal();
-       Station.createStation(addObject);
-       setTimeout(function(){
+       await Station.createStation(addObject);
        window.location.reload();
-       }, 5);
+  
     },
 
     changeTable() {

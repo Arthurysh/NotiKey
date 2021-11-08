@@ -32,4 +32,7 @@ export default {
   getUserList() {
   return Api.get("/getUserList");
   },
+  updateUserListItem(editObj) {
+    return Api.post("/updateUserList", editObj);
+  }
 };
