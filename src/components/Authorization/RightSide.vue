@@ -78,7 +78,7 @@
               <my-button
                 class="btn-registration-in-reg"
                 @click.prevent="register"
-                >Зарегестрироваться</my-button
+                >Зарегистрироваться</my-button
               >
               <my-button class="btn-log-in-reg" @click="toggleElement"
                 >Вход</my-button

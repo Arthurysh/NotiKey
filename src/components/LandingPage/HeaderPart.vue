@@ -48,7 +48,7 @@
     </div>
     <div class="nav-body">
       <my-button class="mobile-nav-btn" @click="$router.push('/Authorization')">Вход</my-button>
-      <my-button class="mobile-nav-btn" @click="$router.push('/Registration')">Регестрация</my-button>
+      <my-button class="mobile-nav-btn" @click="$router.push('/Registration')">Регистрация</my-button>
     </div>
   </div>
 
