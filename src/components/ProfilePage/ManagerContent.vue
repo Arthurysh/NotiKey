@@ -73,8 +73,8 @@
             <input
               class="user-characteristic-input"
               :type="property != 'birthDate' ? 'text' : 'date'"
-              :value="this.editObj[property]"
-              @change="this.editObj[property] = $event.target.value"
+              :value="this.viewDetailedUserObj[property]"
+              @change="this.viewDetailedUserObj[property] = $event.target.value"
             />
           </div>
         </div>
@@ -336,8 +336,8 @@ userItemID: {
   methods: {
 
    async updateUserItem(){
-      await User.updateUserListItem(this.editObj);
-      window.location.reload();
+      await User.updateUserListItem(this.viewDetailedUserObj);
+      this.closeDetailedView();
    },
      async getUser() {
       await User.getUserList().then(response => {

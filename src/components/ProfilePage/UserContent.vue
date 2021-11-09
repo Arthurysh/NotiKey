@@ -132,12 +132,14 @@
           </div>
           <div class="note-content-list">
             <ul>
-              <li>Статус: {{ note.statusId }}</li>
+              <li>Статус: {{ note.status }}</li>
               <li class="note-service-li">
-                Услуга: {{ this.getNoteServicesString(note) }}
-              </li>
+<!--                 Услуга: {{ this.getNoteServicesString(note) }}
+ -->              Услуга: {{  note.serviceName}}
+ 
+            </li>
               <li>Машина: {{ note.car }}</li>
-              <li>Станция: {{ note.stationId }}</li>
+              <li>Станция: {{ note.stationName }}</li>
               <li>Дата: {{ note.date }}</li>
             </ul>
             <div class="note-time">
@@ -174,7 +176,7 @@
             class="note-info-line-inner"
             v-if="
               property != 'noteId' &&
-              property != 'status' &&
+              property != 'statusId' &&
               property != 'statusHistory' &&
               property != 'additionalServices'
             "
@@ -731,8 +733,8 @@ export default {
           color: "#FF9999",
         },
       ],
-      
-      userNotes: [
+      userNotes: this.getNotes(),
+      /* userNotes: [
         {
           noteId: 1,
           status: "Выполнение услуг",
@@ -872,7 +874,7 @@ export default {
           date: "22.10.2022",
           time: "22:30",
         },
-      ],
+      ], */
       services: [
         {
           name: "Ушатать дверь",
@@ -1013,14 +1015,10 @@ export default {
 
   methods: {
     /* ========= Записи ========= */
-  updateNotes() {
-    this.getNotes()
- 
-  },
+  
     async getNotes() {
       await Notes.viewList().then(response => {
       this.userNotes = response.data;
-          console.log(response.data);
      });
     },
     /* ========= Профиль пользователя ========= */
