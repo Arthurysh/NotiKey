@@ -204,7 +204,7 @@
                 class="progress-item"
                 v-bind:class="{
                   'success-status-item':
-                    this.viewNoteObj.statusHistory.includes('Успешно записан'),
+                    this.viewNoteObj.statusHistory.includes(this.viewNoteObj.statusHistory[0]),
                 }"
               >
                 <div class="progress-head-name">
@@ -215,7 +215,7 @@
                   v-bind:class="{
                     'progress-circle-success':
                       this.viewNoteObj.statusHistory.includes(
-                        'Успешно записан'
+                        this.viewNoteObj.statusHistory[0]
                       ),
                   }"
                 >
@@ -229,7 +229,7 @@
                 class="progress-item"
                 v-bind:class="{
                   'success-status-item':
-                    this.viewNoteObj.statusHistory.includes('Выполнение услуг'),
+                    this.viewNoteObj.statusHistory.includes(this.viewNoteObj.statusHistory[1]),
                 }"
               >
                 <div class="progress-head-name">
@@ -240,7 +240,7 @@
                   v-bind:class="{
                     'progress-circle-success':
                       this.viewNoteObj.statusHistory.includes(
-                        'Выполнение услуг'
+                        this.viewNoteObj.statusHistory[1]
                       ),
                   }"
                 >
@@ -254,7 +254,7 @@
                 class="progress-item"
                 v-bind:class="{
                   'success-status-item':
-                    this.viewNoteObj.statusHistory.includes('Готово к оплате'),
+                    this.viewNoteObj.statusHistory.includes(this.viewNoteObj.statusHistory[2]),
                 }"
               >
                 <div class="progress-head-name">
@@ -264,7 +264,7 @@
                   class="progress-circle"
                   v-bind:class="{
                     'progress-circle-success':
-                      this.viewNoteObj.statusHistory.includes('Готово к оплате'),
+                      this.viewNoteObj.statusHistory.includes(this.viewNoteObj.statusHistory[2]),
                   }"
                 >
                   <div class="progress-circle-img-wrap">
@@ -277,7 +277,7 @@
                 class="progress-item"
                 v-bind:class="{
                   'success-status-item':
-                    this.viewNoteObj.statusHistory.includes('Закрыта'),
+                    this.viewNoteObj.statusHistory.includes(this.viewNoteObj.statusHistory[3]),
                 }"
               >
                 <div class="progress-head-name">
@@ -287,7 +287,7 @@
                   class="progress-circle"
                   v-bind:class="{
                     'progress-circle-success':
-                      this.viewNoteObj.statusHistory.includes('Закрыта'),
+                      this.viewNoteObj.statusHistory.includes(this.viewNoteObj.statusHistory[3]),
                   }"
                 >
                   <div class="progress-circle-img-wrap">
