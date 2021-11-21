@@ -134,11 +134,11 @@
             <ul>
               <li>Статус: {{ note.status }}</li>
               <li class="note-service-li">
-<!--                 Услуга: {{ this.getNoteServicesString(note) }}
- -->              Услуга: {{  note.serviceName}}
+               Услуга: {{ this.getNoteServicesString(note) }}
+           <!--Услуга: {{  note.serviceName}} -->
  
             </li>
-              <li>Машина: {{ note.car }}</li>
+              <li>Машина: {{ note.brand }} {{ note.model }}</li>
               <li>Станция: {{ note.stationName }}</li>
               <li>Дата: {{ note.date }}</li>
             </ul>
@@ -711,28 +711,7 @@ export default {
       isActiveSaveBtn: false,
 
       /* ========= Записи пользователя ========= */
-      noteStatus: [
-        {
-          name: "Успешно записан",
-          color: "#84D1FC",
-        },
-        {
-          name: "Выполнение услуг",
-          color: "#FFD15A",
-        },
-        {
-          name: "Готово к оплате",
-          color: "#C8FFAE",
-        },
-        {
-          name: "Закрыта",
-          color: "#B6B6B6",
-        },
-        {
-          name: "Просрочено",
-          color: "#FF9999",
-        },
-      ],
+      noteStatus: this.getStatus(),
       userNotes: this.getNotes(),
       /* userNotes: [
         {
@@ -1015,10 +994,15 @@ export default {
 
   methods: {
     /* ========= Записи ========= */
-  
+  async getStatus() {
+    await Notes.statusList().then(response => {
+      this.noteStatus = response.data;
+     });
+  },
     async getNotes() {
       await Notes.viewList().then(response => {
       this.userNotes = response.data;
+      console.log(this.noteStatus);
      });
     },
     /* ========= Профиль пользователя ========= */
@@ -1073,7 +1057,7 @@ export default {
       let userNote = this.findUserNote(id);
       let userStatusColor;
       this.noteStatus.forEach((element) => {
-        if (element.name === userNote.status) {
+        if (element.status === userNote.status) {
           userStatusColor = element.color;
         }
       });
@@ -1104,12 +1088,12 @@ export default {
       let sum = 0;
 
       for (let i = 0; i < this.viewNoteObj.services.length; i++) {
-        sum += this.viewNoteObj.services[i].price;
+        sum += +this.viewNoteObj.services[i].price;
       }
 
       for (let i = 0; i < this.viewNoteObj.additionalServices.length; i++) {
         if (this.viewNoteObj.additionalServices[i].include == true) {
-          sum += this.viewNoteObj.additionalServices[i].price;
+          sum += +this.viewNoteObj.additionalServices[i].price;
         }
       }
 

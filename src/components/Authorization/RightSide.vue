@@ -331,7 +331,7 @@ export default {
 }
 @media screen and (max-width: 2390px) {
   .right-side-block  {
-    width: 22vw;
+    width: 25vw;
   }
 }
 @media screen and (max-width: 1240px) {
