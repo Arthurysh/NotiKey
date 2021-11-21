@@ -1000,9 +1000,9 @@ export default {
      });
   },
     async getNotes() {
-      await Notes.viewList().then(response => {
+      let userIdObj = this.user.userId
+      await Notes.viewList(userIdObj).then(response => {
       this.userNotes = response.data;
-      console.log(this.noteStatus);
      });
     },
     /* ========= Профиль пользователя ========= */
