@@ -15,6 +15,13 @@ export default {
   editStation(updateInfoStation) {
     return Api.post("/editStation", updateInfoStation);
 
-  }
+  },
+  getList() {
+    return Api.get("/getListStation");
+  },
+
+
+
+  
 
 };

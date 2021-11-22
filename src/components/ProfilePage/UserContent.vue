@@ -407,9 +407,11 @@
               <p class="characteristic-name">Станция</p>
               <my-select
                 class="add-choose-sto"
-                :arrData="brandData"
-                :plug="'Станция СТО'"
+                :arrData="this.stationData"
+                :plug="this.createNotes.station"
                 id="add-sto-select"
+                @change="this.createNotes.station = $event.target.value"
+                :value="this.createNotes.station"
               ></my-select>
             </div>
           </div>
@@ -678,6 +680,7 @@ import MyButton from "../UI/MyButton.vue";
 import MyGridItem from "../UI/MyGridItem.vue";
 import { defaults } from "chart.js";
 import Notes from "@/apis/Notes";
+import Station from "@/apis/Station";
 
 export default {
   components: { MyGridItem, MyButton },
@@ -891,6 +894,10 @@ export default {
       /* Добавление записи пользователя */
       userServices: 0,
       totalAddNoteServicesCost: 0,
+      stationData: this.getStation(),
+      createNotes:{
+        station: "Станция",
+      },
 
       /* ========= Транспорт пользователя ========= */
       userCars: [
@@ -960,6 +967,7 @@ export default {
       selectModelValue: "",
       modelData: ["Model S", "Model X"],
       brandData: ["Tesla"],
+      
 
       /* ========= Скижки пользователя ========= */
       userDiscounts: [
@@ -994,6 +1002,20 @@ export default {
 
   methods: {
     /* ========= Записи ========= */
+    convertStationArray(){
+      
+      for (let i = 0; i < this.stationData.length; i++) {
+        let element = this.stationData[i];
+        this.stationData[i] = element.stationName;
+        console.log(element.stationName)
+      }
+    },
+    async getStation() {
+    await Station.getList().then(response => {
+      this.stationData = response.data;
+     });
+     this.convertStationArray();
+  },
   async getStatus() {
     await Notes.statusList().then(response => {
       this.noteStatus = response.data;
