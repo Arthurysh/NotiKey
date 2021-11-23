@@ -420,9 +420,11 @@
               <p class="characteristic-name">Машина</p>
               <my-select
                 class="add-choose-car"
-                :arrData="brandData"
-                :plug="'Машина'"
+                :arrData="this.carsData"
+                :plug="this.createNotes.cars"
                 id="add-car-select"
+                @change="this.createNotes.cars = $event.target.value"
+                :value="this.createNotes.cars"
               ></my-select>
             </div>
           </div>
@@ -486,14 +488,15 @@
                 <p>Стоимость</p>
               </div>
             </div>
-            <div class="table-body">
+            <div class="table-body" id="tableBodyAddServicesId">
               <div class="row" v-for="elem in userServices" :key="elem">
                 <div class="service-field">
                   <my-select
                     :arrData="getServiceArray()"
                     :plug="'Выбрать услугу'"
                     id="selectDateField"
-                    @change="getServiceCost($event, elem)"
+                    @change="getServiceCost($event, elem); this.insertObjServices($event); "
+                    
                   ></my-select>
                 </div>
                 <div class="service-cost">
@@ -681,6 +684,7 @@ import MyGridItem from "../UI/MyGridItem.vue";
 import { defaults } from "chart.js";
 import Notes from "@/apis/Notes";
 import Station from "@/apis/Station";
+import Cars from "@/apis/Cars";
 
 export default {
   components: { MyGridItem, MyButton },
@@ -857,34 +861,21 @@ export default {
           time: "22:30",
         },
       ], */
-      services: [
-        {
-          name: "Ушатать дверь",
-          cost: 200,
-        },
-        {
-          name: "Поставить дверь",
-          cost: 300,
-        },
-        {
-          name: "Запилить дверь",
-          cost: 400,
-        },
-      ],
-      services: [
-        {
-          name: "Ушатать дверь",
-          cost: 200,
-        },
-        {
-          name: "Поставить дверь",
-          cost: 300,
-        },
-        {
-          name: "Запилить дверь",
-          cost: 400,
-        },
-      ],
+      // services: [
+      //   {
+      //     name: "Ушатать дверь",
+      //     cost: 200,
+      //   },
+      //   {
+      //     name: "Поставить дверь",
+      //     cost: 300,
+      //   },
+      //   {
+      //     name: "Запилить дверь",
+      //     cost: 410,
+      //   },
+      // ],
+      services: this.getServiceList() ,
       /* Записи пользователя детальный просмотр */
       viewNoteObj: {},
       isDetaileNoteListActive: true,
@@ -895,8 +886,12 @@ export default {
       userServices: 0,
       totalAddNoteServicesCost: 0,
       stationData: this.getStation(),
+      carsData: this.getCarsList(),
+      // servicesData: this.getServiceList() ,
       createNotes:{
         station: "Станция",
+        cars: "Машина",
+        services: [],
       },
 
       /* ========= Транспорт пользователя ========= */
@@ -1002,12 +997,58 @@ export default {
 
   methods: {
     /* ========= Записи ========= */
+    insertObjServices($event){
+      let inputValue = $event.target.value;
+      let count = 0;
+      this.services.forEach(element => {
+        if(element.name === inputValue) {
+          this.createNotes.services.forEach(element => {
+            if(element.name === inputValue){
+              count++;
+              
+            }
+          });
+          if(count === 0) {
+            this.createNotes.services.push(element);
+
+          }
+        }
+      });
+      console.log(inputValue);
+    },
+    deleteObjServices(){
+      let servicesTable = document.getElementById('tableBodyAddServicesId');
+      let deleteServiceItem = servicesTable.childNodes[servicesTable.childNodes.length-2].childNodes[0].childNodes[0].value;
+      this.createNotes.services.forEach((element, index) => {
+        if(element.name === deleteServiceItem){
+          this.createNotes.services.splice(index, 1);
+        }
+      });
+    },
+    async getServiceList() {
+    await Notes.ServicesList().then(response => {
+      this.services = response.data;
+     });
+  },
+    async getCarsList() {
+      let userIdObj = this.user.userId
+      await Cars.getList(userIdObj).then(response => {
+      this.carsData = response.data;
+     });
+      this.convertCarsArray();
+    },
+    convertCarsArray(){
+      
+      for (let i = 0; i < this.carsData.length; i++) {
+        let element = this.carsData[i];
+        this.carsData[i] = element.carsData;
+      }
+    },
     convertStationArray(){
       
       for (let i = 0; i < this.stationData.length; i++) {
         let element = this.stationData[i];
         this.stationData[i] = element.stationName;
-        console.log(element.stationName)
       }
     },
     async getStation() {
@@ -1139,8 +1180,10 @@ export default {
     },
 
     async deleteService() {
+      this.deleteObjServices();
       await this.deleteServiceRow();
       this.getTotalServicesCost();
+      
     },
 
     getServiceCost($event, elem) {
@@ -1152,7 +1195,7 @@ export default {
       }
       for (let i = 0; i < this.services.length; i++) {
         if (this.services[i].name == inputValue[0]) {
-          document.getElementById(inputId).value = this.services[i].cost;
+          document.getElementById(inputId).value = this.services[i].price;
         }
       }
       this.getTotalServicesCost();
