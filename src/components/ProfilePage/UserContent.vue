@@ -124,7 +124,7 @@
           @click="deteiledNoteView(note.noteId)"
           :style="{ 'background-color': this.checkNoteStatus(note.noteId) }"
         >
-          <div class="delete-note-button">
+          <div class="delete-note-button" @click="this.deleteNotes(note.noteId)">
             <img src="@/assets/crossIcon.png" alt="" />
           </div>
           <div class="note-head">
@@ -407,11 +407,11 @@
               <p class="characteristic-name">Станция</p>
               <my-select
                 class="add-choose-sto"
-                :arrData="this.stationData"
-                :plug="this.createNotes.station"
+                :arrData="this.converteToArrayString(this.stationData, 'stationName')"
+                :plug="'Станция'"
                 id="add-sto-select"
-                @change="this.createNotes.station = $event.target.value"
-                :value="this.createNotes.station"
+                @change="this.getIdElementObj($event.target.value, 'station')"
+                v-model="this.createNotes.station"
               ></my-select>
             </div>
           </div>
@@ -420,23 +420,23 @@
               <p class="characteristic-name">Машина</p>
               <my-select
                 class="add-choose-car"
-                :arrData="this.carsData"
-                :plug="this.createNotes.cars"
+                :arrData="this.converteToArrayStringCars()"
+                v-model="this.createNotes.cars"
+                :plug="'Выбрать машину'"
                 id="add-car-select"
-                @change="this.createNotes.cars = $event.target.value"
-                :value="this.createNotes.cars"
+                @change="this.getIdElementObj($event.target.value.split(' ')[1], 'cars')"
+                
               ></my-select>
             </div>
           </div>
           <div class="note-info-line">
             <div class="note-info-line-inner">
               <p class="characteristic-name">Дата</p>
-              <my-select
-                class="add-choose-date"
-                :arrData="brandData"
-                :plug="'Дата'"
-                id="add-date-select"
-              ></my-select>
+              <my-input
+                type="date"
+                @change="this.createNotes.date = $event.target.value"
+                :value="this.createNotes.date"
+              ></my-input>
             </div>
           </div>
           <div class="note-info-line">
@@ -444,9 +444,11 @@
               <p class="characteristic-name">Время</p>
               <my-select
                 class="add-choose-time"
-                :arrData="brandData"
+                :arrData="this.converteToArrayString(this.time, 'time')"
                 :plug="'Время'"
                 id="add-time-select"
+                @change="this.getIdElementObj($event.target.value, 'time')"
+                v-model="this.createNotes.time"
               ></my-select>
             </div>
           </div>
@@ -527,7 +529,7 @@
         </div>
       </div>
       <div class="add-note-btn-block">
-        <my-button>Записаться</my-button>
+        <my-button @click="this.insertNotes()">Записаться</my-button>
       </div>
     </div>
   </div>
@@ -685,9 +687,11 @@ import { defaults } from "chart.js";
 import Notes from "@/apis/Notes";
 import Station from "@/apis/Station";
 import Cars from "@/apis/Cars";
+import MyInput from '../UI/MyInput.vue';
+import MySelect from '../UI/MySelect.vue';
 
 export default {
-  components: { MyGridItem, MyButton },
+  components: { MyGridItem, MyButton, MyInput, MySelect },
   props: {
     userItemID: {
       type: Number,
@@ -720,6 +724,9 @@ export default {
       /* ========= Записи пользователя ========= */
       noteStatus: this.getStatus(),
       userNotes: this.getNotes(),
+      time: this.getListTime(),
+      stationData: this.getStation(),
+      carsData: this.getCarsList(),
       /* userNotes: [
         {
           noteId: 1,
@@ -885,13 +892,18 @@ export default {
       /* Добавление записи пользователя */
       userServices: 0,
       totalAddNoteServicesCost: 0,
-      stationData: this.getStation(),
-      carsData: this.getCarsList(),
+      
       // servicesData: this.getServiceList() ,
       createNotes:{
         station: "Станция",
         cars: "Машина",
         services: [],
+        date: "Дата записи",
+        time: "Время записи",
+        userId: this.user.userId,
+        statusId: "1",
+        
+
       },
 
       /* ========= Транспорт пользователя ========= */
@@ -997,6 +1009,69 @@ export default {
 
   methods: {
     /* ========= Записи ========= */
+    deleteNotes(idNotes){
+      let ObjDelete = {
+        idNotes: idNotes,
+      };
+       Notes.deleteNotes(ObjDelete);
+    },
+    insertNotes(){
+      Notes.insertNotes(this.createNotes);
+    },
+     converteToArrayStringCars(){
+      let newArr = [];
+      this.carsData.forEach(element => {
+        newArr.push(`${element["brand"]} ${element["model"]}`);
+      });
+      return newArr;
+    },
+    converteToArrayString(arr, property){
+      let newArr = [];
+      arr.forEach(element => {
+        newArr.push(element[property]);
+      });
+      return newArr;
+    },
+    
+
+
+    async getListTime(){
+      await Notes.TimeList().then(response => {
+      this.time = response.data;
+      
+     });
+    },
+    getIdElementObj(data, typeArray){
+      switch (typeArray) {
+        case "time":
+          this.time.forEach(element => {
+            if(element.time === data) {
+              this.createNotes.time = element.timeId;
+              }
+          });
+          break;
+          case "station":
+          this.stationData.forEach(element => {
+            if(element.stationName === data) {
+              this.createNotes.station = element.stationId;
+              }
+          });
+          break;
+          case "cars":
+          this.carsData.forEach(element => {
+            if(element.model === data) {
+              this.createNotes.cars = element.carId;
+              }
+          });
+          break;
+      
+      
+        default:
+          break;
+      }
+    },
+    
+    
     insertObjServices($event){
       let inputValue = $event.target.value;
       let count = 0;
@@ -1035,27 +1110,28 @@ export default {
       await Cars.getList(userIdObj).then(response => {
       this.carsData = response.data;
      });
-      this.convertCarsArray();
-    },
-    convertCarsArray(){
+     
       
-      for (let i = 0; i < this.carsData.length; i++) {
-        let element = this.carsData[i];
-        this.carsData[i] = element.carsData;
-      }
     },
-    convertStationArray(){
+    // convertCarsArray(){
       
-      for (let i = 0; i < this.stationData.length; i++) {
-        let element = this.stationData[i];
-        this.stationData[i] = element.stationName;
-      }
-    },
+    //   for (let i = 0; i < this.carsData.length; i++) {
+    //     let element = this.carsData[i];
+    //     this.carsData[i] = element.model;
+    //   }
+    // },
+    // convertStationArray(){
+      
+    //   for (let i = 0; i < this.stationData.length; i++) {
+    //     let element = this.stationData[i];
+    //     this.stationData[i] = element.stationName;
+    //   }
+    // },
     async getStation() {
     await Station.getList().then(response => {
       this.stationData = response.data;
      });
-     this.convertStationArray();
+    //  this.convertStationArray();
   },
   async getStatus() {
     await Notes.statusList().then(response => {
