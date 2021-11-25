@@ -124,7 +124,7 @@
           @click="deteiledNoteView(note.noteId)"
           :style="{ 'background-color': this.checkNoteStatus(note.noteId) }"
         >
-          <div class="delete-note-button" @click="this.deleteNotes(note.noteId)">
+          <div class="delete-note-button" @click="this.deleteNotes(note.noteId), this.closeDetailedView()">
             <img src="@/assets/crossIcon.png" alt="" />
           </div>
           <div class="note-head">
@@ -1009,14 +1009,18 @@ export default {
 
   methods: {
     /* ========= Записи ========= */
-    deleteNotes(idNotes){
+   deleteNotes(idNotes){
       let ObjDelete = {
         idNotes: idNotes,
       };
        Notes.deleteNotes(ObjDelete);
+       this.getNotes();
+       
     },
     insertNotes(){
       Notes.insertNotes(this.createNotes);
+      this.closeAddNote();
+      this.getNotes();
     },
      converteToArrayStringCars(){
       let newArr = [];
