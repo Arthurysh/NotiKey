@@ -548,13 +548,14 @@
           class="car-item"
           v-for="car in userCars"
           :key="car"
-          @click="detailedCarView(car.carID)"
+          @click="detailedCarView(car.carId)"
         >
           <div class="car-image-block">
             <img :src="require('@/assets/' + car.image)" alt="" />
           </div>
           <div class="car-name">
             <p>{{ car.brand + " " + car.model }}</p>
+            <p>{{car.nomera}}</p>
           </div>
         </my-grid-item>
         <my-grid-item class="add-new-car" @click="addCarView()">
@@ -584,7 +585,7 @@
           >
             <div
               class="car-info-line-inner"
-              v-if="property != 'carID' && property != 'image'"
+              v-if="property != 'carId' && property != 'image'"
             >
               <p class="characteristic-name">{{ property }}</p>
               <p class="characteristic-value">{{ value }}</p>
@@ -593,7 +594,7 @@
         </div>
 
         <div class="car-control-panel">
-          <my-button class="delete-car">Удалить</my-button>
+          <my-button class="delete-car" @click="this.deleteNotes(this.viewCarObj.carId), this.closeDetailedView()">Удалить</my-button>
         </div>
       </div>
     </div>
@@ -610,22 +611,7 @@
         <div class="add-image-car-model">
           <img :src="require('@/assets/' + this.addCarObj.image)" alt="" />
         </div>
-        <div class="main-add-selectors">
-          <my-select
-            class="choose-brand-button"
-            :arrData="brandData"
-            :plug="'Бренд'"
-            id="brend-select"
-            @change="getCarInfo($event, 1)"
-          ></my-select>
-          <my-select
-            class="choose-model-button"
-            :arrData="modelData"
-            :plug="'Модель'"
-            id="model-select"
-            @change="getCarInfo($event, 2)"
-          ></my-select>
-        </div>
+       
         <div class="car-info-table">
           <div
             class="car-info-line"
@@ -634,16 +620,20 @@
           >
             <div
               class="car-info-line-inner"
-              v-if="property != 'carID' && property != 'image'"
+              v-if="property != 'carId' && property != 'image'"
             >
               <p class="characteristic-name">{{ property }}</p>
-              <p class="characteristic-value">{{ value }}</p>
+              <!-- <p class="characteristic-value">{{ value }}</p> -->
+              <my-input 
+              @input="addCarObj[property] = $event.target.value"
+              :value="addCarObj[property]"
+              ></my-input>
             </div>
           </div>
         </div>
 
         <div class="add-car-button-block">
-          <my-button class="add-car-button">Добавить транспорт</my-button>
+          <my-button class="add-car-button" @click="this.addCarUsers()">Добавить транспорт</my-button>
         </div>
       </div>
     </div>
@@ -907,30 +897,31 @@ export default {
       },
 
       /* ========= Транспорт пользователя ========= */
-      userCars: [
-        {
-          carID: 12,
-          image: "carTest1.png",
-          brand: "Tesla",
-          model: "Model S",
-          year: "2017",
-          type: "Седан",
-          power: "200лс",
-          maxSpeed: 200,
-          racingTime: 4,
-        },
-        {
-          carID: 132,
-          image: "carTest2.png",
-          brand: "Tesla",
-          model: "Model X",
-          year: "2020",
-          type: "Седан",
-          power: "300лс",
-          maxSpeed: 250,
-          racingTime: 3,
-        },
-      ],
+      userCars: this.getCarsUser(),
+      // [
+      //   {
+      //     carID: 12,
+      //     image: "carTest1.png",
+      //     brand: "Tesla",
+      //     model: "Model S",
+      //     year: "2017",
+      //     type: "Седан",
+      //     power: "200лс",
+      //     maxSpeed: 200,
+      //     racingTime: 4,
+      //   },
+      //   {
+      //     carID: 132,
+      //     image: "carTest2.png",
+      //     brand: "Tesla",
+      //     model: "Model X",
+      //     year: "2020",
+      //     type: "Седан",
+      //     power: "300лс",
+      //     maxSpeed: 250,
+      //     racingTime: 3,
+      //   },
+      // ],
       allCars: [
         {
           carID: 12,
@@ -962,13 +953,12 @@ export default {
       addCarObj: {
         carID: 0,
         image: "carPrototype.png",
-        brand: "-",
-        model: "-",
-        year: "-",
-        type: "-",
-        power: "-",
-        maxSpeed: 0,
-        racingTime: 0,
+        brand: "",
+        model: "",
+        year: "",
+        type: "",
+        userId: this.user.userId,
+        nomera: "",
       },
       selectBrandValue: "",
       selectModelValue: "",
@@ -976,7 +966,7 @@ export default {
       brandData: ["Tesla"],
       
 
-      /* ========= Скижки пользователя ========= */
+      /* ========= Скидки пользователя ========= */
       userDiscounts: [
         {
           station: "Elcar",
@@ -1318,6 +1308,36 @@ export default {
     },
 
     /* ========= Транспорт пользователя ========= */
+    addCarUsers(){
+      let newCar = {
+        brand: this.addCarObj.brand,
+        model: this.addCarObj.model,
+        userId: this.user.userId,
+        year: this.addCarObj.year,
+        type: this.addCarObj.type,
+        image: this.addCarObj.image,
+        nomera: this.addCarObj.nomera,
+      };
+      Cars.addCarsUser(newCar);
+      this.closeAddView();
+      this.getCarsUser();
+
+
+    },
+    deleteNotes(idCars){
+      let ObjDelete = {
+        idCars: idCars,
+      };
+       Cars.deleteCars(ObjDelete);
+       this.getCarsUser();
+       
+    },
+    async getCarsUser(){
+      let userIdObj = this.user.userId
+      await Cars.getUserCars(userIdObj).then(response => {
+      this.userCars = response.data;
+     });  
+    },
     detailedCarView(carObjID) {
       this.viewCarObj = this.findUserCar(carObjID);
       this.closeDetailedView();
@@ -1326,7 +1346,7 @@ export default {
     findUserCar(id) {
       let userCar;
       this.userCars.forEach((element) => {
-        if (element.carID == id) {
+        if (element.carId == id) {
           userCar = element;
         }
       });
@@ -1368,15 +1388,14 @@ export default {
 
     clearAddCarArray() {
       this.addCarObj = {
-        carID: 0,
         image: "carPrototype.png",
-        brand: "-",
-        model: "-",
-        year: "-",
-        type: "-",
-        power: "-",
-        maxSpeed: 0,
-        racingTime: 0,
+        brand: "",
+        model: "",
+        year: "",
+        type: "",
+        nomera: "",
+        
+
       };
       this.selectBrandValue = "";
       this.selectModelValue = "";
@@ -1384,15 +1403,13 @@ export default {
 
     clearModelCar() {
       this.addCarObj = {
-        carID: 0,
         image: "carPrototype.png",
-        brand: "-",
-        model: "-",
-        year: "-",
-        type: "-",
-        power: "-",
-        maxSpeed: 0,
-        racingTime: 0,
+        brand: "",
+        model: "",
+        year: "",
+        type: "",
+        nomera: "",
+
       };
       this.selectModelValue = "";
     },
