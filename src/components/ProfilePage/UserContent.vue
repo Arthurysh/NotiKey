@@ -654,7 +654,7 @@
         :key="discount"
       >
         <div class="discount-card-head">
-          <h3>Станция - {{ discount.station }}</h3>
+          <h3>Станция - {{ discount.stationName }}</h3>
         </div>
         <div class="discount-content">
           <div class="percent">
@@ -679,6 +679,7 @@ import Station from "@/apis/Station";
 import Cars from "@/apis/Cars";
 import MyInput from '../UI/MyInput.vue';
 import MySelect from '../UI/MySelect.vue';
+import Discount from "@/apis/Discounts";
 
 export default {
   components: { MyGridItem, MyButton, MyInput, MySelect },
@@ -967,28 +968,29 @@ export default {
       
 
       /* ========= Скидки пользователя ========= */
-      userDiscounts: [
-        {
-          station: "Elcar",
-          percent: 5,
-          date: "22.10.2022",
-        },
-        {
-          station: "Towcar",
-          percent: 10,
-          date: "22.10.2022",
-        },
-        {
-          station: "Towcar",
-          percent: 10,
-          date: "22.10.2022",
-        },
-        {
-          station: "Towcar",
-          percent: 10,
-          date: "22.10.2022",
-        },
-      ],
+       userDiscounts: this.getDiscount(),
+       //  [
+      //   {
+      //     station: "Elcar",
+      //     percent: 5,
+      //     date: "22.10.2022",
+      //   },
+      //   {
+      //     station: "Towcar",
+      //     percent: 10,
+      //     date: "22.10.2022",
+      //   },
+      //   {
+      //     station: "Towcar",
+      //     percent: 10,
+      //     date: "22.10.2022",
+      //   },
+      //   {
+      //     station: "Towcar",
+      //     percent: 10,
+      //     date: "22.10.2022",
+      //   },
+      // ],
 
       /* ========= Общее ========= */
       filterData: ["select1", "select2", "select3"],
@@ -998,6 +1000,14 @@ export default {
   },
 
   methods: {
+    /* ========= Скидки пользователя ========= */
+   async getDiscount(){
+      await Discount.getDiscounts().then(response => {
+      this.userDiscounts = response.data;
+      
+     });
+      
+    },
     /* ========= Записи ========= */
    deleteNotes(idNotes){
       let ObjDelete = {
