@@ -1331,6 +1331,7 @@ export default {
       Cars.addCarsUser(newCar);
       this.closeAddView();
       this.getCarsUser();
+      this.getCarsList();
 
 
     },
@@ -1340,6 +1341,7 @@ export default {
       };
        Cars.deleteCars(ObjDelete);
        this.getCarsUser();
+       this.getCarsList();
        
     },
     async getCarsUser(){
