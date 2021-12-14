@@ -594,7 +594,7 @@
         </div>
 
         <div class="car-control-panel">
-          <my-button class="delete-car" @click="this.deleteNotes(this.viewCarObj.carId), this.closeDetailedView()">Удалить</my-button>
+          <my-button class="delete-car" @click="this.deleteCars(this.viewCarObj.carId), this.closeDetailedView()">Удалить</my-button>
         </div>
       </div>
     </div>
@@ -1335,7 +1335,7 @@ export default {
 
 
     },
-    deleteNotes(idCars){
+    deleteCars(idCars){
       let ObjDelete = {
         idCars: idCars,
       };
