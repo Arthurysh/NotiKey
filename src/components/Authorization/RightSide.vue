@@ -155,6 +155,7 @@ export default {
         surname: "",
         phone: "",
         email: "",
+        birthday: "",
         password: "",
         password_confirmation: "",
         user_role: "User",
