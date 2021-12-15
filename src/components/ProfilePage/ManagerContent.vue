@@ -33,7 +33,7 @@
           @click="this.deteiledManagerUsersView(user.email)"
         >
           <div class="user-head">
-            <h3>{{ user.name + " " + user.surname}}</h3>
+            <h3>{{ user.name + " " + user.surname }}</h3>
           </div>
           <div class="user-content-list">
             <ul>
@@ -43,7 +43,7 @@
             </ul>
           </div>
         </my-grid-item>
-        <my-grid-item class="grid-item add-new-car">
+        <my-grid-item class="grid-item add-new-car" @click="addUserModal()">
           <div class="circle-block">
             <img src="@/assets/addIcon.png" alt="" />
           </div>
@@ -55,7 +55,9 @@
       <div class="close-detailed-contenet" @click="closeDetailedView()">
         <img src="@/assets/closeCrossIcon.png" alt="" />
       </div>
-      <h2>{{ viewDetailedUserObj.name + " " + viewDetailedUserObj.surname}}</h2>
+      <h2>
+        {{ viewDetailedUserObj.name + " " + viewDetailedUserObj.surname }}
+      </h2>
       <div class="head-user-detailed-info">
         <h2>Информация о пользователе</h2>
       </div>
@@ -107,8 +109,49 @@
         </my-grid>
       </div>
       <div class="block-save-btn">
-        <my-button class="save-detail-user-data-btn" @click.prevent="updateUserItem()">Сохранить</my-button>
+        <my-button
+          class="save-detail-user-data-btn"
+          @click.prevent="updateUserItem()"
+          >Сохранить</my-button
+        >
       </div>
+    </div>
+
+    <!-- Добавление пользователя -->
+
+    <div class="add-car" v-if="isUserModalOpen">
+      <my-modal class="user-modal" @close="closeModal()">
+        <div class="add-user-modal">
+          <h2 class="user-modal-head">Добавление пользователя</h2>
+          <my-input
+            v-bind:value="name"
+            @input="name = $event.target.value"
+            :placeholderValue="'Имя'"
+            class="add-user-input"
+          ></my-input>
+          <my-input
+            v-bind:value="surname"
+            @input="surname = $event.target.value"
+            :placeholderValue="'Фамилия'"
+            class="add-user-input"
+          ></my-input>
+          <my-input
+            v-bind:value="phoneNumber"
+            @input="phoneNumber = $event.target.value"
+            :placeholderValue="'Номер телефона'"
+            class="add-user-input"
+          ></my-input>
+          <my-input
+            v-bind:value="email"
+            @input="email = $event.target.value"
+            :placeholderValue="'Почта'"
+            class="add-user-input"
+          ></my-input>
+          <div class="block-add-btn">
+            <my-button class="add-user-button">Зарегистрировать</my-button>
+          </div>
+        </div>
+      </my-modal>
     </div>
 
     <!-- Добавление транспорта пользователя -->
@@ -199,23 +242,58 @@
           </div>
         </div>
       </my-grid-item>
-      <my-grid-item class="grid-item add-new-car">
-          <div class="circle-block">
-            <img src="@/assets/addIcon.png" alt="" />
-          </div>
-        </my-grid-item>
+      <my-grid-item class="grid-item add-new-car" @click="closeDiscountModal()">
+        <div class="circle-block">
+          <img src="@/assets/addIcon.png" alt="" />
+        </div>
+      </my-grid-item>
     </my-grid>
+  </div>
+  <!-- Добавление скидки -->
+  <div class="add-car" v-if="isDiscountModalOpen">
+    <my-modal @close="closeDiscountModal()">
+      <div class="add-user-modal">
+        <h2 class="user-modal-head">Добавление скидки</h2>
+        <my-input
+        v-bind:value="station"
+            @input="station = $event.target.value"
+          :placeholderValue="'Станция'"
+          class="add-discount-input"
+        ></my-input>
+        <my-input
+        v-bind:value="precent"
+            @input="precent = $event.target.value"
+          :placeholderValue="'Процент'"
+          class="add-discount-input"
+        ></my-input>
+        <my-input
+        v-bind:value="discountLimit"
+            @input="discountLimit = $event.target.value"
+          :placeholderValue="'Лимит действия'"
+          class="add-discount-input"
+        ></my-input>
+        <my-input
+        v-bind:value="endDate"
+            @input="endDate = $event.target.value"
+          type="date"
+          :placeholderValue="'Дата окончания'"
+          class="add-discount-input"
+        ></my-input>
+        <div class="block-add-btn">
+          <my-button class="add-discount-button">Добавить скидку</my-button>
+        </div>
+      </div>
+    </my-modal>
   </div>
 </template>
 
 <script>
-import User from '@/apis/User';
-import MyButton from '../UI/MyButton.vue';
+import User from "@/apis/User";
+import MyButton from "../UI/MyButton.vue";
 
 export default {
   props: {
-  
-userItemID: {
+    userItemID: {
       type: Number,
       default: 1,
     },
@@ -231,8 +309,18 @@ userItemID: {
       userId: "",
       modelData: ["Model S", "Model X"],
       brandData: ["Tesla"],
+      name: '',
+      surname: '',
+      phoneNumber: '',
+      email: '',
+      station: '',
+      precent: '',
+      discountLimit: '',
+      endDate: '',
       isDetaileView: false,
       isAddActive: false,
+      isUserModalOpen: false,
+      isDiscountModalOpen: false,
       editObj: {},
       addCarObj: {
         carID: 0,
@@ -334,15 +422,14 @@ userItemID: {
     };
   },
   methods: {
-
-   async updateUserItem(){
+    async updateUserItem() {
       await User.updateUserListItem(this.viewDetailedUserObj);
       this.closeDetailedView();
-   },
-     async getUser() {
-      await User.getUserList().then(response => {
-      this.usersArray = response.data;
-     });
+    },
+    async getUser() {
+      await User.getUserList().then((response) => {
+        this.usersArray = response.data;
+      });
     },
     deteiledManagerUsersView(userObjID) {
       this.viewDetailedUserObj = this.findUserObj(userObjID);
@@ -366,6 +453,18 @@ userItemID: {
         }
       });
       return resUserObj;
+    },
+    addUserModal() {
+      this.closeModal();
+    },
+    addDiscountModal() {
+      this.closeDiscountModal();
+    },
+    closeDiscountModal() {
+      this.isDiscountModalOpen = !this.isDiscountModalOpen;
+    },
+    closeModal() {
+      this.isUserModalOpen = !this.isUserModalOpen;
     },
     addCarView() {
       this.closeAddView();
@@ -438,8 +537,8 @@ userItemID: {
 </script>
 
 <style scoped>
-.block-save-btn{
-  margin-top:20px;
+.block-save-btn {
+  margin-top: 20px;
   display: flex;
   justify-content: center;
 }
@@ -527,6 +626,26 @@ userItemID: {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+/* Добавление пользователя */
+.block-add-btn {
+  display: flex;
+  justify-content: center;
+}
+.user-modal .modal-window {
+  height: auto;
+}
+.user-modal-head {
+  font-size: 20px;
+  margin: 0 0 15px 0;
+  text-align: center;
+}
+
+.add-user-input {
+  width: 100%;
+  margin: 0 0 20px 0;
+}
+
 /* Подробный просмотр пользователей */
 
 .detailed-user-content {
@@ -766,6 +885,11 @@ userItemID: {
   display: flex;
   align-items: flex-end;
   text-align: right;
+}
+/* Добавление скидки */
+.add-discount-input {
+  width: 100%;
+  margin: 0 0 20px 0;
 }
 
 @media screen and (max-width: 1000px) {

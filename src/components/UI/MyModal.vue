@@ -37,7 +37,6 @@ export default {
 .modal-window {
   position: fixed;
   width: 50%;
-  height: 350px;
   background: #fff;
   border-radius: 10px;
   top: 50%;
