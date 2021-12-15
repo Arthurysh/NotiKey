@@ -16,4 +16,7 @@ export default {
     addCarsUser(newCar) {
         return Api.post("/addCars", newCar);
     },
+    getCarList() {
+        return Api.get("/getCarList");
+    },
 };
