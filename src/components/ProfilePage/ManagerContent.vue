@@ -28,18 +28,18 @@
       <my-grid>
         <my-grid-item
           class="grid-item users-item"
-          v-for="user in usersArray"
-          :key="user"
-          @click="this.deteiledManagerUsersView(user.email)"
+          v-for="users in usersArray"
+          :key="users"
+          @click="this.deteiledManagerUsersView(users.userId), this.getCarsUser()"
         >
           <div class="user-head">
-            <h3>{{ user.name + " " + user.surname }}</h3>
+            <h3>{{ users.name + " " + users.surname }}</h3>
           </div>
           <div class="user-content-list">
             <ul>
-              <li>Email: {{ user.email }}</li>
-              <li>Номер телефона: {{ user.phone }}</li>
-              <li>Дата рождения: {{ user.birthday }}</li>
+              <li>Email: {{ users.email }}</li>
+              <li>Номер телефона: {{ users.phone }}</li>
+              <li>Дата рождения: {{ users.birthday }}</li>
             </ul>
           </div>
         </my-grid-item>
@@ -88,7 +88,7 @@
             v-for="car in userCars"
             :key="car"
           >
-            <div class="delete-car-button">
+            <div class="delete-car-button" @click="this.dropCars(car.carId)">
               <img src="@/assets/closeCrossIcon.png" alt="" />
             </div>
             <div class="car-image-block">
@@ -148,7 +148,7 @@
             class="add-user-input"
           ></my-input>
           <div class="block-add-btn">
-            <my-button class="add-user-button">Зарегистрировать</my-button>
+            <my-button class="add-user-button" @click="this.addUserToSystem()">Зарегистрировать</my-button>
           </div>
         </div>
       </my-modal>
@@ -166,22 +166,7 @@
         <div class="add-image-car-model">
           <img :src="require('@/assets/' + this.addCarObj.image)" alt="" />
         </div>
-        <div class="main-add-selectors">
-          <my-select
-            class="choose-brand-button"
-            :arrData="brandData"
-            :plug="'Бренд'"
-            id="brend-select"
-            @change="getCarInfo($event, 1)"
-          ></my-select>
-          <my-select
-            class="choose-model-button"
-            :arrData="modelData"
-            :plug="'Модель'"
-            id="user-model-select"
-            @change="getCarInfo($event, 2)"
-          ></my-select>
-        </div>
+       
         <div class="car-info-table">
           <div
             class="car-info-line"
@@ -190,16 +175,20 @@
           >
             <div
               class="car-info-line-inner"
-              v-if="property != 'carID' && property != 'image'"
+              v-if="property != 'carId' && property != 'image'"
             >
               <p class="characteristic-name">{{ property }}</p>
-              <p class="characteristic-value">{{ value }}</p>
+              <!-- <p class="characteristic-value">{{ value }}</p> -->
+              <my-input 
+              @input="addCarObj[property] = $event.target.value"
+              :value="addCarObj[property]"
+              ></my-input>
             </div>
           </div>
         </div>
 
         <div class="add-car-button-block">
-          <my-button class="add-car-button">Добавить транспорт</my-button>
+          <my-button class="add-car-button" @click="this.addNewCars()">Добавить транспорт</my-button>
         </div>
       </div>
     </div>
@@ -226,18 +215,18 @@
         v-for="discount in managerDiscounts"
         :key="discount"
       >
-        <div class="delete-manager-discount-button">
+        <div class="delete-manager-discount-button" @click="this.deleteDiscount(discount.discountsId)">
           <img src="@/assets/crossIcon.png" alt="" />
         </div>
         <div class="manager-discount-card-head">
-          <h3>Станция - {{ discount.station }}</h3>
+          <h3>Станция - {{ discount.stationName }}</h3>
         </div>
         <div class="discount-content">
           <div class="percent">
             <p>{{ discount.percent }}%</p>
           </div>
           <div class="date-limit">
-            <p>Действует от: {{ discount.activeCount }} покупок</p>
+            <!-- <p>Действует от: {{ discount.activeCount }} покупок</p> -->
             <p>Действует до: {{ discount.date }}</p>
           </div>
         </div>
@@ -254,12 +243,6 @@
     <my-modal @close="closeDiscountModal()">
       <div class="add-user-modal">
         <h2 class="user-modal-head">Добавление скидки</h2>
-        <my-input
-        v-bind:value="station"
-            @input="station = $event.target.value"
-          :placeholderValue="'Станция'"
-          class="add-discount-input"
-        ></my-input>
         <my-input
         v-bind:value="precent"
             @input="precent = $event.target.value"
@@ -280,7 +263,7 @@
           class="add-discount-input"
         ></my-input>
         <div class="block-add-btn">
-          <my-button class="add-discount-button">Добавить скидку</my-button>
+          <my-button class="add-discount-button" @click="addDiscount()">Добавить скидку</my-button>
         </div>
       </div>
     </my-modal>
@@ -290,6 +273,10 @@
 <script>
 import User from "@/apis/User";
 import MyButton from "../UI/MyButton.vue";
+import Cars from "@/apis/Cars";
+import Discount from "@/apis/Discounts";
+import Station from "@/apis/Station";
+import MySelect from '../UI/MySelect.vue';
 
 export default {
   props: {
@@ -299,6 +286,10 @@ export default {
     },
     userRole: {
       type: String,
+      required: true,
+    },
+    user: {
+      type: Object,
       required: true,
     },
   },
@@ -325,49 +316,50 @@ export default {
       addCarObj: {
         carID: 0,
         image: "carPrototype.png",
-        brand: "-",
-        model: "-",
-        year: "-",
-        type: "-",
-        power: "-",
-        maxSpeed: 0,
-        racingTime: 0,
+        brand: "",
+        model: "",
+        year: "",
+        type: "",
+        nomera: "",
       },
-      userCars: [
-        {
-          carID: 12,
-          image: "carTest1.png",
-          brand: "Tesla",
-          model: "Model S",
-          year: "2017",
-          type: "Седан",
-          power: "200лс",
-          maxSpeed: 200,
-          racingTime: 4,
-        },
-        {
-          carID: 132,
-          image: "carTest2.png",
-          brand: "Tesla",
-          model: "Model X",
-          year: "2020",
-          type: "Седан",
-          power: "300лс",
-          maxSpeed: 250,
-          racingTime: 3,
-        },
-        {
-          carID: 132,
-          image: "carTest2.png",
-          brand: "Tesla",
-          model: "Model X",
-          year: "2020",
-          type: "Седан",
-          power: "300лс",
-          maxSpeed: 250,
-          racingTime: 3,
-        },
-      ],
+      
+      
+      userCars: this.getCarsUser(),
+      //  [
+      //   {
+      //     carID: 12,
+      //     image: "carTest1.png",
+      //     brand: "Tesla",
+      //     model: "Model S",
+      //     year: "2017",
+      //     type: "Седан",
+      //     power: "200лс",
+      //     maxSpeed: 200,
+      //     racingTime: 4,
+      //   },
+      //   {
+      //     carID: 132,
+      //     image: "carTest2.png",
+      //     brand: "Tesla",
+      //     model: "Model X",
+      //     year: "2020",
+      //     type: "Седан",
+      //     power: "300лс",
+      //     maxSpeed: 250,
+      //     racingTime: 3,
+      //   },
+      //   {
+      //     carID: 132,
+      //     image: "carTest2.png",
+      //     brand: "Tesla",
+      //     model: "Model X",
+      //     year: "2020",
+      //     type: "Седан",
+      //     power: "300лс",
+      //     maxSpeed: 250,
+      //     racingTime: 3,
+      //   },
+      // ],
       allCars: [
         {
           carID: 12,
@@ -393,35 +385,80 @@ export default {
         },
       ],
       usersArray: this.getUser(),
-      managerDiscounts: [
-        {
-          station: "Elcar",
-          percent: 5,
-          activeCount: 5,
-          date: "22.10.2022",
-        },
-        {
-          station: "Towcar",
-          percent: 10,
-          activeCount: 5,
-          date: "22.10.2022",
-        },
-        {
-          station: "Towcar",
-          percent: 10,
-          activeCount: 5,
-          date: "22.10.2022",
-        },
-        {
-          station: "Towcar",
-          percent: 10,
-          activeCount: 5,
-          date: "22.10.2022",
-        },
-      ],
+      managerDiscounts: this.getDiscountManager(),
     };
   },
   methods: {
+    async deleteDiscount(discount){
+      let ObjDiscountDelete = {
+        discountId: discount,
+      };
+      await Discount.deleteDiscount(ObjDiscountDelete);
+      this.getDiscountManager();
+    },
+    async addDiscount(){
+      let addDiscountObj = {
+        stationId: this.user.stationId,
+        date: this.endDate,
+        percent: this.precent,
+        restrictions: this.discountLimit
+      };
+      
+      await Discount.addDiscount(addDiscountObj);
+      this.closeDiscountModal();
+      this.getDiscountManager();
+
+    },
+    async getDiscountManager(){
+      await Discount.getDiscountManager(this.user.stationId).then(response => {
+      this.managerDiscounts = response.data;
+     });
+      
+    },
+    dropCars(idCars){
+      let ObjDelete = {
+        idCars: idCars,
+      };
+       Cars.deleteCars(ObjDelete);
+       this.getCarsUser();  
+    },
+    async addNewCars(){
+      let newCar = {
+        brand: this.addCarObj.brand,
+        model: this.addCarObj.model,
+        userId: this.viewDetailedUserObj.userId,
+        year: this.addCarObj.year,
+        type: this.addCarObj.type,
+        image: this.addCarObj.image,
+        nomera: this.addCarObj.nomera,
+      };
+      await Cars.addCarsUser(newCar);
+      this.closeAddView();
+      this.getCarsUser();
+      
+    },
+    async getCarsUser(){
+      let userIdObj = this.viewDetailedUserObj.userId;
+      await Cars.getUserCars(userIdObj).then(response => {
+      this.userCars = response.data;
+      
+     });  
+    },
+    async addUserToSystem(){
+      let userObj = {
+        name: this.name,
+        surname: this.surname,
+        phone: this.phoneNumber,
+        email: this.email,
+        user_role: "User",
+        password: "12345678",
+        password_confirmation: "12345678",
+        birthday: "0",
+      };
+      await User.addUserManager(userObj);
+      this.closeModal();
+      this.getUser();
+    },
     async updateUserItem() {
       await User.updateUserListItem(this.viewDetailedUserObj);
       this.closeDetailedView();
@@ -433,13 +470,13 @@ export default {
     },
     deteiledManagerUsersView(userObjID) {
       this.viewDetailedUserObj = this.findUserObj(userObjID);
-      this.userId = userObjID;
+      // this.userId = userObjID;
       this.closeDetailedView();
     },
     findUserObj(id) {
       let resUserObj;
       this.usersArray.forEach((element) => {
-        if (element.email == id) {
+        if (element.userId == id) {
           resUserObj = element;
         }
       });
@@ -502,30 +539,24 @@ export default {
     },
     clearAddCarArray() {
       this.addCarObj = {
-        carID: 0,
         image: "carPrototype.png",
-        brand: "-",
-        model: "-",
-        year: "-",
-        type: "-",
-        power: "-",
-        maxSpeed: 0,
-        racingTime: 0,
+        brand: "",
+        model: "",
+        year: "",
+        type: "",
+        nomera: "",
       };
       this.selectBrandValue = "";
       this.selectModelValue = "";
     },
     clearModelCar() {
       this.addCarObj = {
-        carID: 0,
         image: "carPrototype.png",
-        brand: "-",
-        model: "-",
-        year: "-",
-        type: "-",
-        power: "-",
-        maxSpeed: 0,
-        racingTime: 0,
+        brand: "",
+        model: "",
+        year: "",
+        type: "",
+        nomera: "",
       };
       this.selectModelValue = "";
     },

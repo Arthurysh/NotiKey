@@ -11,6 +11,7 @@
     <manager-content
       :userItemID="userItemID"
       :userRole="userRole"
+      :user="user"
     ></manager-content>
   </div>
 </template>
@@ -19,6 +20,7 @@
 import AdminContent from "@/components/ProfilePage/AdminContent";
 import UserContent from "@/components/ProfilePage/UserContent";
 import ManagerContent from "@/components/ProfilePage/ManagerContent";
+
 export default {
   components: {
     AdminContent,
