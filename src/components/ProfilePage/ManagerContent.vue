@@ -451,8 +451,6 @@ export default {
         phone: this.phoneNumber,
         email: this.email,
         user_role: "User",
-        password: "12345678",
-        password_confirmation: "12345678",
         birthday: "0",
       };
       await User.addUserManager(userObj);
