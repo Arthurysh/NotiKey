@@ -38,5 +38,8 @@ export default {
     async addUserManager(userObj) {
         await Csrf.getCookie();
         return Api.post("/addUserToSystem", userObj)
+    },
+    getUsersList() {
+        return Api.get("/getUsersList")
     }
 };

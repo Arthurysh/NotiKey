@@ -22,6 +22,9 @@ export default {
     },
     deleteNotes(ObjDelete) {
         return Api.post("/deleteNotes", ObjDelete);
+    },
+    getListNotesUsers() {
+        return Api.get("/getListNotesUsers")
     }
 
 

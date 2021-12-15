@@ -159,6 +159,9 @@ import PieChart from "@/components/ProfilePage/AdminCharts/PieChart.vue";
 import BarChart from "@/components/ProfilePage/AdminCharts/BarChart.vue";
 import LineChart from "@/components/ProfilePage/AdminCharts/LineChart.vue";
 import Station from "@/apis/Station";
+import User from "@/apis/User";
+import Cars from "@/apis/Cars";
+import Notes from "@/apis/Notes";
 
 
 export default {
@@ -184,9 +187,27 @@ export default {
       modalEdit: false,
       editObj: {},
       station: this.getStation(),
+      users: this.getUserList(),
+      cars: this.getCarList(),
+      notes: this.getListNotesUsers()
     };
   },
   methods: {
+    getListNotesUsers() {
+      Notes.getListNotesUsers().then(response => {
+      this.notes = response.data;
+      })
+    },
+   async getUserList(){
+      await User.getUsersList().then(response => {
+      this.users = response.data; 
+      })
+     },
+     async getCarList(){
+      await Cars.getCarList().then(response => {
+      this.cars = response.data; 
+      })
+     },
     // ---- Station 
      async deleteIdStation(elem) {
       let elemId;
@@ -199,10 +220,10 @@ export default {
         this.elemId = elem.stationId; 
         break;
         case "Записи": 
-        this.elemId = elem.notesId; 
+        this.elemId = elem.noteId; 
         break;
         case "Транспорт": 
-        this.elemId = elem.carsId; 
+        this.elemId = elem.carId; 
         break;
       }  
       let idElementSection = {
@@ -250,7 +271,12 @@ export default {
             break;
           case "Пользователи":
             this.currentTable = this.users;
-            console.log(this.currentTable);
+            break;
+          case "Транспорт":
+            this.currentTable = this.cars;
+            break;
+          case "Записи":
+            this.currentTable = this.notes;
             break;
           default:
             this.currentTable = this.station;
