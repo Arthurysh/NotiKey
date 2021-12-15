@@ -28,18 +28,20 @@
       <my-grid>
         <my-grid-item
           class="grid-item users-item"
-          v-for="user in usersArray"
-          :key="user"
-          @click="this.deteiledManagerUsersView(user.email)"
+          v-for="users in usersArray"
+          :key="users"
+          @click="
+            this.deteiledManagerUsersView(users.userId), this.getCarsUser()
+          "
         >
           <div class="user-head">
-            <h3>{{ user.name + " " + user.surname }}</h3>
+            <h3>{{ users.name + " " + users.surname }}</h3>
           </div>
           <div class="user-content-list">
             <ul>
-              <li>Email: {{ user.email }}</li>
-              <li>Номер телефона: {{ user.phone }}</li>
-              <li>Дата рождения: {{ user.birthday }}</li>
+              <li>Email: {{ users.email }}</li>
+              <li>Номер телефона: {{ users.phone }}</li>
+              <li>Дата рождения: {{ users.birthday }}</li>
             </ul>
           </div>
         </my-grid-item>
@@ -88,7 +90,7 @@
             v-for="car in userCars"
             :key="car"
           >
-            <div class="delete-car-button">
+            <div class="delete-car-button" @click="this.dropCars(car.carId)">
               <img src="@/assets/closeCrossIcon.png" alt="" />
             </div>
             <div class="car-image-block">
@@ -148,7 +150,9 @@
             class="add-user-input"
           ></my-input>
           <div class="block-add-btn">
-            <my-button class="add-user-button">Зарегистрировать</my-button>
+            <my-button class="add-user-button" @click="this.addUserToSystem()"
+              >Зарегистрировать</my-button
+            >
           </div>
         </div>
       </my-modal>
@@ -166,22 +170,7 @@
         <div class="add-image-car-model">
           <img :src="require('@/assets/' + this.addCarObj.image)" alt="" />
         </div>
-        <div class="main-add-selectors">
-          <my-select
-            class="choose-brand-button"
-            :arrData="brandData"
-            :plug="'Бренд'"
-            id="brend-select"
-            @change="getCarInfo($event, 1)"
-          ></my-select>
-          <my-select
-            class="choose-model-button"
-            :arrData="modelData"
-            :plug="'Модель'"
-            id="user-model-select"
-            @change="getCarInfo($event, 2)"
-          ></my-select>
-        </div>
+
         <div class="car-info-table">
           <div
             class="car-info-line"
@@ -190,16 +179,22 @@
           >
             <div
               class="car-info-line-inner"
-              v-if="property != 'carID' && property != 'image'"
+              v-if="property != 'carId' && property != 'image'"
             >
               <p class="characteristic-name">{{ property }}</p>
-              <p class="characteristic-value">{{ value }}</p>
+              <!-- <p class="characteristic-value">{{ value }}</p> -->
+              <my-input
+                @input="addCarObj[property] = $event.target.value"
+                :value="addCarObj[property]"
+              ></my-input>
             </div>
           </div>
         </div>
 
         <div class="add-car-button-block">
-          <my-button class="add-car-button">Добавить транспорт</my-button>
+          <my-button class="add-car-button" @click="this.addNewCars()"
+            >Добавить транспорт</my-button
+          >
         </div>
       </div>
     </div>
@@ -450,8 +445,10 @@
                     :arrData="getServiceArray()"
                     :plug="'Выбрать услугу'"
                     id="selectDateField"
-                    @change="getServiceCost($event, elem); this.insertObjServices($event); "
-                    
+                    @change="
+                      getServiceCost($event, elem);
+                      this.insertObjServices($event);
+                    "
                   ></my-select>
                 </div>
                 <div class="service-cost">
@@ -488,18 +485,168 @@
             {{ this.getTotalNoteServicesCost() + "грн" }}
           </h3>
         </div>
-        <div
-          class="pay-note-block"
-        >
+        <div class="pay-note-block">
           <div class="google-pay-button">
-            <my-button >
-              Сохранить
-            </my-button>
+            <my-button> Сохранить </my-button>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <!-- Добавление записи -->
+  <div class="add-note" v-if="isAddActive">
+      <div class="close-detailed-contenet" @click="closeAddNote()">
+        <img src="@/assets/closeCrossIcon.png" alt="" />
+      </div>
+      <h2 class="add-note-head">Добавление записи</h2>
+      <div class="add-head-select-block">
+        <h2>Информация о записи</h2>
+        <div class="note-info-table note-add-info-table">
+          <div class="note-info-line">
+            <div class="note-info-line-inner">
+              <p class="characteristic-name">Номер</p>
+              <p style="padding-right: 35px;">Запись {{this.userNotes.length + 1}}</p>
+            </div>
+          </div>
+          <div class="note-info-line">
+            <div class="note-info-line-inner">
+              <p class="characteristic-name">Станция</p>
+              <my-select
+                class="add-choose-sto"
+                :plug="'Станция'"
+                id="add-sto-select"
+                @change="this.getIdElementObj($event.target.value, 'station')"
+                v-model="this.createNotes.station"
+              ></my-select>
+            </div>
+          </div>
+          <div class="note-info-line">
+            <div class="note-info-line-inner">
+              <p class="characteristic-name">Машина</p>
+              <my-select
+                class="add-choose-car"
+                v-model="this.createNotes.cars"
+                :plug="'Выбрать машину'"
+                id="add-car-select"
+                @change="this.getIdElementObj($event.target.value.split(' ')[1], 'cars')"
+                
+              ></my-select>
+            </div>
+          </div>
+          <div class="note-info-line">
+            <div class="note-info-line-inner">
+              <p class="characteristic-name">Дата</p>
+              <my-input
+                type="date"
+                @change="this.createNotes.date = $event.target.value"
+                :value="this.createNotes.date"
+              ></my-input>
+            </div>
+          </div>
+          <div class="note-info-line">
+            <div class="note-info-line-inner">
+              <p class="characteristic-name">Время</p>
+              <my-select
+                class="add-choose-time"
+                :arrData="this.converteToArrayString(this.time, 'time')"
+                :plug="'Время'"
+                id="add-time-select"
+                @change="this.getIdElementObj($event.target.value, 'time')"
+                v-model="this.createNotes.time"
+              ></my-select>
+            </div>
+          </div>
+          <div class="note-info-line">
+            <div class="note-info-line-inner">
+              <p class="characteristic-name">Пользователь</p>
+              <my-select
+                class="add-choose-car"
+                :arrData="getAllUsers()"
+                :plug="'Юзер'"
+                id="add-car-select"               
+              ></my-select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="note-add-station-settings">
+        <div class="station-location-map">
+          <div class="map-station-head">
+            <h3>Адресс</h3>
+          </div>
+          <GMapMap
+            :center="center"
+            :zoom="7"
+            map-type-id="terrain"
+            style="width: 100%; height: 20rem"
+          >
+            <GMapCluster >
+              <GMapMarker
+                :key="index"
+                v-for="(m, index) in markers"
+                :position="m.position"
+                :clickable="true"
+                :draggable="true"
+                @click="center = m.position"
+              />
+            </GMapCluster>
+          </GMapMap>
+        </div>
+        <div class="modal-services">
+          <div class="modal-head">
+            <h3>Выберите услуги</h3>
+          </div>
+          <div class="table-block add-note-services-table" id="service-table">
+            <div class="row row-head">
+              <div class="service-field">
+                <p>Услуга</p>
+              </div>
+              <div class="service-cost">
+                <p>Стоимость</p>
+              </div>
+            </div>
+            <div class="table-body" id="tableBodyAddServicesId">
+              <div class="row" v-for="elem in userServices" :key="elem">
+                <div class="service-field">
+                  <my-select
+                    :arrData="getServiceArray()"
+                    :plug="'Выбрать услугу'"
+                    id="selectDateField"
+                    @change="getServiceCost($event, elem); this.insertObjServices($event); "
+                    
+                  ></my-select>
+                </div>
+                <div class="service-cost">
+                  <input
+                    type="text"
+                    :id="'service-cost-input' + elem"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="services-control-btn-block">
+            <div class="total-cost-block">
+              <h2 @click="this.getTotalServicesCost()">
+                Общая сумма - {{ this.totalAddNoteServicesCost + "грн" }}
+              </h2>
+            </div>
+            <div class="control-block add-service-into-note-control">
+              <button @click="addServiceRow()" id="addRow">
+                <img src="@/assets/plusIcon.png" alt="plus" />
+              </button>
+              <button id="deletRow" @click="deleteService()">
+                <img src="@/assets/crossIcon.png" alt="cross" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="add-note-btn-block">
+        <my-button @click="this.insertNotes()">Записаться</my-button>
+      </div>
+    </div>
   <!-- Скидки -->
   <div
     class="manager-discount-content"
@@ -515,18 +662,21 @@
         v-for="discount in managerDiscounts"
         :key="discount"
       >
-        <div class="delete-manager-discount-button">
+        <div
+          class="delete-manager-discount-button"
+          @click="this.deleteDiscount(discount.discountsId)"
+        >
           <img src="@/assets/crossIcon.png" alt="" />
         </div>
         <div class="manager-discount-card-head">
-          <h3>Станция - {{ discount.station }}</h3>
+          <h3>Станция - {{ discount.stationName }}</h3>
         </div>
         <div class="discount-content">
           <div class="percent">
             <p>{{ discount.percent }}%</p>
           </div>
           <div class="date-limit">
-            <p>Действует от: {{ discount.activeCount }} покупок</p>
+            <!-- <p>Действует от: {{ discount.activeCount }} покупок</p> -->
             <p>Действует до: {{ discount.date }}</p>
           </div>
         </div>
@@ -569,7 +719,9 @@
           class="add-discount-input"
         ></my-input>
         <div class="block-add-btn">
-          <my-button class="add-discount-button">Добавить скидку</my-button>
+          <my-button class="add-discount-button" @click="addDiscount()"
+            >Добавить скидку</my-button
+          >
         </div>
       </div>
     </my-modal>
@@ -579,8 +731,10 @@
 <script>
 import User from "@/apis/User";
 import MyButton from "../UI/MyButton.vue";
+import Cars from "@/apis/Cars";
+import Discount from "@/apis/Discounts";
 import Station from "@/apis/Station";
-import Notes from "@/apis/Notes";
+import MySelect from "../UI/MySelect.vue";
 
 export default {
   props: {
@@ -590,6 +744,10 @@ export default {
     },
     userRole: {
       type: String,
+      required: true,
+    },
+    user: {
+      type: Object,
       required: true,
     },
   },
@@ -616,11 +774,12 @@ export default {
       userServices: 0,
       noteStatus: [],
       viewNoteObj: {},
+      totalAddNoteServicesCost: 0,
       //userNotes: this.getNotes(),
-      time: this.getListTime(),
+      time: ["Время записи"],
       stationData: this.getStation(),
       //carsData: this.getCarsList(),
-      createNotes:{
+      createNotes: {
         station: "Станция",
         cars: "Машина",
         services: [],
@@ -650,8 +809,15 @@ export default {
             },
           ],
           stationName: "sto artura",
-          status: "Успешно записан",
-          statusHistory: [],
+          status: "Выполнение услуг",
+          statusHistory: [
+            {
+              statusId: 1,
+              status: "Успешно записан",
+              color: "#FFD15A",
+            },
+            { statusId: 2, status: "Выполнение услуг", color: "#84D1FC" },
+          ],
           time: "20:10",
         },
       ],
@@ -659,48 +825,56 @@ export default {
       addCarObj: {
         carID: 0,
         image: "carPrototype.png",
-        brand: "-",
-        model: "-",
-        year: "-",
-        type: "-",
-        power: "-",
-        maxSpeed: 0,
-        racingTime: 0,
+        brand: "",
+        model: "",
+        year: "",
+        type: "",
+        nomera: "",
       },
-      userCars: [
-        {
-          carID: 12,
-          image: "carTest1.png",
-          brand: "Tesla",
-          model: "Model S",
-          year: "2017",
-          type: "Седан",
-          power: "200лс",
-          maxSpeed: 200,
-          racingTime: 4,
-        },
-        {
-          carID: 132,
-          image: "carTest2.png",
-          brand: "Tesla",
-          model: "Model X",
-          year: "2020",
-          type: "Седан",
-          power: "300лс",
-          maxSpeed: 250,
-          racingTime: 3,
-        },
-        {
-          carID: 132,
-          image: "carTest2.png",
-          brand: "Tesla",
-          model: "Model X",
-          year: "2020",
-          type: "Седан",
-          power: "300лс",
-          maxSpeed: 250,
-          racingTime: 3,
-        },
+
+      userCars: this.getCarsUser(),
+      //  [
+      //   {
+      //     carID: 12,
+      //     image: "carTest1.png",
+      //     brand: "Tesla",
+      //     model: "Model S",
+      //     year: "2017",
+      //     type: "Седан",
+      //     power: "200лс",
+      //     maxSpeed: 200,
+      //     racingTime: 4,
+      //   },
+      //   {
+      //     carID: 132,
+      //     image: "carTest2.png",
+      //     brand: "Tesla",
+      //     model: "Model X",
+      //     year: "2020",
+      //     type: "Седан",
+      //     power: "300лс",
+      //     maxSpeed: 250,
+      //     racingTime: 3,
+      //   },
+      //   {
+      //     carID: 132,
+      //     image: "carTest2.png",
+      //     brand: "Tesla",
+      //     model: "Model X",
+      //     year: "2020",
+      //     type: "Седан",
+      //     power: "300лс",
+      //     maxSpeed: 250,
+      //     racingTime: 3,
+      //   },
+      // ],
+      services: [
+        {name: "Ушатавыфв",
+        price: 200,},
+        {name: "Ушатавыфв",
+        price: 200,},
+        {name: "Ушатавыфв",
+        price: 200,}
       ],
       allCars: [
         {
@@ -727,35 +901,111 @@ export default {
         },
       ],
       usersArray: this.getUser(),
-      managerDiscounts: [
-        {
-          station: "Elcar",
-          percent: 5,
-          activeCount: 5,
-          date: "22.10.2022",
-        },
-        {
-          station: "Towcar",
-          percent: 10,
-          activeCount: 5,
-          date: "22.10.2022",
-        },
-        {
-          station: "Towcar",
-          percent: 10,
-          activeCount: 5,
-          date: "22.10.2022",
-        },
-        {
-          station: "Towcar",
-          percent: 10,
-          activeCount: 5,
-          date: "22.10.2022",
-        },
-      ],
+      managerDiscounts: this.getDiscountManager(),
     };
   },
   methods: {
+    async deleteDiscount(discount) {
+      let ObjDiscountDelete = {
+        discountId: discount,
+      };
+      await Discount.deleteDiscount(ObjDiscountDelete);
+      this.getDiscountManager();
+    },
+    async addDiscount() {
+      let addDiscountObj = {
+        stationId: this.user.stationId,
+        date: this.endDate,
+        percent: this.precent,
+        restrictions: this.discountLimit,
+      };
+
+      await Discount.addDiscount(addDiscountObj);
+      this.closeDiscountModal();
+      this.getDiscountManager();
+    },
+    async getDiscountManager() {
+      await Discount.getDiscountManager(this.user.stationId).then(
+        (response) => {
+          this.managerDiscounts = response.data;
+        }
+      );
+    },
+    getIdElementObj(data, typeArray){
+      switch (typeArray) {
+        case "time":
+          this.time.forEach(element => {
+            if(element.time === data) {
+              this.createNotes.time = element.timeId;
+              }
+          });
+          break;
+          case "station":
+          this.stationData.forEach(element => {
+            if(element.stationName === data) {
+              this.createNotes.station = element.stationId;
+              }
+          });
+          break;
+          case "cars":
+          this.carsData.forEach(element => {
+            if(element.model === data) {
+              this.createNotes.cars = element.carId;
+              }
+          });
+          break;
+      
+      
+        default:
+          break;
+      }
+    },
+    dropCars(idCars) {
+      let ObjDelete = {
+        idCars: idCars,
+      };
+      Cars.deleteCars(ObjDelete);
+      this.getCarsUser();
+    },
+    addNoteView() {
+      this.closeAddNote();
+    },
+    closeAddNote() {
+      this.isAddActive = !this.isAddActive;
+    },
+    async addNewCars() {
+      let newCar = {
+        brand: this.addCarObj.brand,
+        model: this.addCarObj.model,
+        userId: this.viewDetailedUserObj.userId,
+        year: this.addCarObj.year,
+        type: this.addCarObj.type,
+        image: this.addCarObj.image,
+        nomera: this.addCarObj.nomera,
+      };
+      await Cars.addCarsUser(newCar);
+      this.closeAddView();
+      this.getCarsUser();
+    },
+    async getCarsUser() {
+      let userIdObj = this.viewDetailedUserObj.userId;
+      await Cars.getUserCars(userIdObj).then((response) => {
+        this.userCars = response.data;
+      });
+    },
+    async addUserToSystem() {
+      let userObj = {
+        name: this.name,
+        surname: this.surname,
+        phone: this.phoneNumber,
+        email: this.email,
+        user_role: "User",
+        birthday: "0",
+      };
+      await User.addUserManager(userObj);
+      this.closeModal();
+      this.getUser();
+    },
     async updateUserItem() {
       await User.updateUserListItem(this.viewDetailedUserObj);
       this.closeDetailedView();
@@ -767,23 +1017,30 @@ export default {
     },
     deteiledManagerUsersView(userObjID) {
       this.viewDetailedUserObj = this.findUserObj(userObjID);
-      this.userId = userObjID;
+      // this.userId = userObjID;
       this.closeDetailedView();
+    },
+    getAllUsers() {
+      let userArr = [];
+      this.usersArray.forEach(element => {
+        userArr.push(element.name + " " + element.surname);
+      });
+      return userArr;
     },
     findUserObj(id) {
       let resUserObj;
       this.usersArray.forEach((element) => {
-        if (element.email == id) {
+        if (element.userId == id) {
           resUserObj = element;
         }
       });
       return resUserObj;
     },
     async getServiceList() {
-    await Notes.ServicesList().then(response => {
-      this.services = response.data;
-     });
-  },
+      await Notes.ServicesList().then((response) => {
+        this.services = response.data;
+      });
+    },
     deteiledNoteView(noteObjID) {
       this.viewNoteObj = this.findUserNote(noteObjID);
       this.closeDetailedView();
@@ -798,11 +1055,13 @@ export default {
       }
       return resArr;
     },
-     deleteObjServices(){
-      let servicesTable = document.getElementById('tableBodyAddServicesId');
-      let deleteServiceItem = servicesTable.childNodes[servicesTable.childNodes.length-2].childNodes[0].childNodes[0].value;
+    deleteObjServices() {
+      let servicesTable = document.getElementById("tableBodyAddServicesId");
+      let deleteServiceItem =
+        servicesTable.childNodes[servicesTable.childNodes.length - 2]
+          .childNodes[0].childNodes[0].value;
       this.createNotes.services.forEach((element, index) => {
-        if(element.name === deleteServiceItem){
+        if (element.name === deleteServiceItem) {
           this.createNotes.services.splice(index, 1);
         }
       });
@@ -811,10 +1070,23 @@ export default {
       this.deleteObjServices();
       await this.deleteServiceRow();
       this.getTotalServicesCost();
-      
     },
     deleteServiceRow() {
       this.userServices--;
+    },
+    // converteToArrayStringCars(){
+    //   let newArr = [];
+    //   this.carsData.forEach(element => {
+    //     newArr.push(`${element["brand"]} ${element["model"]}`);
+    //   });
+    //   return newArr;
+    // },
+    converteToArrayString(arr, property){
+      let newArr = [];
+      arr.forEach(element => {
+        newArr.push(element[property]);
+      });
+      return newArr;
     },
     findUserName(userObjID) {
       let resUserObj;
@@ -869,6 +1141,7 @@ export default {
           document.getElementById(inputId).value = this.services[i].price;
         }
       }
+      console.log(this.services[1].price);
       this.getTotalServicesCost();
     },
     getNoteServicesString(noteObj) {
@@ -883,20 +1156,18 @@ export default {
       }
       return servicesString;
     },
-    insertObjServices($event){
+    insertObjServices($event) {
       let inputValue = $event.target.value;
       let count = 0;
-      this.services.forEach(element => {
-        if(element.name === inputValue) {
-          this.createNotes.services.forEach(element => {
-            if(element.name === inputValue){
+      this.services.forEach((element) => {
+        if (element.name === inputValue) {
+          this.createNotes.services.forEach((element) => {
+            if (element.name === inputValue) {
               count++;
-              
             }
           });
-          if(count === 0) {
+          if (count === 0) {
             this.createNotes.services.push(element);
-
           }
         }
       });
@@ -997,30 +1268,24 @@ export default {
     },
     clearAddCarArray() {
       this.addCarObj = {
-        carID: 0,
         image: "carPrototype.png",
-        brand: "-",
-        model: "-",
-        year: "-",
-        type: "-",
-        power: "-",
-        maxSpeed: 0,
-        racingTime: 0,
+        brand: "",
+        model: "",
+        year: "",
+        type: "",
+        nomera: "",
       };
       this.selectBrandValue = "";
       this.selectModelValue = "";
     },
     clearModelCar() {
       this.addCarObj = {
-        carID: 0,
         image: "carPrototype.png",
-        brand: "-",
-        model: "-",
-        year: "-",
-        type: "-",
-        power: "-",
-        maxSpeed: 0,
-        racingTime: 0,
+        brand: "",
+        model: "",
+        year: "",
+        type: "",
+        nomera: "",
       };
       this.selectModelValue = "";
     },
@@ -1665,6 +1930,33 @@ export default {
 
 .row-head .service-cost {
   border-left: 1px solid gray;
+}
+/* Добавление записи */
+.user-head-content h2 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.add-note-head {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.add-head-select-block h2{
+  margin-bottom: 24px;
+}
+.add-head-select-block h2 {
+  font-size: 18px;
+  text-align: center;
+}
+.note-add-station-settings {
+  display: flex;
+  justify-content: space-between;
+}
+.add-note-btn-block {
+  display: flex;
+  justify-content: center;
+}
+.add-note {
+  position: relative;
 }
 /* Добавление машины */
 .add-car {
