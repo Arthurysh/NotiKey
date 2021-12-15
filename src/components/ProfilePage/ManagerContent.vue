@@ -209,7 +209,296 @@
     class="manager-note-content"
     v-if="this.userItemID == 2 && this.userRole == 'Manager'"
   >
-    <h1>Manager Hello note</h1>
+    <div class="all-user-notes" v-if="!isDetaileView && !isAddActive">
+      <div class="note-head-content">
+        <h2>Записи</h2>
+      </div>
+      <div class="filter-panel">
+        <div class="filter-search">
+          <my-select
+            :arrData="this.getStatusFilter()"
+            :plug="'Все'"
+            id="filter-select"
+          ></my-select>
+          <my-input :placeholderValue="'Поиск'" id="nameField"></my-input>
+        </div>
+        <div class="right-sort">
+          <my-select
+            class="sort-button"
+            :arrData="filterData"
+            :plug="'По возрастанию'"
+            id="sort-select"
+          ></my-select>
+        </div>
+      </div>
+      <my-grid>
+        <my-grid-item
+          class="grid-item note-item"
+          v-for="note in userNotes"
+          :key="note"
+          @click="deteiledNoteView(note.noteId)"
+          :style="{ 'background-color': this.checkNoteStatus(note.noteId) }"
+        >
+          <div
+            class="delete-note-button"
+            @click="this.deleteNotes(note.noteId), this.closeDetailedView()"
+          >
+            <img src="@/assets/crossIcon.png" alt="" />
+          </div>
+          <div class="note-head">
+            <h3>Запись {{ note.noteId }}</h3>
+          </div>
+          <div class="note-content-list">
+            <ul>
+              <li>Статус: {{ note.status }}</li>
+              <li class="note-service-li">
+                Услуга: {{ this.getNoteServicesString(note) }}
+                <!--Услуга: {{  note.serviceName}} -->
+              </li>
+              <li>Машина: {{ note.brand }} {{ note.model }}</li>
+              <li>Станция: {{ note.stationName }}</li>
+              <li>Дата: {{ note.date }}</li>
+            </ul>
+            <div class="note-time">
+              {{ note.time }}
+            </div>
+          </div>
+        </my-grid-item>
+        <my-grid-item class="grid-item add-new-car" @click="addNoteView()">
+          <div class="circle-block">
+            <img src="@/assets/addIcon.png" alt="" />
+          </div>
+        </my-grid-item>
+      </my-grid>
+    </div>
+    <!-- Детальный просмотр записей -->
+    <div class="detailed-note-info" v-if="isDetaileView">
+      <div class="close-detailed-contenet" @click="closeDetailedView()">
+        <img src="@/assets/closeCrossIcon.png" alt="" />
+      </div>
+      <h3 class="opened-note-name">
+        {{ "Запись " + this.viewNoteObj.noteId }}
+      </h3>
+      <div class="deteiled-note-head">
+        <h3>Информация о записи</h3>
+      </div>
+      <div class="note-info-table">
+        <div
+          class="note-info-line"
+          v-for="(value, property) in viewNoteObj"
+          :key="property"
+        >
+          <div
+            class="note-info-line-inner"
+            v-if="
+              property != 'noteId' &&
+              property != 'statusId' &&
+              property != 'statusHistory' &&
+              property != 'additionalServices'
+            "
+          >
+            <p class="characteristic-name">{{ property }}</p>
+            <p class="characteristic-value" v-if="property != 'services'">
+              {{ value }}
+            </p>
+            <p
+              class="characteristic-value services-characteristic-value"
+              v-if="property == 'services'"
+            >
+              {{ this.getNoteServicesString(this.viewNoteObj) }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="details">
+        <div class="deteiled-note-status">
+          <h3>Статус записи</h3>
+
+          <div class="progress-note-status">
+            <div class="progress-note">
+              <div
+                class="progress-item"
+                v-bind:class="{
+                  'success-status-item':
+                    this.viewNoteObj.statusHistory.includes(
+                      this.viewNoteObj.statusHistory[0]
+                    ),
+                }"
+              >
+                <div class="progress-head-name">
+                  <p>Запись</p>
+                </div>
+                <div
+                  class="progress-circle"
+                  v-bind:class="{
+                    'progress-circle-success':
+                      this.viewNoteObj.statusHistory.includes(
+                        this.viewNoteObj.statusHistory[0]
+                      ),
+                  }"
+                >
+                  <div class="progress-circle-img-wrap">
+                    <img src="@/assets/sucsessIcon.png" alt="" />
+                  </div>
+                </div>
+              </div>
+              <div class="progress-circle-divider"></div>
+              <div
+                class="progress-item"
+                v-bind:class="{
+                  'success-status-item':
+                    this.viewNoteObj.statusHistory.includes(
+                      this.viewNoteObj.statusHistory[1]
+                    ),
+                }"
+              >
+                <div class="progress-head-name">
+                  <p>Выполнение услуг</p>
+                </div>
+                <div
+                  class="progress-circle"
+                  v-bind:class="{
+                    'progress-circle-success':
+                      this.viewNoteObj.statusHistory.includes(
+                        this.viewNoteObj.statusHistory[1]
+                      ),
+                  }"
+                >
+                  <div class="progress-circle-img-wrap">
+                    <img src="@/assets/sucsessIcon.png" alt="" />
+                  </div>
+                </div>
+              </div>
+              <div class="progress-circle-divider"></div>
+              <div
+                class="progress-item"
+                v-bind:class="{
+                  'success-status-item':
+                    this.viewNoteObj.statusHistory.includes(
+                      this.viewNoteObj.statusHistory[2]
+                    ),
+                }"
+              >
+                <div class="progress-head-name">
+                  <p>
+                    Готово к<br />
+                    оплате
+                  </p>
+                </div>
+                <div
+                  class="progress-circle"
+                  v-bind:class="{
+                    'progress-circle-success':
+                      this.viewNoteObj.statusHistory.includes(
+                        this.viewNoteObj.statusHistory[2]
+                      ),
+                  }"
+                >
+                  <div class="progress-circle-img-wrap">
+                    <img src="@/assets/sucsessIcon.png" alt="" />
+                  </div>
+                </div>
+              </div>
+              <div class="progress-circle-divider"></div>
+              <div
+                class="progress-item"
+                v-bind:class="{
+                  'success-status-item':
+                    this.viewNoteObj.statusHistory.includes(
+                      this.viewNoteObj.statusHistory[3]
+                    ),
+                }"
+              >
+                <div class="progress-head-name">
+                  <p>Закрыта</p>
+                </div>
+                <div
+                  class="progress-circle"
+                  v-bind:class="{
+                    'progress-circle-success':
+                      this.viewNoteObj.statusHistory.includes(
+                        this.viewNoteObj.statusHistory[3]
+                      ),
+                  }"
+                >
+                  <div class="progress-circle-img-wrap">
+                    <img src="@/assets/sucsessIcon.png" alt="" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="progress-service"></div>
+          </div>
+        </div>
+        <div class="modal-services">
+          <div class="modal-head">
+            <h3>Выберите услуги</h3>
+          </div>
+          <div class="table-block add-note-services-table" id="service-table">
+            <div class="row row-head">
+              <div class="service-field">
+                <p>Услуга</p>
+              </div>
+              <div class="service-cost">
+                <p>Стоимость</p>
+              </div>
+            </div>
+            <div class="table-body" id="tableBodyAddServicesId">
+              <div class="row" v-for="elem in userServices" :key="elem">
+                <div class="service-field">
+                  <my-select
+                    :arrData="getServiceArray()"
+                    :plug="'Выбрать услугу'"
+                    id="selectDateField"
+                    @change="getServiceCost($event, elem); this.insertObjServices($event); "
+                    
+                  ></my-select>
+                </div>
+                <div class="service-cost">
+                  <input
+                    type="text"
+                    :id="'service-cost-input' + elem"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="services-control-btn-block">
+            <div class="total-cost-block">
+              <h2 @click="this.getTotalServicesCost()">
+                Общая сумма - {{ this.totalAddNoteServicesCost + "грн" }}
+              </h2>
+            </div>
+            <div class="control-block add-service-into-note-control">
+              <button @click="addServiceRow()" id="addRow">
+                <img src="@/assets/plusIcon.png" alt="plus" />
+              </button>
+              <button id="deletRow" @click="deleteService()">
+                <img src="@/assets/crossIcon.png" alt="cross" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="result-block">
+        <div class="result-price-block">
+          <h3>Общая сумма:</h3>
+          <h3 class="result-total-cost">
+            {{ this.getTotalNoteServicesCost() + "грн" }}
+          </h3>
+        </div>
+        <div
+          class="pay-note-block"
+        >
+          <div class="google-pay-button">
+            <my-button >
+              Сохранить
+            </my-button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <!-- Скидки -->
   <div
@@ -255,26 +544,26 @@
       <div class="add-user-modal">
         <h2 class="user-modal-head">Добавление скидки</h2>
         <my-input
-        v-bind:value="station"
-            @input="station = $event.target.value"
+          v-bind:value="station"
+          @input="station = $event.target.value"
           :placeholderValue="'Станция'"
           class="add-discount-input"
         ></my-input>
         <my-input
-        v-bind:value="precent"
-            @input="precent = $event.target.value"
+          v-bind:value="precent"
+          @input="precent = $event.target.value"
           :placeholderValue="'Процент'"
           class="add-discount-input"
         ></my-input>
         <my-input
-        v-bind:value="discountLimit"
-            @input="discountLimit = $event.target.value"
+          v-bind:value="discountLimit"
+          @input="discountLimit = $event.target.value"
           :placeholderValue="'Лимит действия'"
           class="add-discount-input"
         ></my-input>
         <my-input
-        v-bind:value="endDate"
-            @input="endDate = $event.target.value"
+          v-bind:value="endDate"
+          @input="endDate = $event.target.value"
           type="date"
           :placeholderValue="'Дата окончания'"
           class="add-discount-input"
@@ -290,6 +579,8 @@
 <script>
 import User from "@/apis/User";
 import MyButton from "../UI/MyButton.vue";
+import Station from "@/apis/Station";
+import Notes from "@/apis/Notes";
 
 export default {
   props: {
@@ -309,18 +600,61 @@ export default {
       userId: "",
       modelData: ["Model S", "Model X"],
       brandData: ["Tesla"],
-      name: '',
-      surname: '',
-      phoneNumber: '',
-      email: '',
-      station: '',
-      precent: '',
-      discountLimit: '',
-      endDate: '',
+      name: "",
+      surname: "",
+      phoneNumber: "",
+      email: "",
+      station: "",
+      precent: "",
+      discountLimit: "",
+      endDate: "",
       isDetaileView: false,
       isAddActive: false,
       isUserModalOpen: false,
+      services: this.getServiceList(),
       isDiscountModalOpen: false,
+      userServices: 0,
+      noteStatus: [],
+      viewNoteObj: {},
+      //userNotes: this.getNotes(),
+      time: this.getListTime(),
+      stationData: this.getStation(),
+      //carsData: this.getCarsList(),
+      createNotes:{
+        station: "Станция",
+        cars: "Машина",
+        services: [],
+        date: "Дата записи",
+        time: "Время записи",
+        userId: this.user.userId,
+        statusId: "1",
+      },
+      userNotes: [
+        {
+          additionalServices: [],
+          adress: "Kharkiv",
+          brand: "tesla",
+          date: "20.20.2012",
+          model: "model s",
+          noteId: 64,
+          services: [
+            {
+              serviceId: 1,
+              name: "service1",
+              price: 241,
+            },
+            {
+              serviceId: 2,
+              name: "service1",
+              price: 241,
+            },
+          ],
+          stationName: "sto artura",
+          status: "Успешно записан",
+          statusHistory: [],
+          time: "20:10",
+        },
+      ],
       editObj: {},
       addCarObj: {
         carID: 0,
@@ -445,6 +779,43 @@ export default {
       });
       return resUserObj;
     },
+    async getServiceList() {
+    await Notes.ServicesList().then(response => {
+      this.services = response.data;
+     });
+  },
+    deteiledNoteView(noteObjID) {
+      this.viewNoteObj = this.findUserNote(noteObjID);
+      this.closeDetailedView();
+    },
+    addServiceRow() {
+      this.userServices++;
+    },
+    getServiceArray() {
+      let resArr = [];
+      for (let i = 0; i < this.services.length; i++) {
+        resArr[i] = this.services[i].name;
+      }
+      return resArr;
+    },
+     deleteObjServices(){
+      let servicesTable = document.getElementById('tableBodyAddServicesId');
+      let deleteServiceItem = servicesTable.childNodes[servicesTable.childNodes.length-2].childNodes[0].childNodes[0].value;
+      this.createNotes.services.forEach((element, index) => {
+        if(element.name === deleteServiceItem){
+          this.createNotes.services.splice(index, 1);
+        }
+      });
+    },
+    async deleteService() {
+      this.deleteObjServices();
+      await this.deleteServiceRow();
+      this.getTotalServicesCost();
+      
+    },
+    deleteServiceRow() {
+      this.userServices--;
+    },
     findUserName(userObjID) {
       let resUserObj;
       this.usersArray.forEach((element) => {
@@ -453,6 +824,123 @@ export default {
         }
       });
       return resUserObj;
+    },
+    async getListTime() {
+      await Notes.TimeList().then((response) => {
+        this.time = response.data;
+      });
+    },
+    async getStation() {
+      await Station.getList().then((response) => {
+        this.stationData = response.data;
+      });
+      //  this.convertStationArray();
+    },
+    async getStatus() {
+      await Notes.statusList().then((response) => {
+        this.noteStatus = response.data;
+      });
+    },
+    async getNotes() {
+      let userIdObj = this.user.userId;
+      await Notes.viewList(userIdObj).then((response) => {
+        this.userNotes = response.data;
+      });
+    },
+    checkNoteStatus(id) {
+      let userNote = this.findUserNote(id);
+      let userStatusColor;
+      this.noteStatus.forEach((element) => {
+        if (element.status === userNote.status) {
+          userStatusColor = element.color;
+        }
+      });
+      return userStatusColor;
+    },
+    getServiceCost($event, elem) {
+      let inputId = "service-cost-input" + elem;
+      let inputValue = $event.target.value.split("-");
+      //console.log(inputValue);
+      if (inputValue[0] == "Выбрать услугу") {
+        document.getElementById(inputId).value = 0;
+      }
+      for (let i = 0; i < this.services.length; i++) {
+        if (this.services[i].name == inputValue[0]) {
+          document.getElementById(inputId).value = this.services[i].price;
+        }
+      }
+      this.getTotalServicesCost();
+    },
+    getNoteServicesString(noteObj) {
+      let servicesString = "";
+
+      for (let i = 0; i < noteObj.services.length; i++) {
+        if (i < noteObj.services.length - 1) {
+          servicesString += noteObj.services[i].name + ", ";
+        } else {
+          servicesString += noteObj.services[i].name;
+        }
+      }
+      return servicesString;
+    },
+    insertObjServices($event){
+      let inputValue = $event.target.value;
+      let count = 0;
+      this.services.forEach(element => {
+        if(element.name === inputValue) {
+          this.createNotes.services.forEach(element => {
+            if(element.name === inputValue){
+              count++;
+              
+            }
+          });
+          if(count === 0) {
+            this.createNotes.services.push(element);
+
+          }
+        }
+      });
+      console.log(inputValue);
+    },
+    getTotalServicesCost() {
+      let noteListUserServices =
+        document.getElementsByClassName("service-cost");
+      let myArray = Array.from(noteListUserServices);
+      console.log(myArray);
+      let result = 0;
+      if (this.userServices > 0) {
+        for (let i = 1; i < myArray.length; i++) {
+          //console.log(myArray[i].childNodes[0]);
+          result += Number(myArray[i].childNodes[0].value);
+        }
+      }
+      console.log(result);
+      this.totalAddNoteServicesCost = result;
+    },
+    getTotalNoteServicesCost() {
+      let sum = 0;
+
+      for (let i = 0; i < this.viewNoteObj.services.length; i++) {
+        sum += +this.viewNoteObj.services[i].price;
+      }
+
+      for (let i = 0; i < this.viewNoteObj.additionalServices.length; i++) {
+        if (this.viewNoteObj.additionalServices[i].include == true) {
+          sum += +this.viewNoteObj.additionalServices[i].price;
+        }
+      }
+
+      this.totalServiceNoteCost = sum;
+      return this.totalServiceNoteCost;
+    },
+    findUserNote(id) {
+      let userNote;
+      this.userNotes.forEach((element) => {
+        if (element.noteId == id) {
+          userNote = element;
+        }
+      });
+      return userNote;
     },
     addUserModal() {
       this.closeModal();
@@ -499,6 +987,13 @@ export default {
           this.addCarObj = this.allCars[i];
         }
       }
+    },
+    getStatusFilter() {
+      let resArr = [];
+      for (let i = 0; i < this.userNotes.length; i++) {
+        resArr[i] = this.userNotes[i].status;
+      }
+      return resArr;
     },
     clearAddCarArray() {
       this.addCarObj = {
@@ -770,7 +1265,407 @@ export default {
 .detailed-add-new-car {
   margin-right: 0;
 }
+/* Просмотр записи */
+.note-head-content h2 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.note-head {
+  margin-bottom: 10px;
+}
+.filter-panel {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.filter-panel select {
+  flex-basis: 15%;
+  outline: none;
+  padding: 10px;
+  border-radius: 10px;
+  margin-right: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.filter-search {
+  width: 80%;
+  display: flex;
+}
+.filter-search input {
+  flex-basis: 65%;
+  height: auto;
+  text-align: left;
+  padding-left: 10px;
+  border-radius: 20px;
+}
+.note-item {
+  position: relative;
+  cursor: pointer;
+  border: 1px solid #b0b0b0;
+  border-radius: 12px;
+  padding: 15px;
+  color: #3e3e3e;
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s;
+}
+.delete-note-button {
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+.delete-note-button img {
+  max-width: 100%;
+  max-height: 100%;
+}
+.note-content-list ul {
+  color: #625e5e;
+  list-style-type: none;
+}
+.note-service-li {
+  max-width: 75%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.note-time {
+  font-weight: bold;
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+}
+.note-info-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.note-info-table .note-info-line p {
+  font-size: 12px;
+  font-weight: bold;
+}
+.note-info-line:nth-child(2n + 1) {
+  background: #c4c4c4;
+}
 
+.note-info-line-inner {
+  width: 100%;
+  display: flex;
+  padding: 10px 40px;
+  justify-content: space-between;
+}
+
+.note-add-info-table .note-info-line:nth-child(2n + 1) select {
+  background: #c4c4c4;
+}
+
+.note-add-info-table .note-info-line select {
+  border: none;
+  outline: none;
+  padding: 0 5px 0 0;
+  width: 90px;
+}
+.services-characteristic-value {
+  max-width: 290px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.deteiled-note-status h3 {
+  margin-bottom: 15px;
+}
+.progress-note {
+  display: flex;
+  justify-content: space-between;
+  height: 90px;
+}
+
+.progress-note .progress-item {
+  width: 64px;
+  margin: 0 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.progress-item .progress-head-name {
+  color: #5b5b5b;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.progress-item .progress-circle {
+  width: 40px;
+  height: 40px;
+  background: #c4c4c4;
+  border-radius: 50%;
+  border: 4px solid #969696;
+  position: relative;
+}
+.progress-item .progress-circle img {
+  display: none;
+}
+
+.progress-item .progress-circle-success {
+  background: #7fd970;
+  border: 4px solid #7fd970;
+}
+.progress-circle-divider {
+  margin-top: 66px;
+  height: 5px;
+  width: 30px;
+  border-radius: 8px;
+  background: #c4c4c4;
+}
+.progress-circle-img-wrap {
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.progress-circle-img-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+}
+.progress-item .progress-circle-success img {
+  display: block;
+}
+.success-status-item + .progress-circle-divider {
+  background: #7fd970;
+}
+.deteiled-note-description {
+  margin-left: 20px;
+}
+.deteiled-note-description li {
+  position: relative;
+  list-style: none;
+}
+.deteiled-note-description p {
+  font-weight: bold;
+  font-size: 15px;
+}
+.detailed-note-drop-down {
+  margin-bottom: 10px;
+}
+.drop-down-head {
+  display: flex;
+  align-items: center;
+}
+.drop-down-head h3 {
+  margin-right: 7px;
+}
+.drop-down-icon-wrap,
+.drop-down-recomended-icon-wrap {
+  width: 15px;
+  height: 15px;
+}
+.drop-down-icon-wrap img,
+.drop-down-recomended-icon-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  transition: transform 0.2s;
+  transform: rotate(-90deg);
+}
+.drop-down-icon-wrap .drop-down-icon-active,
+.drop-down-recomended-icon-wrap .drop-down-recomended-icon-active {
+  transition: transform 0.2s;
+  transform: rotate(-180deg);
+}
+.result-price-block {
+  display: flex;
+  padding: 15px 0;
+}
+.result-total-cost {
+  margin-left: 10px;
+  color: #5b5b5b;
+}
+.pay-note-block select {
+  margin-bottom: 10px;
+}
+.google-pay-button button {
+  padding: 10px 15px;
+  background: black;
+  display: flex;
+  align-items: center;
+}
+.google-pay-button img {
+  height: 20px;
+  width: 20px;
+  margin-right: 10px;
+}
+.details {
+  position: relative;
+  display: flex;
+  width: 75%;
+  justify-content: space-between;
+  padding: 10px 0 30px 0;
+}
+.modal-services {
+  height: 350px;
+}
+
+.station-location-map,
+.modal-services {
+  width: 48%;
+}
+.add-note-services-table
+  .table-body
+  .row:nth-child(2n + 1)
+  .service-field
+  select,
+.add-note-services-table
+  .table-body
+  .row:nth-child(2n + 1)
+  .service-cost
+  input {
+  background: #c4c4c4;
+}
+
+.table-block.add-note-services-table {
+  overflow: normal;
+}
+
+.table-block.add-note-services-table .table-body {
+  height: 178px;
+  overflow-y: scroll;
+}
+
+.table-block.add-note-services-table {
+  height: 212px;
+}
+
+.total-cost-block {
+  font-size: 14px;
+}
+
+.modal-services {
+  height: 350px;
+}
+
+.station-location-map,
+.modal-services {
+  width: 48%;
+}
+.modal-head,
+.map-station-head {
+  margin-bottom: 20px;
+}
+.table-block {
+  border: 1px solid gray;
+  border-radius: 5px;
+  height: 200px;
+  background: #fff;
+  margin-bottom: 10px;
+  overflow: scroll;
+}
+
+.table-block .row {
+  border-bottom: 1px solid gray;
+  display: flex;
+}
+
+.table-block .row select,
+.table-block .row input {
+  border: none;
+  border-radius: 0;
+  height: 100%;
+  outline: none;
+  width: 100%;
+  text-align: center;
+}
+.row-head {
+  background: #fff;
+}
+.service-cost {
+  border-left: 1px solid gray;
+}
+
+.service-cost,
+.service-field {
+  flex-basis: 50%;
+}
+.service-cost input {
+  border-left: 1px solid gray;
+}
+.row-head .service-cost,
+.row-head .service-field {
+  padding: 6px;
+  text-align: center;
+}
+
+.row-head .service-cost {
+  border-left: 1px solid gray;
+}
+.services-control-btn-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.services-control-btn-block button {
+  height: 40px;
+  width: 40px;
+  border: none;
+  border-radius: 5px;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.5s;
+}
+.control-block button:first-child:hover {
+  background: #006be0;
+}
+
+.control-block button:last-child:hover {
+  background: #bd3232;
+}
+
+.control-block button img {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.control-block button:last-child img {
+  width: 15px;
+  height: 15px;
+}
+
+.control-block button:first-child {
+  background: #4599f5;
+  color: #fff;
+  margin-right: 10px;
+}
+
+.control-block button:last-child {
+  background: #da5252;
+  color: #fff;
+}
+
+.note-add-info-table .note-info-line:nth-child(2n + 1) select {
+  background: #c4c4c4;
+}
+
+.note-add-info-table .note-info-line select {
+  border: none;
+  outline: none;
+  padding: 0 5px 0 0;
+  width: 90px;
+}
+
+.row-head .service-cost {
+  border-left: 1px solid gray;
+}
 /* Добавление машины */
 .add-car {
   position: relative;
@@ -830,7 +1725,17 @@ export default {
   font-size: 12px;
   font-weight: bold;
 }
-
+/* Записи пользователя детальней */
+.detailed-note-info {
+  position: relative;
+}
+.deteiled-note-head h3 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.deteiled-note-head {
+  margin-bottom: 10px;
+}
 /* Скидки менеджера */
 .delete-manager-discount-button {
   width: 25px;
@@ -885,6 +1790,30 @@ export default {
   display: flex;
   align-items: flex-end;
   text-align: right;
+}
+.details-list {
+  max-height: 0;
+  padding-left: 15px;
+  overflow: hidden;
+  transition: max-height 0.2s;
+}
+.details-list li {
+  margin-bottom: 5px;
+  color: #5b5b5b;
+}
+.details-list-active,
+.details-recomended-list-active {
+  max-height: 200px;
+  transition: max-height 1s;
+}
+.details::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: #c4c4c4;
+  bottom: 0;
+  position: absolute;
 }
 /* Добавление скидки */
 .add-discount-input {
