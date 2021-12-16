@@ -2030,9 +2030,6 @@ export default {
 .car-info-table .car-info-line:nth-child(2n + 1) {
   background: #c4c4c4;
 }
-.my-input-field {
-
-}
 .car-info-line-inner {
   width: 100%;
   display: flex;
