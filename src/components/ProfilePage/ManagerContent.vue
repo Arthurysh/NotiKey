@@ -261,7 +261,7 @@
             </div>
           </div>
         </my-grid-item>
-        <my-grid-item class="grid-item add-new-car" @click="addNoteView()">
+        <my-grid-item class="grid-item add-new-car" @click="getCarsList(), addNoteView()">
           <div class="circle-block">
             <img src="@/assets/addIcon.png" alt="" />
           </div>
@@ -510,28 +510,31 @@
               <p style="padding-right: 35px;">Запись {{this.userNotes.length + 1}}</p>
             </div>
           </div>
-          <div class="note-info-line">
+          <!-- <div class="note-info-line">
             <div class="note-info-line-inner">
               <p class="characteristic-name">Станция</p>
               <my-select
                 class="add-choose-sto"
                 :plug="'Станция'"
                 id="add-sto-select"
+                :arrData="this.converteToArrayString(this.stationData, 'stationName')"
                 @change="this.getIdElementObj($event.target.value, 'station')"
                 v-model="this.createNotes.station"
               ></my-select>
             </div>
           </div>
+           -->
           <div class="note-info-line">
             <div class="note-info-line-inner">
               <p class="characteristic-name">Машина</p>
               <my-select
+                :arrData="this.converteToArrayStringCars()"
                 class="add-choose-car"
                 v-model="this.createNotes.cars"
                 :plug="'Выбрать машину'"
                 id="add-car-select"
                 @change="this.getIdElementObj($event.target.value.split(' ')[1], 'cars')"
-                
+                @click="this.getCarsList()"
               ></my-select>
             </div>
           </div>
@@ -564,9 +567,12 @@
               <p class="characteristic-name">Пользователь</p>
               <my-select
                 class="add-choose-car"
-                :arrData="getAllUsers()"
+                :arrData="this.getAllUsers()"
                 :plug="'Юзер'"
-                id="add-car-select"               
+                id="add-car-select"   
+                @change="this.getIdElementObj($event.target.value, 'user')"
+                v-model="this.createNotes.userId" 
+                @click="this.getCarsList()"           
               ></my-select>
             </div>
           </div>
@@ -777,20 +783,20 @@ export default {
       services: this.getServiceList(),
       isDiscountModalOpen: false,
       userServices: 0,
-      noteStatus: [],
+      noteStatus: this.getStatus(),
       viewNoteObj: {},
       totalAddNoteServicesCost: 0,
       //userNotes: this.getNotes(),
-      time: ["Время записи"],
+      time: this.getListTime(),
       stationData: this.getStation(),
-      //carsData: this.getCarsList(),
+      carsData: this.getCarsList(),
       createNotes: {
-        station: "Станция",
+        station: this.user.stationId,
         cars: "Машина",
         services: [],
         date: "Дата записи",
         time: "Время записи",
-        userId: this.user.userId,
+        userId: 14,
         statusId: "1",
       },
       userNotes: this.managerViewNotes(),
@@ -847,35 +853,45 @@ export default {
         {name: "Ушатавыфв",
         price: 200,}
       ],
-      allCars: [
-        {
-          carID: 12,
-          image: "carTest1.png",
-          brand: "Tesla",
-          model: "Model S",
-          year: "2017",
-          type: "Седан",
-          power: "200лс",
-          maxSpeed: 200,
-          racingTime: 4,
-        },
-        {
-          carID: 132,
-          image: "carTest2.png",
-          brand: "Tesla",
-          model: "Model X",
-          year: "2020",
-          type: "Седан",
-          power: "300лс",
-          maxSpeed: 250,
-          racingTime: 3,
-        },
-      ],
+      
       usersArray: this.getUser(),
       managerDiscounts: this.getDiscountManager(),
     };
   },
   methods: {
+    insertNotes(){
+      Notes.insertNotes(this.createNotes);
+      this.closeAddNote();
+      this.managerViewNotes();
+    },
+    async getStatus() {
+    await Notes.statusList().then(response => {
+      this.noteStatus = response.data;
+     });
+  },
+    async getListTime(){
+      await Notes.TimeList().then(response => {
+      this.time = response.data;
+      
+     });
+    },
+    async getCarsList() {
+      await Cars.getList(this.createNotes.userId).then(response => {
+      this.carsData = response.data;
+     });
+
+    
+    },
+    async getServiceList() {
+    await Notes.ServicesList().then(response => {
+      this.services = response.data;
+     });
+  },
+    async getStation() {
+    await Station.getList().then(response => {
+      this.stationData = response.data;
+     });
+  },
    async managerViewNotes() {
       
       await Notes.managerViewNotes(this.user.stationId).then(
@@ -928,7 +944,14 @@ export default {
           case "cars":
           this.carsData.forEach(element => {
             if(element.model === data) {
-              this.createNotes.cars = element.carId;
+               this.createNotes.cars = element.carId;
+              }
+          });
+          break;
+          case "user":
+          this.usersArray.forEach(element => {
+            if((element.name + " " + element.surname + " " + element.email) === data) {
+              this.createNotes.userId = element.userId;
               }
           });
           break;
@@ -1001,7 +1024,7 @@ export default {
     getAllUsers() {
       let userArr = [];
       this.usersArray.forEach(element => {
-        userArr.push(element.name + " " + element.surname);
+        userArr.push(element.name + " " + element.surname + " " + element.email);
       });
       return userArr;
     },
@@ -1052,19 +1075,20 @@ export default {
     deleteServiceRow() {
       this.userServices--;
     },
-    // converteToArrayStringCars(){
-    //   let newArr = [];
-    //   this.carsData.forEach(element => {
-    //     newArr.push(`${element["brand"]} ${element["model"]}`);
-    //   });
-    //   return newArr;
-    // },
+    converteToArrayStringCars(){
+      let newArr = [];
+      this.carsData.forEach(element => {
+        newArr.push(`${element["brand"]} ${element["model"]}`);
+      });
+      return newArr;
+    },
     converteToArrayString(arr, property){
       let newArr = [];
       arr.forEach(element => {
         newArr.push(element[property]);
       });
       return newArr;
+      
     },
     findUserName(userObjID) {
       let resUserObj;
