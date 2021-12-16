@@ -25,8 +25,10 @@ export default {
     },
     getListNotesUsers() {
         return Api.get("/getListNotesUsers")
-    }
-
+    },
+    managerViewNotes(stationIdObj) {
+        return Api.get(`/managerViewNotes?stationId=${stationIdObj}`)
+    },
 
 
 };

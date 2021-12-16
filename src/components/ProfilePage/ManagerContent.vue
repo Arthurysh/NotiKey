@@ -735,6 +735,7 @@ import Cars from "@/apis/Cars";
 import Discount from "@/apis/Discounts";
 import Station from "@/apis/Station";
 import MySelect from "../UI/MySelect.vue";
+import Notes from "@/apis/Notes";
 
 export default {
   props: {
@@ -788,39 +789,40 @@ export default {
         userId: this.user.userId,
         statusId: "1",
       },
-      userNotes: [
-        {
-          additionalServices: [],
-          adress: "Kharkiv",
-          brand: "tesla",
-          date: "20.20.2012",
-          model: "model s",
-          noteId: 64,
-          services: [
-            {
-              serviceId: 1,
-              name: "service1",
-              price: 241,
-            },
-            {
-              serviceId: 2,
-              name: "service1",
-              price: 241,
-            },
-          ],
-          stationName: "sto artura",
-          status: "Выполнение услуг",
-          statusHistory: [
-            {
-              statusId: 1,
-              status: "Успешно записан",
-              color: "#FFD15A",
-            },
-            { statusId: 2, status: "Выполнение услуг", color: "#84D1FC" },
-          ],
-          time: "20:10",
-        },
-      ],
+      userNotes: this.managerViewNotes(),
+      // [
+      //   {
+      //     additionalServices: [],
+      //     adress: "Kharkiv",
+      //     brand: "tesla",
+      //     date: "20.20.2012",
+      //     model: "model s",
+      //     noteId: 64,
+      //     services: [
+      //       {
+      //         serviceId: 1,
+      //         name: "service1",
+      //         price: 241,
+      //       },
+      //       {
+      //         serviceId: 2,
+      //         name: "service1",
+      //         price: 241,
+      //       },
+      //     ],
+      //     stationName: "sto artura",
+      //     status: "Выполнение услуг",
+      //     statusHistory: [
+      //       {
+      //         statusId: 1,
+      //         status: "Успешно записан",
+      //         color: "#FFD15A",
+      //       },
+      //       { statusId: 2, status: "Выполнение услуг", color: "#84D1FC" },
+      //     ],
+      //     time: "20:10",
+      //   },
+      // ],
       editObj: {},
       addCarObj: {
         carID: 0,
@@ -833,41 +835,6 @@ export default {
       },
 
       userCars: this.getCarsUser(),
-      //  [
-      //   {
-      //     carID: 12,
-      //     image: "carTest1.png",
-      //     brand: "Tesla",
-      //     model: "Model S",
-      //     year: "2017",
-      //     type: "Седан",
-      //     power: "200лс",
-      //     maxSpeed: 200,
-      //     racingTime: 4,
-      //   },
-      //   {
-      //     carID: 132,
-      //     image: "carTest2.png",
-      //     brand: "Tesla",
-      //     model: "Model X",
-      //     year: "2020",
-      //     type: "Седан",
-      //     power: "300лс",
-      //     maxSpeed: 250,
-      //     racingTime: 3,
-      //   },
-      //   {
-      //     carID: 132,
-      //     image: "carTest2.png",
-      //     brand: "Tesla",
-      //     model: "Model X",
-      //     year: "2020",
-      //     type: "Седан",
-      //     power: "300лс",
-      //     maxSpeed: 250,
-      //     racingTime: 3,
-      //   },
-      // ],
       services: [
         {name: "Ушатавыфв",
         price: 200,},
@@ -905,6 +872,13 @@ export default {
     };
   },
   methods: {
+   async managerViewNotes() {
+      
+      await Notes.managerViewNotes(this.user.stationId).then(
+        (response) => {
+          this.userNotes = response.data;
+        });
+    },
     async deleteDiscount(discount) {
       let ObjDiscountDelete = {
         discountId: discount,
