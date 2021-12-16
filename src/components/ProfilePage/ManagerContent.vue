@@ -184,8 +184,10 @@
               <p class="characteristic-name">{{ property }}</p>
               <!-- <p class="characteristic-value">{{ value }}</p> -->
               <my-input
+                :placeholder=property
                 @input="addCarObj[property] = $event.target.value"
                 :value="addCarObj[property]"
+                class="user-addcar-input"
               ></my-input>
             </div>
           </div>
@@ -204,7 +206,7 @@
     class="manager-note-content"
     v-if="this.userItemID == 2 && this.userRole == 'Manager'"
   >
-    <div class="all-user-notes" v-if="!isDetaileView && !isAddActive">
+    <div class="all-user-notes" v-if="!isDetaileView && !isAddNoteActive">
       <div class="note-head-content">
         <h2>Записи</h2>
       </div>
@@ -494,7 +496,7 @@
     </div>
   </div>
   <!-- Добавление записи -->
-  <div class="add-note" v-if="isAddActive">
+  <div class="add-note" v-if="isAddNoteActive">
       <div class="close-detailed-contenet" @click="closeAddNote()">
         <img src="@/assets/closeCrossIcon.png" alt="" />
       </div>
@@ -540,6 +542,7 @@
                 type="date"
                 @change="this.createNotes.date = $event.target.value"
                 :value="this.createNotes.date"
+                class="note-info-date"
               ></my-input>
             </div>
           </div>
@@ -769,6 +772,7 @@ export default {
       endDate: "",
       isDetaileView: false,
       isAddActive: false,
+      isAddNoteActive: false,
       isUserModalOpen: false,
       services: this.getServiceList(),
       isDiscountModalOpen: false,
@@ -945,7 +949,7 @@ export default {
       this.closeAddNote();
     },
     closeAddNote() {
-      this.isAddActive = !this.isAddActive;
+      this.isAddNoteActive = !this.isAddNoteActive;
     },
     async addNewCars() {
       let newCar = {
@@ -1436,6 +1440,16 @@ export default {
   text-align: right;
   outline: none;
 }
+.car-info-line-inner input {
+  background: #fff;
+  border: none;
+  text-align: right;
+  outline: none;
+}
+.car-info-line:nth-child(2n + 1),
+.car-info-line:nth-child(2n + 1) input {
+  background: #c4c4c4;
+}
 .manager-user-car-list {
   padding: 20px;
   border-radius: 12px;
@@ -1590,12 +1604,23 @@ export default {
 .note-info-line:nth-child(2n + 1) {
   background: #c4c4c4;
 }
-
+.note-info-date {
+  border: 0;
+  padding: 0;
+  border-radius: 0;
+}
 .note-info-line-inner {
   width: 100%;
   display: flex;
   padding: 10px 40px;
   justify-content: space-between;
+}
+.note-info-line-inner input{
+  background: #fff;
+  border: none;
+  text-align:right;
+  padding-left: 20px;
+  box-sizing:border-box;
 }
 
 .note-add-info-table .note-info-line:nth-child(2n + 1) select {
@@ -1980,6 +2005,9 @@ export default {
 
 .car-info-table .car-info-line:nth-child(2n + 1) {
   background: #c4c4c4;
+}
+.my-input-field {
+
 }
 .car-info-line-inner {
   width: 100%;
