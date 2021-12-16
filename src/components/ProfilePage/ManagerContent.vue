@@ -441,14 +441,15 @@
               </div>
             </div>
             <div class="table-body" id="tableBodyAddServicesId">
-              <div class="row" v-for="elem in userServices" :key="elem">
+              <div class="row" v-for="elem in userServicesView" :key="elem">
                 <div class="service-field">
                   <my-select
                     :arrData="getServiceArray()"
                     :plug="'Выбрать услугу'"
                     id="selectDateField"
+                    :value="elem-1 > this.viewNoteObj.services.length-1 ? 'Выбрать услугу': this.viewNoteObj.services[elem-1].name"
                     @change="
-                      getServiceCost($event, elem);
+                      this.getServiceCost($event, elem);
                       this.insertObjServices($event);
                     "
                   ></my-select>
@@ -457,6 +458,7 @@
                   <input
                     type="text"
                     :id="'service-cost-input' + elem"
+                    :value="elem-1 > this.viewNoteObj.services.length-1 ? '': this.viewNoteObj.services[elem-1].price"
                     readonly
                   />
                 </div>
@@ -470,10 +472,10 @@
               </h2>
             </div>
             <div class="control-block add-service-into-note-control">
-              <button @click="addServiceRow()" id="addRow">
+              <button @click="addServiceRowNotes()" id="addRow">
                 <img src="@/assets/plusIcon.png" alt="plus" />
               </button>
-              <button id="deletRow" @click="deleteService()">
+              <button id="deletRow" @click="deleteServiceRowNotes()">
                 <img src="@/assets/crossIcon.png" alt="cross" />
               </button>
             </div>
@@ -785,6 +787,7 @@ export default {
       userServices: 0,
       noteStatus: this.getStatus(),
       viewNoteObj: {},
+      userServicesView: 0,
       totalAddNoteServicesCost: 0,
       //userNotes: this.getNotes(),
       time: this.getListTime(),
@@ -800,6 +803,7 @@ export default {
         statusId: "1",
       },
       userNotes: this.managerViewNotes(),
+      // userNoteServices: this.userServicesObjToMasive(),
       // [
       //   {
       //     additionalServices: [],
@@ -859,6 +863,10 @@ export default {
     };
   },
   methods: {
+    consoleLog(elem){
+      console.log(elem)
+      console.log(this.userServicesView)
+    },
     insertNotes(){
       Notes.insertNotes(this.createNotes);
       this.closeAddNote();
@@ -1044,10 +1052,14 @@ export default {
     },
     deteiledNoteView(noteObjID) {
       this.viewNoteObj = this.findUserNote(noteObjID);
+      this.userServicesView = this.viewNoteObj.services.length;
       this.closeDetailedView();
     },
     addServiceRow() {
       this.userServices++;
+    },
+    addServiceRowNotes() {
+      this.userServicesView++;
     },
     getServiceArray() {
       let resArr = [];
@@ -1074,6 +1086,9 @@ export default {
     },
     deleteServiceRow() {
       this.userServices--;
+    },
+    deleteServiceRowNotes() {
+      this.userServicesView--;
     },
     converteToArrayStringCars(){
       let newArr = [];
@@ -1183,7 +1198,6 @@ export default {
       let result = 0;
       if (this.userServices > 0) {
         for (let i = 1; i < myArray.length; i++) {
-          //console.log(myArray[i].childNodes[0]);
           result += Number(myArray[i].childNodes[0].value);
         }
       }
