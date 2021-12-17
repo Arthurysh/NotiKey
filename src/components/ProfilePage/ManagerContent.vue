@@ -493,7 +493,7 @@
       <div class="result-block">
         <div class="pay-note-block">
           <div class="google-pay-button">
-            <my-button> Сохранить </my-button>
+            <my-button @click="this.updateServicesNotesManager()"> Сохранить </my-button>
           </div>
         </div>
       </div>
@@ -530,20 +530,6 @@
             ></my-select>
           </div>
         </div>
-        <!-- <div class="note-info-line">
-            <div class="note-info-line-inner">
-              <p class="characteristic-name">Станция</p>
-              <my-select
-                class="add-choose-sto"
-                :plug="'Станция'"
-                id="add-sto-select"
-                :arrData="this.converteToArrayString(this.stationData, 'stationName')"
-                @change="this.getIdElementObj($event.target.value, 'station')"
-                v-model="this.createNotes.station"
-              ></my-select>
-            </div>
-          </div>
-           -->
         <div class="note-info-line">
           <div class="note-info-line-inner">
             <p class="characteristic-name">Машина</p>
@@ -798,7 +784,6 @@ export default {
       userServicesView: 0,
       currentDate: "",
       totalAddNoteServicesCost: 0,
-      //userNotes: this.getNotes(),
       time: this.getListTime(),
       stationData: this.getStation(),
       carsData: this.getCarsList(),
@@ -812,40 +797,6 @@ export default {
         statusId: "1",
       },
       userNotes: this.managerViewNotes(),
-      // userNoteServices: this.userServicesObjToMasive(),
-      // [
-      //   {
-      //     additionalServices: [],
-      //     adress: "Kharkiv",
-      //     brand: "tesla",
-      //     date: "20.20.2012",
-      //     model: "model s",
-      //     noteId: 64,
-      //     services: [
-      //       {
-      //         serviceId: 1,
-      //         name: "service1",
-      //         price: 241,
-      //       },
-      //       {
-      //         serviceId: 2,
-      //         name: "service1",
-      //         price: 241,
-      //       },
-      //     ],
-      //     stationName: "sto artura",
-      //     status: "Выполнение услуг",
-      //     statusHistory: [
-      //       {
-      //         statusId: 1,
-      //         status: "Успешно записан",
-      //         color: "#FFD15A",
-      //       },
-      //       { statusId: 2, status: "Выполнение услуг", color: "#84D1FC" },
-      //     ],
-      //     time: "20:10",
-      //   },
-      // ],
       editObj: {},
       addCarObj: {
         carID: 0,
@@ -869,6 +820,24 @@ export default {
     };
   },
   methods: {
+    async updateServicesNotesManager() {
+      let updateServicesObj = {
+        services: this.viewNoteObj.services,
+        noteId: this.viewNoteObj.noteId,
+
+      };
+      let masServ = [];
+      this.viewNoteObj.services.forEach((element) => {
+           this.services.forEach((elements) => {
+              if (element.name === elements.name) {
+              masServ.push(elements);
+            }
+           });
+          });
+          updateServicesObj.services = masServ;
+     await Notes.udateNotesServices(updateServicesObj);
+     this.closeDetailedView();
+    },
     updateViewNoteObj($event, elem) {
       let valueServ = $event.target.value;
       this.viewNoteObj.services[elem - 1].name = valueServ;
@@ -1138,6 +1107,7 @@ export default {
     },
     deleteServiceRowNotes() {
       this.userServicesView--;
+      this.viewNoteObj.services.pop();
     },
     converteToArrayStringCars() {
       let newArr = [];

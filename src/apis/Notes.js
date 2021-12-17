@@ -35,5 +35,7 @@ export default {
     downStatus(downObj) {
         return Api.post("/downStatus", downObj);
     },
-
+    udateNotesServices(updateObj) {
+        return Api.post("/udateNotesServices", updateObj);
+    },
 };
