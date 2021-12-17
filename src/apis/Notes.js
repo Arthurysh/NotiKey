@@ -29,6 +29,11 @@ export default {
     managerViewNotes(stationIdObj) {
         return Api.get(`/managerViewNotes?stationId=${stationIdObj}`)
     },
-
+    upStatus(upObj) {
+        return Api.post("/upStatus", upObj);
+    },
+    downStatus(downObj) {
+        return Api.post("/downStatus", downObj);
+    },
 
 };

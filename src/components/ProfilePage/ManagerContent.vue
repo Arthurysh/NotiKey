@@ -429,6 +429,10 @@
             </div>
             <div class="progress-service"></div>
           </div>
+          <div class="nav-status">
+          <my-button class="status-btn up" @click.prevent="this.upStatus()">></my-button>
+          <my-button class="status-btn down" @click.prevent="this.downStatus()">></my-button>
+          </div>
         </div>
         <div class="modal-services">
           <div class="modal-head">
@@ -872,6 +876,33 @@ export default {
     };
   },
   methods: {
+    deleteNotes(idNotes){
+      let ObjDelete = {
+        idNotes: idNotes,
+      };
+       Notes.deleteNotes(ObjDelete);
+       this.managerViewNotes();
+       
+    },
+   async manageStatus() {
+    await this.managerViewNotes();
+    this.viewNoteObj = this.findUserNote(this.viewNoteObj.noteId);
+    },
+    async upStatus() {
+      let objUp = {
+       noteId: this.viewNoteObj.noteId
+      };
+      await Notes.upStatus(objUp);
+      this.manageStatus();
+
+    },
+    async downStatus() {
+      let objUp = {
+       noteId: this.viewNoteObj.noteId
+      };
+      await Notes.downStatus(objUp);
+      this.manageStatus();
+    },
     consoleLog(elem) {
       console.log(elem);
       console.log(this.userServicesView);
@@ -1335,6 +1366,24 @@ export default {
 </script>
 
 <style scoped>
+.nav-status{
+  display:flex;
+  justify-content: center;
+  width:100%;
+  padding-top:40px;
+}
+.status-btn.up{
+  transform: rotate(180deg);
+}
+.status-btn.up{
+  padding:11px 15px 11px 15px;
+  border-radius: 50%;
+}
+.status-btn.down{
+  padding:11px 15px 11px 15px;
+  border-radius: 50%;
+  margin-left:20px;
+}
 .block-save-btn {
   margin-top: 20px;
   display: flex;
