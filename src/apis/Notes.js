@@ -38,4 +38,7 @@ export default {
     udateNotesServices(updateObj) {
         return Api.post("/udateNotesServices", updateObj);
     },
+    statisticNotes() {
+        return Api.get("/statisticNotes")
+    },
 };

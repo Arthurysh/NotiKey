@@ -294,7 +294,8 @@
               property != 'noteId' &&
               property != 'statusId' &&
               property != 'statusHistory' &&
-              property != 'additionalServices'
+              property != 'additionalServices' &&
+              property != 'userId'
             "
           >
             <p class="characteristic-name">{{ property }}</p>
@@ -863,7 +864,10 @@ export default {
     async upStatus() {
       let objUp = {
        noteId: this.viewNoteObj.noteId,
-       statusId: this.viewNoteObj.statusId+1
+       statusId: this.viewNoteObj.statusId+1,
+       userId: this.viewNoteObj.userId,
+       status: this.viewNoteObj.status,
+
       };
       await Notes.upStatus(objUp);
       this.manageStatus();
