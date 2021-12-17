@@ -430,8 +430,8 @@
             <div class="progress-service"></div>
           </div>
           <div class="nav-status">
-          <my-button class="status-btn up" @click.prevent="this.upStatus()">></my-button>
-          <my-button class="status-btn down" @click.prevent="this.downStatus()">></my-button>
+          <my-button class="status-btn up" @click.prevent="this.downStatus()">></my-button>
+          <my-button class="status-btn down" @click.prevent="this.upStatus()">></my-button>
           </div>
         </div>
         <div class="modal-services">
@@ -890,7 +890,8 @@ export default {
     },
     async upStatus() {
       let objUp = {
-       noteId: this.viewNoteObj.noteId
+       noteId: this.viewNoteObj.noteId,
+       statusId: this.viewNoteObj.statusId+1
       };
       await Notes.upStatus(objUp);
       this.manageStatus();
@@ -898,7 +899,9 @@ export default {
     },
     async downStatus() {
       let objUp = {
-       noteId: this.viewNoteObj.noteId
+       noteId: this.viewNoteObj.noteId,
+       statusId: this.viewNoteObj.statusId-1
+
       };
       await Notes.downStatus(objUp);
       this.manageStatus();
