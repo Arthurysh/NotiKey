@@ -457,6 +457,7 @@
                     :value="this.viewNoteObj.services[elem - 1].name"
                     @change="
                     this.insertObjServices($event);
+                    this.updateViewNoteObj($event, elem);
                       this.getServiceCost($event, elem);
                     "
                   ></my-select>
@@ -753,9 +754,9 @@ import MySelect from "../UI/MySelect.vue";
 import Notes from "@/apis/Notes";
 
 export default {
-  // updated() {
-  //   this.getTotalServicesCost();
-  // },
+  updated() {
+    this.getTotalServicesCost();
+  },
   props: {
     userItemID: {
       type: Number,
@@ -868,6 +869,16 @@ export default {
     };
   },
   methods: {
+    updateViewNoteObj($event, elem) {
+      let valueServ = $event.target.value;
+      this.viewNoteObj.services[elem - 1].name = valueServ;
+      
+      this.services.forEach(element => {
+        if (element.name === valueServ) {
+          this.viewNoteObj.services[elem - 1].price = element.price;
+        }
+      });
+    },
     deleteNotes(idNotes){
       let ObjDelete = {
         idNotes: idNotes,
@@ -1212,6 +1223,7 @@ export default {
     insertObjServices($event) {
       let inputValue = $event.target.value;
       let count = 0;
+
       this.services.forEach((element) => {
         if (element.name === inputValue) {
           this.createNotes.services.forEach((element) => {
