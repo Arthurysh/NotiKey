@@ -454,14 +454,10 @@
                     :arrData="getServiceArray()"
                     :plug="'Выбрать услугу'"
                     id="selectDateField"
-                    :value="
-                      elem - 1 > this.viewNoteObj.services.length - 1
-                        ? 'Выбрать услугу'
-                        : this.viewNoteObj.services[elem - 1].name
-                    "
+                    :value="this.viewNoteObj.services[elem - 1].name"
                     @change="
+                    this.insertObjServices($event);
                       this.getServiceCost($event, elem);
-                      this.insertObjServices($event);
                     "
                   ></my-select>
                 </div>
@@ -469,11 +465,7 @@
                   <input
                     type="text"
                     :id="'service-cost-input' + elem"
-                    :value="
-                      elem - 1 > this.viewNoteObj.services.length - 1
-                        ? ''
-                        : this.viewNoteObj.services[elem - 1].price
-                    "
+                    :value="this.viewNoteObj.services[elem - 1].price"
                     readonly
                   />
                 </div>
@@ -482,7 +474,7 @@
           </div>
           <div class="services-control-btn-block">
             <div class="total-cost-block">
-              <h2 @click="this.getTotalServicesCost()">
+              <h2>
                 Общая сумма - {{ this.totalAddNoteServicesCost + "грн" }}
               </h2>
             </div>
@@ -761,9 +753,9 @@ import MySelect from "../UI/MySelect.vue";
 import Notes from "@/apis/Notes";
 
 export default {
-  updated() {
-    this.getTotalServicesCost();
-  },
+  // updated() {
+  //   this.getTotalServicesCost();
+  // },
   props: {
     userItemID: {
       type: Number,
@@ -1099,6 +1091,10 @@ export default {
     },
     addServiceRowNotes() {
       this.userServicesView++;
+      this.viewNoteObj.services.push({
+        name: "Выбрать услугу",
+        price:0,
+      });
     },
     getServiceArray() {
       let resArr = [];
@@ -1186,17 +1182,19 @@ export default {
     },
     getServiceCost($event, elem) {
       let inputId = "service-cost-input" + elem;
-      let inputValue = $event.target.value.split("-");
-      //console.log(inputValue);
-      if (inputValue[0] == "Выбрать услугу") {
+      let inputValue = $event.target.value;
+      //console.log(elem);
+      if (inputValue == "Выбрать услугу") {
         document.getElementById(inputId).value = 0;
       }
       for (let i = 0; i < this.services.length; i++) {
-        if (this.services[i].name == inputValue[0]) {
+        //console.log(this.services[i].name == inputValue);
+        if (this.services[i].name == inputValue) {
           document.getElementById(inputId).value = this.services[i].price;
+          console.log(document.getElementById(inputId).value);
         }
       }
-      console.log(this.services[1].price);
+      //console.log(this.services[1].price);
       this.getTotalServicesCost();
     },
     getNoteServicesString(noteObj) {
@@ -1227,6 +1225,7 @@ export default {
         }
       });
       console.log(inputValue);
+      console.log(this.viewNoteObj.services);
     },
     getCurrentDate() {
       var today = new Date();
