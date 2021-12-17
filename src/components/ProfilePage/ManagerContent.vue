@@ -631,7 +631,7 @@
         </div>
         <div class="services-control-btn-block">
           <div class="total-cost-block">
-            <h2 @click="this.getTotalServicesCost()">
+            <h2>
               Общая сумма - {{ this.totalAddNoteServicesCost + "грн" }}
             </h2>
           </div>
@@ -997,6 +997,7 @@ export default {
     },
     closeAddNote() {
       this.isAddNoteActive = !this.isAddNoteActive;
+      this.totalAddNoteServicesCost = 0;
     },
     async addNewCars() {
       let newCar = {
@@ -1231,12 +1232,12 @@ export default {
       let myArray = Array.from(noteListUserServices);
       console.log(myArray);
       let result = 0;
-      if (this.userServices > 0) {
+      if (this.isAddNoteActive) {
         for (let i = 1; i < myArray.length; i++) {
           result += Number(myArray[i].childNodes[0].value);
         }
       }
-      if (this.userServicesView > 0) {
+      if (this.isDetaileView) {
         for (let i = 1; i < myArray.length; i++) {
           result += Number(myArray[i].childNodes[0].value);
         }
