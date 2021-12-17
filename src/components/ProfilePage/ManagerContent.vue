@@ -867,17 +867,17 @@ export default {
        statusId: this.viewNoteObj.statusId+1,
        userId: this.viewNoteObj.userId,
        status: this.viewNoteObj.status,
-
       };
       await Notes.upStatus(objUp);
       this.manageStatus();
 
     },
     async downStatus() {
-      let objUp = {
+     let objUp = {
        noteId: this.viewNoteObj.noteId,
-       statusId: this.viewNoteObj.statusId-1
-
+       statusId: this.viewNoteObj.statusId-1,
+       userId: this.viewNoteObj.userId,
+       status: this.viewNoteObj.status,
       };
       await Notes.downStatus(objUp);
       this.manageStatus();
