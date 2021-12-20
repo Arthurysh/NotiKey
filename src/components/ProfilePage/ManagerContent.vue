@@ -697,12 +697,6 @@
       <div class="add-user-modal">
         <h2 class="user-modal-head">Добавление скидки</h2>
         <my-input
-          v-bind:value="station"
-          @input="station = $event.target.value"
-          :placeholderValue="'Станция'"
-          class="add-discount-input"
-        ></my-input>
-        <my-input
           v-bind:value="precent"
           @input="precent = $event.target.value"
           :placeholderValue="'Процент'"
