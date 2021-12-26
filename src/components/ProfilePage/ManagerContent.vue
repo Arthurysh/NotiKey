@@ -541,7 +541,7 @@
               :plug="'Выбрать машину'"
               id="add-car-select"
               @change="
-                this.getIdElementObj($event.target.value.split(' ')[1], 'cars')
+                this.getIdElementObj($event.target.value, 'cars')
               "
               @click="this.getCarsList()"
             ></my-select>
@@ -942,6 +942,8 @@ export default {
       );
     },
     getIdElementObj(data, typeArray) {
+      console.log(data);
+      console.log(typeArray);
       switch (typeArray) {
         case "time":
           this.time.forEach((element) => {
@@ -959,7 +961,7 @@ export default {
           break;
         case "cars":
           this.carsData.forEach((element) => {
-            if (element.model === data) {
+            if (element.brand + " " + element.model === data) {
               this.createNotes.cars = element.carId;
             }
           });
