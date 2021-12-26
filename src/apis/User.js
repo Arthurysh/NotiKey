@@ -41,5 +41,8 @@ export default {
     },
     getUsersList() {
         return Api.get("/getUsersList")
+    },
+    getUserStatistic() {
+        return Api.get("/getUserStatistic");
     }
 };

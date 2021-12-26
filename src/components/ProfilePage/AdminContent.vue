@@ -178,9 +178,9 @@ export default {
   },
   data() {
     return {
-      statisticData1: [12, 19, 3, 5, 2, 3, 8],
-      statisticData2: [13, 9, 12, 20, 22, 20, 24],
-      statisticData3: [300, 215, 300, 500, 803, 580, 1004],
+      statisticData1: this.getStationStatistic(),
+      statisticData2: this.getUserStatistic(),
+      statisticData3: this.getCashStatistic(),
       tables: ["Пользователи", "Записи", "Транспорт", "Станции"],
       currentTable: [],
       isModalOpen: false,
@@ -193,6 +193,21 @@ export default {
     };
   },
   methods: {
+    getCashStatistic() {
+      Notes.getCashStatistic().then(response => {
+      this.statisticData3 = response.data;
+      })
+    },
+    getUserStatistic() {
+      User.getUserStatistic().then(response => {
+      this.statisticData2 = response.data;
+      })
+    },
+    getStationStatistic() {
+      Station.getStationStatistic().then(response => {
+      this.statisticData1 = response.data;
+      })
+    },
     getListNotesUsers() {
       Notes.getListNotesUsers().then(response => {
       this.notes = response.data;

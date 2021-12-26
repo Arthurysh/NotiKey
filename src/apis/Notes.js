@@ -41,4 +41,7 @@ export default {
     statisticNotes() {
         return Api.get("/statisticNotes")
     },
+    getCashStatistic() {
+        return Api.get("/getCashStatistic")
+    }
 };
