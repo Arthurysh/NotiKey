@@ -424,7 +424,7 @@
                 v-model="this.createNotes.cars"
                 :plug="'Выбрать машину'"
                 id="add-car-select"
-                @change="this.getIdElementObj($event.target.value.split(' ')[1], 'cars')"
+                @change="this.getIdElementObj($event.target.value, 'cars')"
                 
               ></my-select>
             </div>
@@ -1063,7 +1063,7 @@ export default {
           break;
           case "cars":
           this.carsData.forEach(element => {
-            if(element.model === data) {
+            if(element.brand + " " + element.model === data) {
               this.createNotes.cars = element.carId;
               }
           });
